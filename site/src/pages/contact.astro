@@ -1,0 +1,101 @@
+---
+// Real, honest contact experience: a direct mailto: to the confirmed
+// business address (info@byteandbook.com — set by the user, 2026-08-27).
+// No form is rendered, because there is no backend/email-submission
+// integration configured — per CLAUDE.md, a form that looks functional
+// but silently goes nowhere is worse than no form. If a submitting form
+// is wanted later, it requires a third-party service (Formspree/EmailJS
+// or similar), which needs an account + API key and therefore explicit
+// approval before it's added.
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Header from '../components/layout/Header.astro';
+import Footer from '../components/layout/Footer.astro';
+import Container from '../components/ui/Container.astro';
+import Card from '../components/ui/Card.astro';
+import Button from '../components/ui/Button.astro';
+
+const EMAIL = 'info@byteandbook.com';
+
+const briefPoints = [
+  'Which service(s) this touches — one discipline or several',
+  'A short description of what you’re building or fixing',
+  'Rough timeline, if you have one',
+  'Budget range, if you have one — helps us scope realistically',
+];
+---
+
+<BaseLayout
+  title="Contact — ByteAndBook"
+  description="Start a project with ByteAndBook — email info@byteandbook.com with what you're building and we'll follow up to scope it."
+>
+  <Header />
+
+  <main class="pt-32 pb-24">
+    <Container class="max-w-3xl">
+      <span class="inline-block rounded-full border border-ink-700 bg-ink-900/60 px-4 py-1.5 text-xs font-semibold uppercase tracking-[0.18em] text-signal-400">
+        Contact
+      </span>
+      <h1 class="mt-5 text-4xl font-bold text-ink-50 md:text-5xl">Start a project</h1>
+      <p class="mt-5 text-lg text-ink-300">
+        Email us directly and tell us what you're building — there's no
+        form to fill out, just a real inbox on the other end.
+      </p>
+
+      <div class="mt-10 flex flex-col items-start gap-4 rounded-bb-lg border border-ink-700 bg-ink-900/60 p-8 sm:flex-row sm:items-center sm:justify-between">
+        <div>
+          <p class="text-xs font-semibold uppercase tracking-[0.14em] text-ink-500">Email</p>
+          <a href={`mailto:${EMAIL}`} class="mt-1 block text-2xl font-semibold text-ink-50 hover:text-signal-300">
+            {EMAIL}
+          </a>
+        </div>
+        <div class="flex gap-3">
+          <Button href={`mailto:${EMAIL}`} variant="primary">Open Email</Button>
+          <button
+            type="button"
+            data-copy-email
+            data-email={EMAIL}
+            class="inline-flex items-center justify-center gap-2 rounded-bb-md border border-ink-600 px-6 py-3 text-sm font-semibold text-ink-100 transition-colors hover:border-signal-400 hover:text-signal-300"
+          >
+            Copy
+          </button>
+        </div>
+      </div>
+
+      <div class="mt-12">
+        <h2 class="text-lg font-semibold text-ink-50">Helpful to include</h2>
+        <ul class="mt-4 space-y-3">
+          {briefPoints.map((point) => (
+            <li class="flex items-start gap-3 text-sm text-ink-300">
+              <span class="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-signal-400" />
+              {point}
+            </li>
+          ))}
+        </ul>
+        <p class="mt-6 text-sm text-ink-400">
+          None of this is required to reach out — if you're not sure yet,
+          send what you have and we'll ask.
+        </p>
+      </div>
+    </Container>
+  </main>
+
+  <Footer />
+</BaseLayout>
+
+<script>
+  const button = document.querySelector<HTMLButtonElement>('[data-copy-email]');
+  button?.addEventListener('click', async () => {
+    const email = button.dataset.email ?? '';
+    try {
+      await navigator.clipboard.writeText(email);
+      const original = button.textContent;
+      button.textContent = 'Copied';
+      setTimeout(() => {
+        button.textContent = original;
+      }, 1600);
+    } catch {
+      // Clipboard API unavailable/denied — the mailto: button and the
+      // visible email text right above it remain fully usable.
+    }
+  });
+</script>

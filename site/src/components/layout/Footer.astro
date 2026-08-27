@@ -2,6 +2,7 @@
 import Container from '../ui/Container.astro';
 
 const year = new Date().getFullYear();
+const EMAIL = 'info@byteandbook.com';
 ---
 
 <footer class="border-t border-ink-800 bg-ink-950 py-12">
@@ -14,6 +15,9 @@ const year = new Date().getFullYear();
         Digital technology &amp; growth agency — design, engineering, and
         infrastructure built as one connected system.
       </p>
+      <a href={`mailto:${EMAIL}`} class="mt-4 inline-block text-sm font-medium text-ink-200 hover:text-signal-300">
+        {EMAIL}
+      </a>
     </div>
 
     <nav class="flex flex-wrap gap-x-8 gap-y-3 text-sm text-ink-300">
