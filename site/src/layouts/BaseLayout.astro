@@ -20,5 +20,17 @@ const { title, description } = Astro.props;
   </head>
   <body>
     <slot />
+    <script>
+      // Level 3: global scroll-reveal wiring. Adds .js-ready (which
+      // arms the [data-reveal] hidden-until-scrolled CSS) only when
+      // motion is actually going to run, so no-JS and reduced-motion
+      // visitors always see full content with no dependency on script
+      // timing.
+      import { initScrollReveal, prefersReducedMotion } from '../scripts/motion';
+      if (!prefersReducedMotion()) {
+        document.documentElement.classList.add('js-ready');
+      }
+      initScrollReveal();
+    </script>
   </body>
 </html>

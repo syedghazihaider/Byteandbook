@@ -14,6 +14,8 @@ import Button from '../../components/ui/Button.astro';
 import Card from '../../components/ui/Card.astro';
 import Icon from '../../components/ui/Icon.astro';
 import FlowSteps from '../../components/diagrams/FlowSteps.astro';
+import NodeGraph3D from '../../components/three/NodeGraph3D.astro';
+import HardwareExplode3D from '../../components/three/HardwareExplode3D.astro';
 
 export async function getStaticPaths() {
   const services = await getCollection('services');
@@ -31,6 +33,13 @@ const related = allServices
   .filter((s) => s.id !== service.id && s.data.pillar === service.data.pillar)
   .sort((a, b) => a.data.order - b.data.order)
   .slice(0, 3);
+
+// Level 1 premium 3D is reserved for these three showcase pages per
+// CLAUDE.md's animation strategy; every other service page relies on
+// the Level 2 animated FlowSteps diagram below instead.
+const isCloud = service.id === 'cloud';
+const isDevops = service.id === 'devops';
+const isHardware = service.id === 'computer-hardware';
 ---
 
 <BaseLayout title={`${service.data.title} — ByteAndBook`} description={service.data.metaDescription}>
@@ -57,8 +66,24 @@ const related = allServices
       </Container>
     </section>
 
+    {(isCloud || isDevops) && service.data.flowSteps && (
+      <section class="border-b border-ink-800 py-16">
+        <Container>
+          <NodeGraph3D steps={service.data.flowSteps} pulse={isDevops} />
+        </Container>
+      </section>
+    )}
+
+    {isHardware && (
+      <section class="border-b border-ink-800 py-16">
+        <Container>
+          <HardwareExplode3D />
+        </Container>
+      </section>
+    )}
+
     {service.data.flowSteps && service.data.flowSteps.length > 0 && (
-      <section class="border-y border-ink-800 bg-ink-900/40 py-16">
+      <section class="border-y border-ink-800 bg-ink-900/40 py-16" data-reveal>
         <Container>
           <h2 class="text-center text-sm font-semibold uppercase tracking-[0.18em] text-ink-400">
             How it works
@@ -86,7 +111,7 @@ const related = allServices
           </h2>
           <div class="mt-8 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
             {related.map((r) => (
-              <a href={`/services/${r.id}/`} class="block">
+              <a href={`/services/${r.id}/`} class="block" data-reveal>
                 <Card class="h-full">
                   <div class="mb-4 flex h-12 w-12 items-center justify-center rounded-bb-sm bg-signal-500/10 text-signal-400">
                     <Icon name={r.data.icon as any} class="h-6 w-6" />
@@ -103,7 +128,7 @@ const related = allServices
 
     <section class="py-16">
       <Container>
-        <div class="rounded-bb-lg border border-ink-700 bg-ink-900/60 px-8 py-14 text-center">
+        <div class="rounded-bb-lg border border-ink-700 bg-ink-900/60 px-8 py-14 text-center" data-reveal>
           <h2 class="text-2xl font-bold text-ink-50 md:text-3xl">
             Discuss a {service.data.title.toLowerCase()} project
           </h2>
