@@ -1,0 +1,77 @@
+/*
+  ByteAndBook design tokens — single source of truth for color, type,
+  radius and shadow. Tailwind config reads these via CSS variables so
+  raw CSS, inline SVG diagrams, and Three.js scenes can all share the
+  same palette instead of duplicating hex values per surface.
+
+  Direction: "Obsidian & Signal" — a graphite/near-black neutral scale
+  (not pure black — a touch of cool depth) with one dominant precise
+  accent (signal blue, for trust/technology) and one restrained warm
+  accent (ember, used sparingly for growth/energy emphasis). Deliberately
+  avoids the ubiquitous indigo-to-teal SaaS gradient look.
+*/
+
+:root {
+  /* ---- Neutral scale (graphite, cool-toned) ---- */
+  --bb-ink-950: #08090c;
+  --bb-ink-900: #0d0f14;
+  --bb-ink-800: #14161d;
+  --bb-ink-700: #1c1f29;
+  --bb-ink-600: #2a2e3b;
+  --bb-ink-500: #3d4254;
+  --bb-ink-400: #5b6178;
+  --bb-ink-300: #868da3;
+  --bb-ink-200: #b6bccb;
+  --bb-ink-100: #dde0e8;
+  --bb-ink-50:  #f5f6f9;
+
+  /* ---- Signal (primary accent — trust / technology) ---- */
+  --bb-signal-700: #1b3fa8;
+  --bb-signal-600: #2650c9;
+  --bb-signal-500: #3866f0; /* primary CTA */
+  --bb-signal-400: #6088f5;
+  --bb-signal-300: #94aff9;
+
+  /* ---- Ember (secondary accent — growth / energy, used sparingly) ---- */
+  --bb-ember-600: #c97a1a;
+  --bb-ember-500: #e8992e; /* accent highlight only, never a base color */
+  --bb-ember-400: #f0b45f;
+
+  /* ---- Semantic surface/text roles (dark theme is the default brand surface) ---- */
+  --bb-bg: var(--bb-ink-950);
+  --bb-bg-elevated: var(--bb-ink-900);
+  --bb-bg-elevated-2: var(--bb-ink-800);
+  --bb-border: var(--bb-ink-700);
+  --bb-border-strong: var(--bb-ink-600);
+  --bb-text: var(--bb-ink-50);
+  --bb-text-muted: var(--bb-ink-300);
+  --bb-text-faint: var(--bb-ink-400);
+  --bb-accent: var(--bb-signal-500);
+  --bb-accent-strong: var(--bb-signal-400);
+  --bb-accent-warm: var(--bb-ember-500);
+
+  /* ---- Type ---- */
+  --bb-font-display: 'Sora Variable', 'Sora', system-ui, sans-serif;
+  --bb-font-body: 'Inter Variable', 'Inter', system-ui, sans-serif;
+
+  /* Fluid type scale (clamp: min, preferred-vw, max) */
+  --bb-text-xs:   clamp(0.75rem, 0.72rem + 0.15vw, 0.8125rem);
+  --bb-text-sm:   clamp(0.875rem, 0.84rem + 0.2vw, 0.9375rem);
+  --bb-text-base: clamp(1rem, 0.96rem + 0.2vw, 1.0625rem);
+  --bb-text-lg:   clamp(1.125rem, 1.07rem + 0.3vw, 1.25rem);
+  --bb-text-xl:   clamp(1.375rem, 1.28rem + 0.5vw, 1.625rem);
+  --bb-text-2xl:  clamp(1.75rem, 1.6rem + 0.8vw, 2.125rem);
+  --bb-text-3xl:  clamp(2.125rem, 1.9rem + 1.2vw, 2.75rem);
+  --bb-text-4xl:  clamp(2.625rem, 2.2rem + 2vw, 3.75rem);
+  --bb-text-5xl:  clamp(3.25rem, 2.6rem + 3vw, 5rem);
+
+  /* ---- Radius ---- */
+  --bb-radius-sm: 0.5rem;
+  --bb-radius-md: 0.875rem;
+  --bb-radius-lg: 1.25rem;
+  --bb-radius-full: 999px;
+
+  /* ---- Shadow / glow (used sparingly, on interactive/hover states only) ---- */
+  --bb-shadow-elevated: 0 10px 40px -12px rgba(0, 0, 0, 0.55);
+  --bb-shadow-glow: 0 0 0 1px rgba(56, 102, 240, 0.25), 0 12px 40px -8px rgba(56, 102, 240, 0.35);
+}

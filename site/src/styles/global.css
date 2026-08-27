@@ -1,0 +1,87 @@
+@import "tailwindcss";
+@import "./tokens.css";
+@import "@fontsource-variable/sora";
+@import "@fontsource-variable/inter";
+
+/*
+  Tailwind v4 theme mapping — bridges the token source of truth
+  (tokens.css) into Tailwind's utility classes, so e.g. bg-ink-950,
+  text-signal-500, font-display etc. are available as utilities while
+  tokens.css remains the single place color/type values are edited.
+*/
+@theme {
+  --color-ink-950: var(--bb-ink-950);
+  --color-ink-900: var(--bb-ink-900);
+  --color-ink-800: var(--bb-ink-800);
+  --color-ink-700: var(--bb-ink-700);
+  --color-ink-600: var(--bb-ink-600);
+  --color-ink-500: var(--bb-ink-500);
+  --color-ink-400: var(--bb-ink-400);
+  --color-ink-300: var(--bb-ink-300);
+  --color-ink-200: var(--bb-ink-200);
+  --color-ink-100: var(--bb-ink-100);
+  --color-ink-50:  var(--bb-ink-50);
+
+  --color-signal-700: var(--bb-signal-700);
+  --color-signal-600: var(--bb-signal-600);
+  --color-signal-500: var(--bb-signal-500);
+  --color-signal-400: var(--bb-signal-400);
+  --color-signal-300: var(--bb-signal-300);
+
+  --color-ember-600: var(--bb-ember-600);
+  --color-ember-500: var(--bb-ember-500);
+  --color-ember-400: var(--bb-ember-400);
+
+  --font-display: var(--bb-font-display);
+  --font-body: var(--bb-font-body);
+
+  --radius-bb-sm: var(--bb-radius-sm);
+  --radius-bb-md: var(--bb-radius-md);
+  --radius-bb-lg: var(--bb-radius-lg);
+}
+
+@layer base {
+  * {
+    border-color: var(--bb-border);
+  }
+
+  html {
+    scroll-behavior: smooth;
+    color-scheme: dark;
+  }
+
+  body {
+    background-color: var(--bb-bg);
+    color: var(--bb-text);
+    font-family: var(--bb-font-body);
+    font-feature-settings: "ss01" 1;
+  }
+
+  h1, h2, h3, h4 {
+    font-family: var(--bb-font-display);
+    letter-spacing: -0.01em;
+  }
+
+  a {
+    color: inherit;
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--bb-accent-strong);
+    outline-offset: 3px;
+    border-radius: var(--bb-radius-sm);
+  }
+
+  /* Global reduced-motion guard: any element opting into motion via
+     [data-animate] is neutralized here in one place, rather than every
+     Level 1/2 component needing its own media query. */
+  @media (prefers-reduced-motion: reduce) {
+    [data-animate] {
+      animation: none !important;
+      transition: none !important;
+    }
+    html {
+      scroll-behavior: auto;
+    }
+  }
+}

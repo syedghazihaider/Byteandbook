@@ -183,3 +183,15 @@ required, so installation (when it happens) will be a routine local dev
 dependency install under the TOOLING & DEPENDENCIES rule:
 `astro`, `@astrojs/tailwind`, `tailwindcss`, `@astrojs/sitemap`, `three`,
 `gsap`.
+
+## 12. Amendment (Phase 4) — Tailwind integration path
+When dependencies were actually installed in Phase 4, the latest Astro
+(v7) had already dropped compatibility with `@astrojs/tailwind` (capped
+at Astro v5) in favor of wiring Tailwind v4 directly as a Vite plugin —
+Astro's own current recommended path for Tailwind v4. Adjusted stack:
+`@tailwindcss/vite` + `tailwindcss@^4`, configured in `astro.config.mjs`
+under `vite.plugins`, with theme tokens defined via Tailwind v4's CSS-
+native `@theme` block in `src/styles/global.css` (rather than a
+`tailwind.config.mjs` JS file). Functionally equivalent outcome — static
+build output, purged CSS, same token source of truth — just a different
+wiring mechanism than originally anticipated in Section 5.
