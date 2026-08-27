@@ -1,0 +1,59 @@
+---
+import Container from '../ui/Container.astro';
+import Button from '../ui/Button.astro';
+
+const navLinks = [
+  { label: 'Services', href: '#services' },
+  { label: 'Approach', href: '#approach' },
+];
+---
+
+<header class="fixed inset-x-0 top-0 z-50 border-b border-ink-800/80 bg-ink-950/80 backdrop-blur-md">
+  <Container class="flex items-center justify-between py-4">
+    <a href="#top" class="font-display text-xl font-bold tracking-tight text-ink-50">
+      Byte<span class="text-signal-400">&amp;</span>Book
+    </a>
+
+    <nav class="hidden items-center gap-8 text-sm font-medium text-ink-300 md:flex">
+      {navLinks.map((link) => (
+        <a href={link.href} class="transition-colors hover:text-ink-50">{link.label}</a>
+      ))}
+    </nav>
+
+    <div class="hidden md:block">
+      <Button href="/contact" variant="primary" class="px-5 py-2.5 text-sm">Start a Project</Button>
+    </div>
+
+    <button
+      id="menu-toggle"
+      class="flex h-10 w-10 items-center justify-center rounded-bb-sm text-ink-200 md:hidden"
+      aria-label="Toggle menu"
+      aria-expanded="false"
+      aria-controls="mobile-nav"
+    >
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" class="h-6 w-6">
+        <line x1="4" y1="7" x2="20" y2="7" />
+        <line x1="4" y1="12" x2="20" y2="12" />
+        <line x1="4" y1="17" x2="20" y2="17" />
+      </svg>
+    </button>
+  </Container>
+
+  <nav id="mobile-nav" class="hidden border-t border-ink-800 bg-ink-950 md:hidden">
+    <Container class="flex flex-col gap-4 py-6 text-ink-200">
+      {navLinks.map((link) => (
+        <a href={link.href} class="text-base">{link.label}</a>
+      ))}
+      <Button href="/contact" variant="primary" class="w-full">Start a Project</Button>
+    </Container>
+  </nav>
+</header>
+
+<script>
+  const toggle = document.getElementById('menu-toggle');
+  const mobileNav = document.getElementById('mobile-nav');
+  toggle?.addEventListener('click', () => {
+    const isHidden = mobileNav?.classList.toggle('hidden');
+    toggle.setAttribute('aria-expanded', String(!isHidden));
+  });
+</script>
