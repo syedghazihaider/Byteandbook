@@ -1,0 +1,123 @@
+---
+// Single dynamic route generating all 11 static service pages from the
+// content collection, rather than 11 hand-duplicated .astro files —
+// a deliberate refinement over the Phase 2 plan's one-file-per-service
+// layout (see ARCHITECTURE.md Section 13). Each page is still emitted
+// as its own static HTML file at build time (getStaticPaths), so the
+// output and URLs are identical to what the original plan described.
+import { getCollection, render } from 'astro:content';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Header from '../../components/layout/Header.astro';
+import Footer from '../../components/layout/Footer.astro';
+import Container from '../../components/ui/Container.astro';
+import Button from '../../components/ui/Button.astro';
+import Card from '../../components/ui/Card.astro';
+import Icon from '../../components/ui/Icon.astro';
+import FlowSteps from '../../components/diagrams/FlowSteps.astro';
+
+export async function getStaticPaths() {
+  const services = await getCollection('services');
+  return services.map((service) => ({
+    params: { slug: service.id },
+    props: { service },
+  }));
+}
+
+const { service } = Astro.props;
+const { Content } = await render(service);
+
+const allServices = await getCollection('services');
+const related = allServices
+  .filter((s) => s.id !== service.id && s.data.pillar === service.data.pillar)
+  .sort((a, b) => a.data.order - b.data.order)
+  .slice(0, 3);
+---
+
+<BaseLayout title={`${service.data.title} — ByteAndBook`} description={service.data.metaDescription}>
+  <Header />
+
+  <main>
+    <section class="pt-32 pb-16">
+      <Container>
+        <nav class="mb-8 flex items-center gap-2 text-sm text-ink-400" aria-label="Breadcrumb">
+          <a href="/" class="hover:text-ink-200">Home</a>
+          <span>/</span>
+          <a href="/#services" class="hover:text-ink-200">Services</a>
+          <span>/</span>
+          <span class="text-ink-200">{service.data.title}</span>
+        </nav>
+
+        <div class="max-w-3xl">
+          <span class="inline-block rounded-full border border-ink-700 bg-ink-900/60 px-4 py-1.5 text-xs font-semibold uppercase tracking-[0.18em] text-signal-400">
+            {service.data.pillar}
+          </span>
+          <h1 class="mt-5 text-4xl font-bold text-ink-50 md:text-5xl">{service.data.title}</h1>
+          <p class="mt-5 text-lg text-ink-300">{service.data.summary}</p>
+        </div>
+      </Container>
+    </section>
+
+    {service.data.flowSteps && service.data.flowSteps.length > 0 && (
+      <section class="border-y border-ink-800 bg-ink-900/40 py-16">
+        <Container>
+          <h2 class="text-center text-sm font-semibold uppercase tracking-[0.18em] text-ink-400">
+            How it works
+          </h2>
+          <div class="mt-10">
+            <FlowSteps steps={service.data.flowSteps} />
+          </div>
+        </Container>
+      </section>
+    )}
+
+    <section class="py-16">
+      <Container class="max-w-3xl">
+        <div class="prose-service text-ink-300">
+          <Content />
+        </div>
+      </Container>
+    </section>
+
+    {related.length > 0 && (
+      <section class="py-16">
+        <Container>
+          <h2 class="text-2xl font-bold text-ink-50">
+            Related {service.data.pillar} services
+          </h2>
+          <div class="mt-8 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+            {related.map((r) => (
+              <a href={`/services/${r.id}/`} class="block">
+                <Card class="h-full">
+                  <div class="mb-4 flex h-12 w-12 items-center justify-center rounded-bb-sm bg-signal-500/10 text-signal-400">
+                    <Icon name={r.data.icon as any} class="h-6 w-6" />
+                  </div>
+                  <h3 class="text-lg font-semibold text-ink-50">{r.data.title}</h3>
+                  <p class="mt-2 text-sm text-ink-300">{r.data.summary}</p>
+                </Card>
+              </a>
+            ))}
+          </div>
+        </Container>
+      </section>
+    )}
+
+    <section class="py-16">
+      <Container>
+        <div class="rounded-bb-lg border border-ink-700 bg-ink-900/60 px-8 py-14 text-center">
+          <h2 class="text-2xl font-bold text-ink-50 md:text-3xl">
+            Discuss a {service.data.title.toLowerCase()} project
+          </h2>
+          <p class="mx-auto mt-3 max-w-xl text-ink-300">
+            Tell us where you're starting from and what you need — we'll
+            scope it against the process above.
+          </p>
+          <div class="mt-7">
+            <Button href="/contact" variant="primary">Start a Project</Button>
+          </div>
+        </div>
+      </Container>
+    </section>
+  </main>
+
+  <Footer />
+</BaseLayout>

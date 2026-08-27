@@ -2,15 +2,19 @@
 import Container from '../ui/Container.astro';
 import Button from '../ui/Button.astro';
 
+// Absolute paths back to homepage anchors — bare "#services" only
+// resolves correctly while already on "/", and breaks from every
+// other route (service pages, contact, etc.) introduced from Phase 6
+// onward.
 const navLinks = [
-  { label: 'Services', href: '#services' },
-  { label: 'Approach', href: '#approach' },
+  { label: 'Services', href: '/#services' },
+  { label: 'Approach', href: '/#approach' },
 ];
 ---
 
 <header class="fixed inset-x-0 top-0 z-50 border-b border-ink-800/80 bg-ink-950/80 backdrop-blur-md">
   <Container class="flex items-center justify-between py-4">
-    <a href="#top" class="font-display text-xl font-bold tracking-tight text-ink-50">
+    <a href="/" class="font-display text-xl font-bold tracking-tight text-ink-50">
       Byte<span class="text-signal-400">&amp;</span>Book
     </a>
 

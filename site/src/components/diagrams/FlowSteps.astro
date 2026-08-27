@@ -1,0 +1,33 @@
+---
+// Static structural version of the per-service visual-concept flow
+// (CLAUDE.md's "Website -> Crawler -> Index -> ..." style diagrams).
+// Phase 7 adds scroll-triggered/animated behavior on top of this same
+// markup rather than building the diagrams from scratch — this is the
+// shared skeleton every Level 1/2 service diagram will enhance.
+interface Props {
+  steps: string[];
+}
+const { steps } = Astro.props;
+---
+
+<div class="flex flex-wrap items-start justify-center gap-x-1 gap-y-8" data-flow>
+  {steps.map((step, i) => (
+    <Fragment>
+      <div class="flex w-28 flex-col items-center gap-3 text-center sm:w-32">
+        <div class="flex h-12 w-12 items-center justify-center rounded-full border border-ink-600 bg-ink-900 font-display text-base font-semibold text-signal-400">
+          {i + 1}
+        </div>
+        <span class="text-xs font-medium leading-snug text-ink-200">{step}</span>
+      </div>
+      {i < steps.length - 1 && (
+        <svg
+          viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75"
+          stroke-linecap="round" stroke-linejoin="round"
+          class="mt-4 h-5 w-5 shrink-0 text-ink-600"
+        >
+          <polyline points="9 6 15 12 9 18" />
+        </svg>
+      )}
+    </Fragment>
+  ))}
+</div>

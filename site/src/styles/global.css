@@ -75,6 +75,11 @@
   /* Global reduced-motion guard: any element opting into motion via
      [data-animate] is neutralized here in one place, rather than every
      Level 1/2 component needing its own media query. */
+  .prose-service p {
+    font-size: var(--bb-text-lg);
+    line-height: 1.75;
+  }
+
   @media (prefers-reduced-motion: reduce) {
     [data-animate] {
       animation: none !important;
