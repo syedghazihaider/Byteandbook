@@ -7,6 +7,7 @@ icon: palette
 animationLevel: '2'
 order: 10
 flowSteps: ['Idea', 'Sketch', 'Geometry', 'Typography', 'Color', 'Logo', 'Brand System']
+capabilities: ['Custom logo design', 'Brand identity systems', 'Typography & color systems', 'Brand guideline documentation']
 ---
 
 A brand identity is built in layers: an idea becomes a sketch, a sketch

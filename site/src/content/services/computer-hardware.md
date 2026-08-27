@@ -7,6 +7,7 @@ icon: cpu
 animationLevel: '1'
 order: 9
 flowSteps: ['CPU', 'GPU', 'RAM', 'SSD', 'Motherboard', 'Cooling', 'PSU', 'Networking']
+capabilities: ['Workstation specification', 'Server build consulting', 'Component sourcing guidance', 'Performance benchmarking']
 ---
 
 Hardware recommendations start from the workload — rendering, inference,

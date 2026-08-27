@@ -7,6 +7,7 @@ icon: share-2
 animationLevel: '2'
 order: 4
 flowSteps: ['Content', 'Distribution', 'Engagement', 'Audience', 'Leads', 'Analytics']
+capabilities: ['Content planning & production', 'Multi-platform distribution', 'Community engagement', 'Performance analytics']
 ---
 
 Social strategy is treated as a distribution and measurement system:

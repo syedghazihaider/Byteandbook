@@ -7,6 +7,7 @@ icon: sparkles
 animationLevel: '2'
 order: 3
 flowSteps: ['Business Information', 'Structured Content', 'Entity Understanding', 'AI / LLM', 'AI Search', 'Citation / Recommendation', 'Customer']
+capabilities: ['Structured, entity-clear content', 'Schema & structured data implementation', 'AI/LLM content readiness review', 'Citation & recommendation tracking']
 ---
 
 As AI systems increasingly mediate discovery, being understood by a

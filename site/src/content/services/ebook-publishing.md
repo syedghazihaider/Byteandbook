@@ -7,6 +7,7 @@ icon: book-open
 animationLevel: '2'
 order: 11
 flowSteps: ['Manuscript', 'Editing', 'Layout', 'Cover', 'eBook', 'Distribution']
+capabilities: ['Manuscript editing', 'Layout & typesetting', 'Cover design', 'Multi-format distribution prep']
 ---
 
 Digital publishing is handled as a single pipeline from manuscript to

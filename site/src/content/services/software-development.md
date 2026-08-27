@@ -7,6 +7,7 @@ icon: code
 animationLevel: '2'
 order: 6
 flowSteps: ['Frontend', 'API', 'Backend', 'Database', 'Testing', 'Deployment', 'Users', 'Monitoring']
+capabilities: ['Custom application development', 'API design & integration', 'Database architecture', 'Automated testing & monitoring']
 ---
 
 Custom software is built as a connected system — frontend, API, backend

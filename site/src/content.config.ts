@@ -17,6 +17,10 @@ const services = defineCollection({
     // Visual-concept flow steps from CLAUDE.md (e.g. SEO: Website ->
     // Crawler -> Index -> ...). Consumed by Phase 7 diagram components.
     flowSteps: z.array(z.string()).optional(),
+    // Concrete, non-fabricated capability bullets shown on the service
+    // page — descriptive of what the discipline covers, not claims
+    // about clients/results that would need verification.
+    capabilities: z.array(z.string()).optional(),
   }),
 });
 

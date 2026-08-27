@@ -7,6 +7,7 @@ icon: trending-up
 animationLevel: '2'
 order: 1
 flowSteps: ['Audience', 'Campaign', 'Ads', 'Landing Page', 'Conversion', 'Analytics', 'Growth']
+capabilities: ['Audience research & segmentation', 'Campaign strategy & media planning', 'Landing page design', 'Conversion tracking & analytics']
 ---
 
 Digital marketing at ByteAndBook is built as a measurable system, not a

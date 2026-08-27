@@ -1,0 +1,28 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Header from '../components/layout/Header.astro';
+import Footer from '../components/layout/Footer.astro';
+import Container from '../components/ui/Container.astro';
+import Button from '../components/ui/Button.astro';
+---
+
+<BaseLayout title="Page not found — ByteAndBook" description="The page you're looking for doesn't exist.">
+  <Header />
+
+  <main class="flex min-h-screen items-center pt-24">
+    <Container class="max-w-2xl text-center">
+      <span class="font-display text-6xl font-bold text-ink-700">404</span>
+      <h1 class="mt-4 text-3xl font-bold text-ink-50 md:text-4xl">This page doesn't exist</h1>
+      <p class="mx-auto mt-4 max-w-md text-ink-300">
+        The link may be outdated, or the page hasn't been built yet —
+        this site is still under active development.
+      </p>
+      <div class="mt-8 flex flex-wrap items-center justify-center gap-4">
+        <Button href="/" variant="primary">Back to Home</Button>
+        <Button href="/#services" variant="outline">Browse Services</Button>
+      </div>
+    </Container>
+  </main>
+
+  <Footer />
+</BaseLayout>

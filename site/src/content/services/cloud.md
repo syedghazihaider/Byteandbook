@@ -7,6 +7,7 @@ icon: cloud
 animationLevel: '1'
 order: 8
 flowSteps: ['Users', 'DNS', 'Load Balancer', 'Servers', 'Application', 'Database / Storage', 'Monitoring']
+capabilities: ['Cloud infrastructure setup (AWS, Azure, GCP)', 'Load balancing & scaling', 'Database & storage architecture', 'Monitoring & observability']
 ---
 
 Cloud infrastructure is designed as the path a real request takes: from

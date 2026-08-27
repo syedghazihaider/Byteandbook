@@ -41,6 +41,31 @@ const process = [
   { step: '03', title: 'Build', description: 'Engineer and ship, with the same discipline whether it’s a logo or a Kubernetes cluster.' },
   { step: '04', title: 'Grow', description: 'Monitor, measure, and iterate against the goals set in discovery.' },
 ];
+
+// Genuine, general FAQs — no fabricated claims about clients, pricing
+// figures, or results. Also feeds Phase 9's FAQPage structured data.
+const faqs = [
+  {
+    question: 'How is a project scoped and priced?',
+    answer:
+      "Every engagement is scoped individually. The disciplines we cover — from a logo to a Kubernetes cluster — vary too much in scope for flat package pricing, so we start from what you're building and price against that.",
+  },
+  {
+    question: 'Do you only take on full four-pillar engagements?',
+    answer:
+      'No — a project can be a single discipline (just SEO, just a logo, just a cloud migration) or span multiple pillars. The process is the same either way.',
+  },
+  {
+    question: 'What happens after I submit a project inquiry?',
+    answer:
+      "We review what you've shared and follow up to scope the work through the Discover → Design → Build → Grow process outlined above.",
+  },
+  {
+    question: 'Is ByteAndBook a good fit for an early-stage or small project?',
+    answer:
+      'Yes. Single-discipline and smaller-scope engagements are welcome, not just full-system builds.',
+  },
+];
 ---
 
 <BaseLayout
@@ -150,6 +175,31 @@ const process = [
               <h3 class="mt-3 text-lg font-semibold text-ink-50">{item.title}</h3>
               <p class="mt-2 text-sm text-ink-300">{item.description}</p>
             </div>
+          ))}
+        </div>
+      </Container>
+    </section>
+
+    <!-- FAQ -->
+    <section class="py-20">
+      <Container class="max-w-3xl">
+        <SectionHeading eyebrow="FAQ" heading="Common questions" align="center" class="mx-auto max-w-2xl" />
+        <div class="mt-10 divide-y divide-ink-800 border-y border-ink-800">
+          {faqs.map((faq) => (
+            <details class="group py-5">
+              <summary class="flex cursor-pointer list-none items-center justify-between gap-4 text-left font-semibold text-ink-50">
+                {faq.question}
+                <svg
+                  viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75"
+                  stroke-linecap="round" stroke-linejoin="round"
+                  class="h-5 w-5 shrink-0 text-ink-400 transition-transform duration-200 group-open:rotate-45"
+                >
+                  <line x1="12" y1="5" x2="12" y2="19" />
+                  <line x1="5" y1="12" x2="19" y2="12" />
+                </svg>
+              </summary>
+              <p class="mt-3 text-sm text-ink-300">{faq.answer}</p>
+            </details>
           ))}
         </div>
       </Container>

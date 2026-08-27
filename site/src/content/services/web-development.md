@@ -7,6 +7,7 @@ icon: layout
 animationLevel: '2'
 order: 5
 flowSteps: ['Idea', 'Wireframe', 'UI', 'Code', 'Browser', 'Responsive Devices', 'Deployment']
+capabilities: ['Responsive front-end builds', 'UI/UX implementation', 'CMS & headless integrations', 'Performance-optimized deployment']
 ---
 
 Every build moves through the same disciplined path from idea to

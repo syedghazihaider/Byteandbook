@@ -7,6 +7,7 @@ icon: search
 animationLevel: '2'
 order: 2
 flowSteps: ['Website', 'Crawler', 'Index', 'Search Results', 'Ranking', 'Organic Traffic', 'Leads']
+capabilities: ['Technical SEO audits', 'On-page optimization', 'Content strategy', 'Link building']
 ---
 
 SEO work here follows the actual mechanics of search: a site has to be

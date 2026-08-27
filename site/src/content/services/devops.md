@@ -7,6 +7,7 @@ icon: git-branch
 animationLevel: '1'
 order: 7
 flowSteps: ['Developer', 'Git', 'Build', 'Tests', 'Docker', 'Registry', 'Kubernetes', 'Production', 'Monitoring']
+capabilities: ['CI/CD pipeline design', 'Containerization with Docker', 'Kubernetes orchestration', 'Infrastructure as Code']
 ---
 
 DevOps here means a pipeline you can actually see: every commit moves
