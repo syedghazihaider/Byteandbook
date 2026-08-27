@@ -1,0 +1,15 @@
+# Legacy backup / orphaned DB dump — kept on disk per CLAUDE.md safety
+# rules, but not versioned as source (large, not part of the rebuild).
+byteandbook-backup-2026-08-26.zip
+bytesbra_wp928.sql
+
+# Future build tooling (Phase 4+)
+node_modules/
+dist/
+.astro/
+.env
+.env.*
+
+# OS/editor cruft
+.DS_Store
+Thumbs.db
