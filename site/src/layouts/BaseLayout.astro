@@ -10,6 +10,7 @@
 // sitewide Organization/WebSite graph below — real content only, see
 // each page for what backs each field.
 import StartProjectModal from '../components/project/StartProjectModal.astro';
+import { verifiedSocialUrls } from '../config/site';
 
 interface Props {
   title: string;
@@ -28,10 +29,14 @@ const canonicalUrl = new URL(path, SITE_URL).toString();
 // Sitewide identity graph — present on every page (not just the
 // homepage) per standard practice, so any page can be understood in
 // isolation. Only fields with real, verified values are included: no
-// logo asset exists yet, no verified social profiles, no physical
-// address/phone — all correctly omitted rather than invented.
+// logo asset exists yet, no legal entity name confirmed (see /terms/
+// section 27), no physical address/phone — all correctly omitted
+// rather than invented. `sameAs` is sourced from config/site.ts and
+// only appears at all once a verified external profile URL exists —
+// see V2-5 report for why it's absent right now.
 const organizationId = `${SITE_URL}/#organization`;
 const websiteId = `${SITE_URL}/#website`;
+const sameAs = verifiedSocialUrls();
 const siteGraph = {
   '@context': 'https://schema.org',
   '@graph': [
@@ -47,6 +52,7 @@ const siteGraph = {
         email: 'info@byteandbook.com',
         contactType: 'customer support',
       },
+      ...(sameAs.length > 0 ? { sameAs } : {}),
     },
     {
       '@type': 'WebSite',

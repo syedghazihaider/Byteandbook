@@ -3,7 +3,6 @@ Allow: /
 Disallow: /style-guide/
 Disallow: /404.html
 Disallow: /checkout/
-Disallow: /work/
 Disallow: /insights/
 
 Sitemap: https://byteandbook.com/sitemap-index.xml

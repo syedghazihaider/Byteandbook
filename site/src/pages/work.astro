@@ -1,39 +1,161 @@
 ---
-// V2-1: route placeholder only. Full case-study/social-proof architecture
-// is scoped to V2-5 per CLAUDE.md. No fabricated case studies, clients,
-// logos, or results are placed here — an honest capabilities statement
-// only. noindex until real, verifiable content exists.
+// V2-5: real, permanent Work page, replacing the V2-1 placeholder.
+// Explains methodology, capability evidence, and the evidence
+// standard for future case studies — genuinely useful content that
+// doesn't depend on having a published case study yet. The case-study
+// grid below is wired to src/data/caseStudies.ts and renders nothing
+// but an honest empty-state message while that array is empty; adding
+// a real, client-authorized entry there makes it appear automatically.
+// Indexable: unlike the V2-1 "coming later" placeholder, this page now
+// has substantial permanent content (methodology, evidence standards)
+// independent of whether any case study exists — see V2-5 report.
+import { getCollection } from 'astro:content';
 import BaseLayout from '../layouts/BaseLayout.astro';
 import Header from '../components/layout/Header.astro';
 import Footer from '../components/layout/Footer.astro';
 import Container from '../components/ui/Container.astro';
-import Button from '../components/ui/Button.astro';
+import SectionHeading from '../components/ui/SectionHeading.astro';
+import Icon from '../components/ui/Icon.astro';
+import StartProjectTrigger from '../components/project/StartProjectTrigger.astro';
+import CaseStudyCard from '../components/trust/CaseStudyCard.astro';
+import TrustBadge from '../components/trust/TrustBadge.astro';
+import { caseStudies } from '../data/caseStudies';
+
+const SITE_URL = 'https://byteandbook.com';
+const path = '/work/';
+
+const services = (await getCollection('services')).sort((a, b) => a.data.order - b.data.order);
+
+const evidenceStandards = [
+  {
+    icon: 'shield' as const,
+    title: 'Client-authorized only',
+    description: 'A project is never published as work here without the client\'s explicit, separate permission — an engagement does not imply that permission on its own.',
+  },
+  {
+    icon: 'check-circle' as const,
+    title: 'Verifiable, not just stated',
+    description: 'Where a metric or result is shown, it links to something a visitor can actually check — a live URL, a public source, or client-provided evidence.',
+  },
+  {
+    icon: 'code' as const,
+    title: 'No invented numbers',
+    description: 'We do not publish traffic, revenue, or performance figures we cannot back with real evidence — an unverifiable number is left out, not estimated.',
+  },
+];
+
+const breadcrumbJsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'BreadcrumbList',
+  itemListElement: [
+    { '@type': 'ListItem', position: 1, name: 'Home', item: `${SITE_URL}/` },
+    { '@type': 'ListItem', position: 2, name: 'Work', item: `${SITE_URL}${path}` },
+  ],
+};
 ---
 
 <BaseLayout
   title="Work — ByteAndBook"
-  description="ByteAndBook project work and case studies — in progress."
-  path="/work/"
-  noindex
+  description="How ByteAndBook documents and evidences project work — methodology, capability areas, and the evidence standard verified case studies must meet before publication."
+  path={path}
+  jsonLd={[breadcrumbJsonLd]}
 >
   <Header />
 
-  <main id="main-content" tabindex="-1" class="flex min-h-[70vh] items-center pt-24">
-    <Container class="max-w-2xl text-center">
-      <span class="inline-block rounded-full border border-ink-700 bg-ink-900/60 px-4 py-1.5 text-xs font-semibold uppercase tracking-[0.18em] text-signal-400">
-        Work
-      </span>
-      <h1 class="mt-5 text-3xl font-bold text-ink-50 md:text-4xl">Case studies are in progress</h1>
-      <p class="mx-auto mt-4 max-w-md text-ink-300">
-        We only publish verified project work here — no placeholder case
-        studies or invented results. Check the individual service pages
-        for how each discipline actually works in the meantime.
-      </p>
-      <div class="mt-8 flex flex-wrap items-center justify-center gap-4">
-        <Button href="/services/" variant="primary">Browse Services</Button>
-        <Button href="/" variant="outline">Back to Home</Button>
-      </div>
-    </Container>
+  <main id="main-content" tabindex="-1">
+    <section class="pt-32 pb-16">
+      <Container class="max-w-3xl">
+        <nav class="mb-8 flex items-center gap-2 text-sm text-ink-300" aria-label="Breadcrumb">
+          <a href="/" class="hover:text-ink-200">Home</a>
+          <span>/</span>
+          <span class="text-ink-200">Work</span>
+        </nav>
+
+        <span class="inline-block rounded-full border border-ink-700 bg-ink-900/60 px-4 py-1.5 text-xs font-semibold uppercase tracking-[0.18em] text-signal-400">
+          Work
+        </span>
+        <h1 class="mt-5 text-4xl font-bold text-ink-50 md:text-5xl">How we work, and how we prove it</h1>
+        <p class="mt-5 text-lg text-ink-300">
+          This page explains our methodology and the evidence standard every case study has to meet
+          before it's published — not a placeholder, and not a page of invented results.
+        </p>
+      </Container>
+    </section>
+
+    <section class="border-t border-ink-800 py-16">
+      <Container class="max-w-3xl">
+        <SectionHeading eyebrow="Methodology" heading="The same process, every project" />
+        <p class="mt-4 text-ink-300">
+          Every engagement runs through the same nine-stage process — Discovery, Requirements, Scope,
+          Quote, Confirmation, Execution, Review, Delivery, Support — regardless of which discipline
+          it touches. That consistency is what makes the work reviewable after the fact, not just
+          during it.
+        </p>
+        <a href="/process/" class="mt-4 inline-flex items-center gap-1 text-sm font-medium text-signal-400 hover:text-signal-300">
+          See the full process →
+        </a>
+      </Container>
+    </section>
+
+    <section class="border-t border-ink-800 py-16">
+      <Container>
+        <SectionHeading eyebrow="Capability areas" heading="What we build, across four pillars" align="center" class="mx-auto max-w-2xl" />
+        <div class="mt-10 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+          {services.map((service) => (
+            <a href={`/services/${service.id}/`} class="block rounded-bb-md border border-ink-700 bg-ink-900/60 px-5 py-4 text-sm text-ink-200 transition-colors hover:border-signal-400 hover:text-signal-300">
+              {service.data.title}
+            </a>
+          ))}
+        </div>
+      </Container>
+    </section>
+
+    <section class="border-t border-ink-800 py-16">
+      <Container class="max-w-3xl">
+        <SectionHeading eyebrow="Evidence standards" heading="What it takes for work to appear here" />
+        <div class="mt-10 grid gap-8 sm:grid-cols-2">
+          {evidenceStandards.map((item) => (
+            <TrustBadge icon={item.icon} title={item.title} description={item.description} />
+          ))}
+        </div>
+      </Container>
+    </section>
+
+    <section class="border-t border-ink-800 py-16">
+      <Container>
+        <SectionHeading eyebrow="Case studies" heading="Verified project work" align="center" class="mx-auto max-w-2xl" />
+
+        {caseStudies.length > 0 ? (
+          <div class="mt-10 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+            {caseStudies.map((caseStudy) => (
+              <CaseStudyCard caseStudy={caseStudy} />
+            ))}
+          </div>
+        ) : (
+          <div class="mx-auto mt-10 max-w-xl rounded-bb-lg border border-ink-700 bg-ink-900/60 p-8 text-center" data-reveal>
+            <p class="text-ink-300">
+              Verified case studies will be published here as client-authorized work becomes
+              available. Until then, the service pages above show how each discipline actually
+              works, and the evidence standard above shows what any future case study has to meet.
+            </p>
+          </div>
+        )}
+      </Container>
+    </section>
+
+    <section class="border-t border-ink-800 py-20">
+      <Container>
+        <div class="rounded-bb-lg border border-ink-700 bg-ink-900/60 px-8 py-16 text-center" data-reveal>
+          <h2 class="text-3xl font-bold text-ink-50 md:text-4xl">Want to be the first case study?</h2>
+          <p class="mx-auto mt-4 max-w-xl text-ink-300">
+            Tell us what you're building — we'll scope it against the same process described above.
+          </p>
+          <div class="mt-8">
+            <StartProjectTrigger variant="primary">Start a Project</StartProjectTrigger>
+          </div>
+        </div>
+      </Container>
+    </section>
   </main>
 
   <Footer />

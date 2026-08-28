@@ -8,12 +8,50 @@ import Button from '../components/ui/Button.astro';
 import Icon from '../components/ui/Icon.astro';
 import AmbientField3D from '../components/three/AmbientField3D.astro';
 import StartProjectTrigger from '../components/project/StartProjectTrigger.astro';
+import TrustBadge from '../components/trust/TrustBadge.astro';
+import LeadershipCard from '../components/trust/LeadershipCard.astro';
+import { leadershipProfiles } from '../data/leadership';
 
 // Team bios, founding history, and client claims are deliberately
 // omitted — none were verified as genuine per the Phase 1 content-
 // integrity audit, and CLAUDE.md prohibits fabricating them. This page
 // covers positioning and approach only, which doesn't require
 // verification. Add real team/history content once confirmed.
+//
+// V2-5: leadershipProfiles (src/data/leadership.ts) is currently empty
+// — no team member details are approved for public display yet — so
+// the section below renders nothing at all rather than a placeholder,
+// per CLAUDE.md's guidance to omit rather than pad. Populate that array
+// once real, approved profiles exist and this section activates
+// automatically.
+
+const trustSignals = [
+  {
+    icon: 'shield' as const,
+    title: 'Scope before payment',
+    description: 'We never request payment for undefined work — a project only reaches checkout after scope and price are agreed in writing.',
+  },
+  {
+    icon: 'check-circle' as const,
+    title: 'Clear project references',
+    description: 'Every confirmed order gets a reference ID, generated server-side, so a conversation about your project is always traceable.',
+  },
+  {
+    icon: 'layout' as const,
+    title: 'Transparent policies',
+    description: 'Our Terms, Privacy, and Refund & Cancellation policies are published in full — not summarized, not hidden behind a support request.',
+  },
+  {
+    icon: 'search' as const,
+    title: 'Client-authorized case studies only',
+    description: "We publish a project as work only with the client's explicit, separate permission — never assumed from the engagement itself.",
+  },
+  {
+    icon: 'code' as const,
+    title: 'No hidden payment flow',
+    description: 'Checkout explains exactly what happens and when — no surprise charges, no payment collected before you\'ve agreed to a scope.',
+  },
+];
 
 const principles = [
   {
@@ -83,6 +121,35 @@ const principles = [
         </div>
       </Container>
     </section>
+
+    <section class="border-t border-ink-800 py-16">
+      <Container>
+        <h2 class="text-2xl font-bold text-ink-50">How we build trust</h2>
+        <p class="mt-3 max-w-2xl text-ink-300">
+          We'd rather show how we actually operate than ask you to take our word for it.
+        </p>
+        <div class="mt-10 grid gap-x-8 gap-y-8 sm:grid-cols-2">
+          {trustSignals.map((signal) => (
+            <div data-reveal>
+              <TrustBadge icon={signal.icon} title={signal.title} description={signal.description} />
+            </div>
+          ))}
+        </div>
+      </Container>
+    </section>
+
+    {leadershipProfiles.length > 0 && (
+      <section class="border-t border-ink-800 py-16">
+        <Container>
+          <h2 class="text-2xl font-bold text-ink-50">Leadership</h2>
+          <div class="mt-8 grid gap-6 md:grid-cols-2">
+            {leadershipProfiles.map((profile) => (
+              <LeadershipCard profile={profile} />
+            ))}
+          </div>
+        </Container>
+      </section>
+    )}
 
     <section class="py-16">
       <Container>

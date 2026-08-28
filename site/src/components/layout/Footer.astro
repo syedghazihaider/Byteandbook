@@ -1,8 +1,21 @@
 ---
 import Container from '../ui/Container.astro';
+import { SITE_SOCIAL } from '../../config/site';
 
 const year = new Date().getFullYear();
 const EMAIL = 'info@byteandbook.com';
+
+// V2-5: only renders entries with a real, verified URL in
+// config/site.ts — currently none, so this list (and the "Elsewhere"
+// nav below) is empty and nothing renders. No "#" placeholder links.
+const socialLinks = (
+  [
+    { label: 'LinkedIn', url: SITE_SOCIAL.linkedin },
+    { label: 'GitHub', url: SITE_SOCIAL.github },
+    { label: 'Clutch', url: SITE_SOCIAL.clutch },
+    { label: 'Trustpilot', url: SITE_SOCIAL.trustpilot },
+  ] as const
+).filter((link): link is { label: string; url: string } => typeof link.url === 'string' && link.url.length > 0);
 ---
 
 <footer class="border-t border-ink-800 bg-ink-950 py-12">
@@ -12,7 +25,7 @@ const EMAIL = 'info@byteandbook.com';
         Byte<span class="text-signal-400">&amp;</span>Book
       </a>
       <p class="mt-3 text-sm text-ink-300">
-        Digital technology &amp; growth agency — design, engineering, and
+        Remote-first digital technology &amp; growth agency — design, engineering, and
         infrastructure built as one connected system.
       </p>
       <a href={`mailto:${EMAIL}`} class="mt-4 inline-block text-sm font-medium text-ink-200 hover:text-signal-300">
@@ -29,6 +42,14 @@ const EMAIL = 'info@byteandbook.com';
       <a href="/contact/" class="hover:text-ink-50">Contact</a>
       <a href="/checkout/" class="hover:text-ink-50">Checkout</a>
     </nav>
+
+    {socialLinks.length > 0 && (
+      <nav aria-label="Elsewhere" class="flex flex-wrap gap-x-6 gap-y-3 text-sm text-ink-300">
+        {socialLinks.map((link) => (
+          <a href={link.url} target="_blank" rel="noopener" class="hover:text-ink-50">{link.label}</a>
+        ))}
+      </nav>
+    )}
   </Container>
 
   <Container class="mt-10 flex flex-col gap-4 border-t border-ink-800 pt-6 text-xs text-ink-300 sm:flex-row sm:items-center sm:justify-between">

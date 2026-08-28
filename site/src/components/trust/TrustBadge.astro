@@ -1,0 +1,26 @@
+---
+// Restrained, evidence-first trust signal — icon + short label +
+// one-line explanation of something genuinely true about how
+// ByteAndBook operates. Never a numeric counter, star rating, or
+// third-party badge; every instance of this component must describe a
+// verifiable, current fact about this site/business, not a marketing
+// claim. See about.astro's "How we build trust" section for usage.
+import Icon from '../ui/Icon.astro';
+
+interface Props {
+  icon: 'shield' | 'check-circle' | 'code' | 'search' | 'layout' | 'cpu';
+  title: string;
+  description: string;
+}
+const { icon, title, description } = Astro.props;
+---
+
+<div class="flex items-start gap-4">
+  <div class="flex h-10 w-10 shrink-0 items-center justify-center rounded-bb-sm bg-signal-500/10 text-signal-400">
+    <Icon name={icon} class="h-5 w-5" />
+  </div>
+  <div>
+    <h3 class="text-sm font-semibold text-ink-50">{title}</h3>
+    <p class="mt-1 text-sm text-ink-300">{description}</p>
+  </div>
+</div>

@@ -1,0 +1,75 @@
+---
+// Renders one verified case study (src/data/caseStudies.ts). Not
+// currently used anywhere — the case study array is empty until a
+// client authorizes publishing their project — but built to the full
+// CaseStudy shape now so adding the first real entry needs no template
+// work. A testimonial block only renders if the record actually has
+// one; metrics only render with their evidence note when supplied.
+import type { CaseStudy } from '../../data/caseStudies';
+import Card from '../ui/Card.astro';
+
+interface Props {
+  caseStudy: CaseStudy;
+}
+const { caseStudy } = Astro.props;
+---
+
+<Card class="h-full">
+  <div class="flex items-center justify-between gap-3">
+    <span class="text-xs font-semibold uppercase tracking-[0.14em] text-signal-400">{caseStudy.industry}</span>
+    {caseStudy.verificationUrl && (
+      <a href={caseStudy.verificationUrl} target="_blank" rel="noopener" class="text-xs text-ink-400 hover:text-signal-300">
+        Verify
+      </a>
+    )}
+  </div>
+
+  <h3 class="mt-3 text-lg font-semibold text-ink-50">
+    {caseStudy.clientUrl ? (
+      <a href={caseStudy.clientUrl} target="_blank" rel="noopener" class="hover:text-signal-300">{caseStudy.clientName}</a>
+    ) : caseStudy.clientName}
+  </h3>
+
+  <p class="mt-3 text-sm text-ink-300"><span class="font-semibold text-ink-200">Challenge:</span> {caseStudy.challenge}</p>
+  <p class="mt-2 text-sm text-ink-300"><span class="font-semibold text-ink-200">Solution:</span> {caseStudy.solution}</p>
+
+  {caseStudy.services.length > 0 && (
+    <div class="mt-4 flex flex-wrap gap-2">
+      {caseStudy.services.map((service) => (
+        <span class="rounded-full border border-ink-700 px-3 py-1 text-xs text-ink-300">{service}</span>
+      ))}
+    </div>
+  )}
+
+  {caseStudy.metrics && caseStudy.metrics.length > 0 && (
+    <div class="mt-5 grid grid-cols-2 gap-4 border-t border-ink-800 pt-4">
+      {caseStudy.metrics.map((metric) => (
+        <div>
+          <p class="text-lg font-bold text-ink-50">{metric.value}</p>
+          <p class="text-xs text-ink-400">{metric.label}</p>
+          {metric.evidence && <p class="mt-0.5 text-xs text-ink-500">{metric.evidence}</p>}
+        </div>
+      ))}
+    </div>
+  )}
+
+  {caseStudy.testimonial && (
+    <blockquote class="mt-5 border-t border-ink-800 pt-4 text-sm italic text-ink-300">
+      "{caseStudy.testimonial.quote}"
+      <footer class="mt-2 text-xs not-italic text-ink-400">
+        {caseStudy.testimonial.person}
+        {caseStudy.testimonial.role && `, ${caseStudy.testimonial.role}`}
+        {caseStudy.testimonial.company && ` — ${caseStudy.testimonial.company}`}
+        {caseStudy.testimonial.sourceUrl && (
+          <> · <a href={caseStudy.testimonial.sourceUrl} target="_blank" rel="noopener" class="text-signal-400 hover:text-signal-300">Source</a></>
+        )}
+      </footer>
+    </blockquote>
+  )}
+
+  {caseStudy.liveUrl && (
+    <a href={caseStudy.liveUrl} target="_blank" rel="noopener" class="mt-5 inline-flex items-center gap-1 text-sm font-medium text-signal-400 hover:text-signal-300">
+      View live project →
+    </a>
+  )}
+</Card>

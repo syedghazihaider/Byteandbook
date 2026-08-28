@@ -44,11 +44,16 @@ const indexablePages = {
   '/terms/': 'terms/index.html',
   '/privacy/': 'privacy/index.html',
   '/refund-policy/': 'refund-policy/index.html',
+  // V2-5: /work/ got real, substantial, permanent content (methodology,
+  // evidence standards) independent of whether any case study exists
+  // yet — indexable like any other professional-site page (see V2-5
+  // report).
+  '/work/': 'work/index.html',
   ...Object.fromEntries(SERVICE_SLUGS.map((s) => [`/services/${s}/`, `services/${s}/index.html`])),
 };
-// Pages that stay noindex: internal reference (style-guide), pages
-// whose real content is still scoped to a later phase (work/insights —
-// V2-5/V2-7), and /checkout/ — a payment workflow page for people who
+// Pages that stay noindex: internal reference (style-guide), /insights/
+// (still a genuine "coming later" placeholder, real content scoped to
+// V2-7), and /checkout/ — a payment workflow page for people who
 // already have an order reference, not a search landing page, so it
 // stays out of the index/sitemap on purpose even though its V2-4
 // content is real (see V2-4 report).
@@ -56,7 +61,6 @@ const nonIndexablePages = {
   '/404.html': '404.html',
   '/style-guide/': 'style-guide/index.html',
   '/checkout/': 'checkout/index.html',
-  '/work/': 'work/index.html',
   '/insights/': 'insights/index.html',
 };
 const allPages = { ...indexablePages, ...nonIndexablePages };
@@ -153,7 +157,7 @@ for (const [route, relPath] of Object.entries(allPages)) {
     check(`${route}: Service schema present`, types.has('Service'));
     check(`${route}: BreadcrumbList schema present`, types.has('BreadcrumbList'));
   }
-  if (['/services/', '/process/', '/terms/', '/privacy/', '/refund-policy/'].includes(route)) {
+  if (['/services/', '/process/', '/terms/', '/privacy/', '/refund-policy/', '/work/'].includes(route)) {
     check(`${route}: BreadcrumbList schema present`, types.has('BreadcrumbList'));
   }
   if (route === '/checkout/') {
@@ -183,10 +187,11 @@ check('robots.txt disallows /404.html', robotsTxt.includes('Disallow: /404.html'
 for (const route of Object.keys(nonIndexablePages).filter((r) => r.endsWith('/'))) {
   check(`robots.txt disallows ${route}`, robotsTxt.includes(`Disallow: ${route}`));
 }
-// V2-4 regression guard: these three moved from noindex to indexable —
-// make sure a future edit doesn't silently re-add them to Disallow.
-for (const route of ['/terms/', '/privacy/', '/refund-policy/']) {
-  check(`robots.txt does NOT disallow ${route} (indexable since V2-4)`, !robotsTxt.includes(`Disallow: ${route}`));
+// Regression guard: these routes moved from noindex to indexable in
+// V2-4/V2-5 — make sure a future edit doesn't silently re-add them to
+// Disallow.
+for (const route of ['/terms/', '/privacy/', '/refund-policy/', '/work/']) {
+  check(`robots.txt does NOT disallow ${route} (indexable)`, !robotsTxt.includes(`Disallow: ${route}`));
 }
 
 for (const f of sitemapFiles) {
@@ -201,7 +206,7 @@ const sitemapUrlCount = sitemapFiles.reduce(
   (n, f) => n + (readFileSync(join(DIST, f), 'utf-8').match(/<loc>/g) || []).length,
   0
 );
-check('sitemap contains exactly 19 indexable URLs', sitemapUrlCount === 19);
+check('sitemap contains exactly 20 indexable URLs', sitemapUrlCount === 20);
 
 // duplicate title/description check across all pages
 const titleValues = [...titles.values()];
@@ -443,6 +448,74 @@ for (const relPath of allDistHtmlFiles) {
     }
   }
 }
+
+// ---- 7. V2-5: trust/case-study/leadership architecture --------------------
+const workHtml = readHtml('work/index.html');
+const workNorm = norm(workHtml);
+const aboutHtml = readHtml('about/index.html');
+const aboutNorm = norm(aboutHtml);
+
+check('work/: no leftover "in progress" placeholder text', !/case studies are in progress/i.test(workNorm));
+check('work/: explains methodology', /methodology|nine-stage process/i.test(workNorm));
+check('work/: explains evidence standards', /evidence standard/i.test(workNorm));
+check('work/: handles empty case-study state honestly', /will be published here as client-authorized work becomes available/i.test(workNorm));
+check('work/: links to /process/', /href="\/process\/"/.test(workHtml));
+check('work/: stays indexable (real permanent content, not a placeholder)', /<meta name="robots" content="index, follow"/.test(workHtml));
+
+// Case-study + leadership data architecture exists, and both are
+// genuinely empty — no fabricated records of either kind.
+check('src/data/caseStudies.ts exists', existsSync(join(__dirname, '..', 'src', 'data', 'caseStudies.ts')));
+check('src/data/leadership.ts exists', existsSync(join(__dirname, '..', 'src', 'data', 'leadership.ts')));
+if (existsSync(join(__dirname, '..', 'src', 'data', 'caseStudies.ts'))) {
+  const caseStudiesSource = readFileSync(join(__dirname, '..', 'src', 'data', 'caseStudies.ts'), 'utf-8');
+  check('caseStudies.ts: array is empty (no fabricated case studies)', /caseStudies:\s*CaseStudy\[\]\s*=\s*\[\s*\]/.test(caseStudiesSource));
+}
+if (existsSync(join(__dirname, '..', 'src', 'data', 'leadership.ts'))) {
+  const leadershipSource = readFileSync(join(__dirname, '..', 'src', 'data', 'leadership.ts'), 'utf-8');
+  check('leadership.ts: profiles array is empty (no unverified team data)', /leadershipProfiles:\s*LeadershipProfile\[\]\s*=\s*\[\s*\]/.test(leadershipSource));
+}
+check('components/trust/CaseStudyCard.astro exists', existsSync(join(__dirname, '..', 'src', 'components', 'trust', 'CaseStudyCard.astro')));
+check('components/trust/LeadershipCard.astro exists', existsSync(join(__dirname, '..', 'src', 'components', 'trust', 'LeadershipCard.astro')));
+check('components/trust/TrustBadge.astro exists', existsSync(join(__dirname, '..', 'src', 'components', 'trust', 'TrustBadge.astro')));
+
+// About page: still builds, trust section present, leadership section
+// absent while the data array is empty (per CLAUDE.md: omit rather than
+// show a placeholder).
+check('about/: "How we build trust" section present', /how we build trust/i.test(aboutNorm));
+check('about/: no Leadership section while leadershipProfiles is empty', !/<h2[^>]*>Leadership<\/h2>/i.test(aboutHtml));
+
+// Site-wide: no fake testimonial identities inherited from the old
+// site, no star-rating characters, no empty "#" social placeholder
+// links, anywhere in the built output.
+const LEGACY_FAKE_IDENTITIES = ['John Smith', 'Emily Johnson', 'Michael Brown', 'Future Systems'];
+for (const relPath of allDistHtmlFiles) {
+  if (!existsSync(join(DIST, relPath))) continue;
+  const html = readHtml(relPath);
+  for (const identity of LEGACY_FAKE_IDENTITIES) {
+    check(`${relPath}: no legacy fake identity "${identity}"`, !html.includes(identity));
+  }
+  check(`${relPath}: no star-rating characters (★/⭐)`, !/[★⭐]/.test(html));
+  check(`${relPath}: no empty href="#" placeholder links`, !/href="#"/.test(html));
+  check(`${relPath}: no "Trusted by N+ clients"-style claim`, !/trusted by \d/i.test(html));
+  check(`${relPath}: no "Award winning" / "Top rated" claim`, !/award.winning|top.rated/i.test(html));
+}
+
+// Organization schema: sameAs present only when a verified social URL
+// actually exists (config/site.ts currently has none).
+const siteConfigSource = readFileSync(join(__dirname, '..', 'src', 'config', 'site.ts'), 'utf-8');
+const hasVerifiedSocial = /linkedin:\s*['"]/.test(siteConfigSource) || /github:\s*['"]/.test(siteConfigSource) ||
+  /clutch:\s*['"]/.test(siteConfigSource) || /trustpilot:\s*['"]/.test(siteConfigSource);
+check('config/site.ts: no verified social URL is set yet (expected for this phase)', !hasVerifiedSocial);
+if (!hasVerifiedSocial) {
+  check('homepage: Organization schema has no sameAs (no verified profiles yet)', !homeHtml.includes('"sameAs"'));
+}
+
+// Legacy root files: confirmed obsolete (byte-identical, unreferenced
+// by the Astro build) and removed from the working tree in V2-5 — make
+// sure they don't silently reappear as build inputs.
+const repoRoot = join(__dirname, '..', '..');
+check('legacy root index.html removed from working tree', !existsSync(join(repoRoot, 'index.html')));
+check('legacy root "byteandbook github.txt" removed from working tree', !existsSync(join(repoRoot, 'byteandbook github.txt')));
 
 // ---- Report ---------------------------------------------------------------
 console.log(`QA check: ${checks} assertions, ${failures.length} failure(s).`);
