@@ -1,43 +1,94 @@
-@import "tailwindcss";
-@import "./tokens.css";
-@import "@fontsource-variable/sora";
-@import "@fontsource-variable/inter";
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
 
 /*
-  Tailwind v4 theme mapping — bridges the token source of truth
-  (tokens.css) into Tailwind's utility classes, so e.g. bg-ink-950,
-  text-signal-500, font-display etc. are available as utilities while
-  tokens.css remains the single place color/type values are edited.
+  This file is compiled by the standalone Tailwind CLI (see
+  package.json's "css:build" script), NOT by an Astro/Vite plugin, and
+  the output is committed to public/styles.css and linked as a plain
+  <link rel="stylesheet"> in BaseLayout — never imported into the Astro/
+  Vite module graph. Every in-process integration path tried (the
+  @tailwindcss/vite plugin, @tailwindcss/postcss, and finally the
+  official v3 @astrojs/tailwind integration) produced a completely
+  empty compiled stylesheet specifically in `astro build` production
+  output on this toolchain, while `astro dev` and the Tailwind CLI
+  itself both compiled correctly — isolating the bug to Astro/Vite's
+  build-time CSS asset emission in this environment, not to any
+  particular Tailwind version or plugin. Routing around Vite's CSS
+  pipeline entirely (plain static file, zero bundler processing)
+  guarantees the compiled CSS reaches the browser regardless of that
+  bug. Re-run `npm run css:build` after editing this file.
+
+  Design tokens below are the single source of truth for color/type/
+  radius, read by tailwind.config.mjs (theme.extend) so utilities like
+  bg-ink-950, text-signal-400, rounded-bb-md stay wired to these same
+  values, and by raw CSS/SVG/Three.js code that needs the palette
+  outside Tailwind.
 */
-@theme {
-  --color-ink-950: var(--bb-ink-950);
-  --color-ink-900: var(--bb-ink-900);
-  --color-ink-800: var(--bb-ink-800);
-  --color-ink-700: var(--bb-ink-700);
-  --color-ink-600: var(--bb-ink-600);
-  --color-ink-500: var(--bb-ink-500);
-  --color-ink-400: var(--bb-ink-400);
-  --color-ink-300: var(--bb-ink-300);
-  --color-ink-200: var(--bb-ink-200);
-  --color-ink-100: var(--bb-ink-100);
-  --color-ink-50:  var(--bb-ink-50);
+:root {
+  /* ---- Neutral scale (graphite, cool-toned) ---- */
+  --bb-ink-950: #08090c;
+  --bb-ink-900: #0d0f14;
+  --bb-ink-800: #14161d;
+  --bb-ink-700: #1c1f29;
+  --bb-ink-600: #2a2e3b;
+  --bb-ink-500: #3d4254;
+  --bb-ink-400: #5b6178;
+  --bb-ink-300: #868da3;
+  --bb-ink-200: #b6bccb;
+  --bb-ink-100: #dde0e8;
+  --bb-ink-50:  #f5f6f9;
 
-  --color-signal-700: var(--bb-signal-700);
-  --color-signal-600: var(--bb-signal-600);
-  --color-signal-500: var(--bb-signal-500);
-  --color-signal-400: var(--bb-signal-400);
-  --color-signal-300: var(--bb-signal-300);
+  /* ---- Signal (primary accent — trust / technology) ---- */
+  --bb-signal-700: #1b3fa8;
+  --bb-signal-600: #2650c9;
+  --bb-signal-500: #3866f0; /* primary CTA */
+  --bb-signal-400: #6088f5;
+  --bb-signal-300: #94aff9;
 
-  --color-ember-600: var(--bb-ember-600);
-  --color-ember-500: var(--bb-ember-500);
-  --color-ember-400: var(--bb-ember-400);
+  /* ---- Ember (secondary accent — growth / energy, used sparingly) ---- */
+  --bb-ember-600: #c97a1a;
+  --bb-ember-500: #e8992e; /* accent highlight only, never a base color */
+  --bb-ember-400: #f0b45f;
 
-  --font-display: var(--bb-font-display);
-  --font-body: var(--bb-font-body);
+  /* ---- Semantic surface/text roles (dark theme is the default brand surface) ---- */
+  --bb-bg: var(--bb-ink-950);
+  --bb-bg-elevated: var(--bb-ink-900);
+  --bb-bg-elevated-2: var(--bb-ink-800);
+  --bb-border: var(--bb-ink-700);
+  --bb-border-strong: var(--bb-ink-600);
+  --bb-text: var(--bb-ink-50);
+  --bb-text-muted: var(--bb-ink-300);
+  --bb-text-faint: var(--bb-ink-400);
+  --bb-accent: var(--bb-signal-500);
+  --bb-accent-strong: var(--bb-signal-400);
+  --bb-accent-warm: var(--bb-ember-500);
 
-  --radius-bb-sm: var(--bb-radius-sm);
-  --radius-bb-md: var(--bb-radius-md);
-  --radius-bb-lg: var(--bb-radius-lg);
+  /* ---- Type (delivered via Google Fonts <link> in BaseLayout, not
+     self-hosted — see BaseLayout.astro for why) ---- */
+  --bb-font-display: 'Sora', system-ui, sans-serif;
+  --bb-font-body: 'Inter', system-ui, sans-serif;
+
+  /* Fluid type scale (clamp: min, preferred-vw, max) */
+  --bb-text-xs:   clamp(0.75rem, 0.72rem + 0.15vw, 0.8125rem);
+  --bb-text-sm:   clamp(0.875rem, 0.84rem + 0.2vw, 0.9375rem);
+  --bb-text-base: clamp(1rem, 0.96rem + 0.2vw, 1.0625rem);
+  --bb-text-lg:   clamp(1.125rem, 1.07rem + 0.3vw, 1.25rem);
+  --bb-text-xl:   clamp(1.375rem, 1.28rem + 0.5vw, 1.625rem);
+  --bb-text-2xl:  clamp(1.75rem, 1.6rem + 0.8vw, 2.125rem);
+  --bb-text-3xl:  clamp(2.125rem, 1.9rem + 1.2vw, 2.75rem);
+  --bb-text-4xl:  clamp(2.625rem, 2.2rem + 2vw, 3.75rem);
+  --bb-text-5xl:  clamp(3.25rem, 2.6rem + 3vw, 5rem);
+
+  /* ---- Radius ---- */
+  --bb-radius-sm: 0.5rem;
+  --bb-radius-md: 0.875rem;
+  --bb-radius-lg: 1.25rem;
+  --bb-radius-full: 999px;
+
+  /* ---- Shadow / glow (used sparingly, on interactive/hover states only) ---- */
+  --bb-shadow-elevated: 0 10px 40px -12px rgba(0, 0, 0, 0.55);
+  --bb-shadow-glow: 0 0 0 1px rgba(56, 102, 240, 0.25), 0 12px 40px -8px rgba(56, 102, 240, 0.35);
 }
 
 @layer base {
