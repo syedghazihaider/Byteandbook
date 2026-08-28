@@ -13,6 +13,7 @@ import Footer from '../components/layout/Footer.astro';
 import Container from '../components/ui/Container.astro';
 import Card from '../components/ui/Card.astro';
 import Button from '../components/ui/Button.astro';
+import AmbientField3D from '../components/three/AmbientField3D.astro';
 
 const EMAIL = 'info@byteandbook.com';
 
@@ -32,14 +33,19 @@ const briefPoints = [
 
   <main class="pt-32 pb-24">
     <Container class="max-w-3xl">
-      <span class="inline-block rounded-full border border-ink-700 bg-ink-900/60 px-4 py-1.5 text-xs font-semibold uppercase tracking-[0.18em] text-signal-400">
-        Contact
-      </span>
-      <h1 class="mt-5 text-4xl font-bold text-ink-50 md:text-5xl">Start a project</h1>
-      <p class="mt-5 text-lg text-ink-300">
-        Email us directly and tell us what you're building — there's no
-        form to fill out, just a real inbox on the other end.
-      </p>
+      <div class="relative overflow-hidden">
+        <AmbientField3D />
+        <div class="relative">
+          <span class="inline-block rounded-full border border-ink-700 bg-ink-900/60 px-4 py-1.5 text-xs font-semibold uppercase tracking-[0.18em] text-signal-400">
+            Contact
+          </span>
+          <h1 class="mt-5 text-4xl font-bold text-ink-50 md:text-5xl">Start a project</h1>
+          <p class="mt-5 text-lg text-ink-300">
+            Email us directly and tell us what you're building — there's no
+            form to fill out, just a real inbox on the other end.
+          </p>
+        </div>
+      </div>
 
       <div class="mt-10 flex flex-col items-start gap-4 rounded-bb-lg border border-ink-700 bg-ink-900/60 p-8 sm:flex-row sm:items-center sm:justify-between">
         <div>
