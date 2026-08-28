@@ -9,6 +9,7 @@ import Card from '../components/ui/Card.astro';
 import Button from '../components/ui/Button.astro';
 import Icon from '../components/ui/Icon.astro';
 import HeroScene from '../components/three/HeroScene.astro';
+import CapabilitySystem3D from '../components/three/CapabilitySystem3D.astro';
 
 const services = (await getCollection('services')).sort((a, b) => a.data.order - b.data.order);
 
@@ -131,7 +132,8 @@ const faqs = [
     </section>
 
     <!-- Services -->
-    <section id="services" class="scroll-mt-24 py-20">
+    <section id="services" class="relative scroll-mt-24 py-20">
+      <CapabilitySystem3D count={services.length} />
       <Container>
         <SectionHeading eyebrow="Services" heading="Explained visually, not with stock photos" align="center" class="mx-auto max-w-2xl">
           <p class="mt-2 text-ink-300">
@@ -141,8 +143,8 @@ const faqs = [
         </SectionHeading>
 
         <div class="mt-12 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-          {services.map((service) => (
-            <a href={`/services/${service.id}/`} class="block" data-reveal>
+          {services.map((service, i) => (
+            <a href={`/services/${service.id}/`} class="block" data-reveal data-service-card={i}>
               <Card class="h-full">
                 <div class="mb-4 flex items-center justify-between">
                   <div class="flex h-12 w-12 items-center justify-center rounded-bb-sm bg-signal-500/10 text-signal-400">
