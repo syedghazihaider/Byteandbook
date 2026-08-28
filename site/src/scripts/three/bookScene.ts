@@ -20,7 +20,7 @@ export function createBookScene(canvas: HTMLCanvasElement): SceneHandle {
   camera.position.set(0, 2.1, 6.2);
   camera.lookAt(0, 0, 0);
 
-  const ink = readColorToken('--bb-ink-300');
+  const ink = readColorToken('--bb-ink-600');
   const signal = readColorToken('--bb-signal-400');
   const ember = readColorToken('--bb-ember-500');
 
@@ -75,7 +75,7 @@ export function createBookScene(canvas: HTMLCanvasElement): SceneHandle {
   for (let i = 0; i < pageCount; i++) {
     const side = i % 2 === 0 ? 1 : -1;
     const hinge = new THREE.Object3D();
-    const page = makePanel(signal.clone().lerp(new THREE.Color(0xffffff), 0.55), 0.012);
+    const page = makePanel(signal.clone().lerp(new THREE.Color(0xffffff), 0.78), 0.012);
     page.position.x = (side * panelW) / 2 - side * 0.03;
     page.scale.set(0.96, 1, 0.94);
     hinge.add(page);

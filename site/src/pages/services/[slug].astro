@@ -16,6 +16,9 @@ import Icon from '../../components/ui/Icon.astro';
 import FlowSteps from '../../components/diagrams/FlowSteps.astro';
 import NodeGraph3D from '../../components/three/NodeGraph3D.astro';
 import HardwareExplode3D from '../../components/three/HardwareExplode3D.astro';
+import DataEcosystem3D from '../../components/three/DataEcosystem3D.astro';
+import BrandScene3D from '../../components/three/BrandScene3D.astro';
+import BookScene3D from '../../components/three/BookScene3D.astro';
 
 export async function getStaticPaths() {
   const services = await getCollection('services');
@@ -34,12 +37,21 @@ const related = allServices
   .sort((a, b) => a.data.order - b.data.order)
   .slice(0, 3);
 
-// Level 1 premium 3D is reserved for these three showcase pages per
-// CLAUDE.md's animation strategy; every other service page relies on
-// the Level 2 animated FlowSteps diagram below instead.
-const isCloud = service.id === 'cloud';
+// Every service page gets a Level 1 3D hero, grouped into the scene
+// families documented in 3D_ART_DIRECTION.md — the family the page
+// belongs to, not the individual service, decides which renderer runs.
+// The Level 2 FlowSteps diagram (below) still renders for every page
+// regardless of family, so the same data is always available as plain
+// accessible markup too.
+const infrastructureNetwork = new Set(['cloud', 'devops', 'web-development', 'software-development']);
+const dataEcosystem = new Set(['digital-marketing', 'seo', 'geo', 'social-media-marketing']);
+
+const isInfrastructure = infrastructureNetwork.has(service.id);
 const isDevops = service.id === 'devops';
+const isDataEcosystem = dataEcosystem.has(service.id);
 const isHardware = service.id === 'computer-hardware';
+const isBranding = service.id === 'branding';
+const isEbook = service.id === 'ebook-publishing';
 ---
 
 <BaseLayout title={`${service.data.title} — ByteAndBook`} description={service.data.metaDescription}>
@@ -66,10 +78,18 @@ const isHardware = service.id === 'computer-hardware';
       </Container>
     </section>
 
-    {(isCloud || isDevops) && service.data.flowSteps && (
+    {isInfrastructure && service.data.flowSteps && (
       <section class="border-b border-ink-800 py-16">
         <Container>
           <NodeGraph3D steps={service.data.flowSteps} pulse={isDevops} />
+        </Container>
+      </section>
+    )}
+
+    {isDataEcosystem && service.data.flowSteps && (
+      <section class="border-b border-ink-800 py-16">
+        <Container>
+          <DataEcosystem3D steps={service.data.flowSteps} />
         </Container>
       </section>
     )}
@@ -78,6 +98,22 @@ const isHardware = service.id === 'computer-hardware';
       <section class="border-b border-ink-800 py-16">
         <Container>
           <HardwareExplode3D />
+        </Container>
+      </section>
+    )}
+
+    {isBranding && service.data.flowSteps && (
+      <section class="border-b border-ink-800 py-16">
+        <Container>
+          <BrandScene3D steps={service.data.flowSteps} />
+        </Container>
+      </section>
+    )}
+
+    {isEbook && (
+      <section class="border-b border-ink-800 py-16">
+        <Container>
+          <BookScene3D />
         </Container>
       </section>
     )}
