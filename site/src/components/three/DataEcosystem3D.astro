@@ -27,7 +27,11 @@ const { steps, accentVar } = Astro.props;
   document.querySelectorAll<HTMLElement>('[data-data-ecosystem]').forEach((container) => {
     const canvas = container.querySelector<HTMLCanvasElement>('canvas');
     const labelsRoot = container.querySelector<HTMLElement>('[data-labels]');
-    if (!canvas || !labelsRoot || !shouldRunHeavyMotion()) return;
+    if (!canvas || !labelsRoot) return;
+    if (!shouldRunHeavyMotion()) {
+      container.remove();
+      return;
+    }
 
     const steps: string[] = JSON.parse(container.dataset.steps || '[]');
     const accentVar = container.dataset.accentVar || undefined;

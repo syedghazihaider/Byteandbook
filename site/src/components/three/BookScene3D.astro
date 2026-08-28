@@ -16,7 +16,11 @@
 
   document.querySelectorAll<HTMLElement>('[data-book-scene]').forEach((container) => {
     const canvas = container.querySelector<HTMLCanvasElement>('canvas');
-    if (!canvas || !shouldRunHeavyMotion()) return;
+    if (!canvas) return;
+    if (!shouldRunHeavyMotion()) {
+      container.remove();
+      return;
+    }
 
     let handle: ReturnType<typeof createBookScene> | null = null;
     onVisibilityChange(

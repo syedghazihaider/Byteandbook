@@ -74,9 +74,10 @@
       toggle.textContent = exploded ? 'Assemble view' : 'Explode view';
       handle?.setExploded(exploded);
     });
-  } else if (toggle) {
-    // No heavy motion (reduced-motion / mobile / no support) — hide
-    // the interactive control rather than leaving a dead button.
-    toggle.parentElement?.remove();
+  } else if (container) {
+    // No heavy motion (reduced-motion / mobile / no support) — collapse
+    // the whole scene rather than leaving an empty canvas box and a dead
+    // toggle button.
+    container.remove();
   }
 </script>

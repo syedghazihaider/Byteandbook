@@ -29,7 +29,15 @@ const { steps, pulse = false, accentVar } = Astro.props;
   document.querySelectorAll<HTMLElement>('[data-node-graph]').forEach((container) => {
     const canvas = container.querySelector<HTMLCanvasElement>('canvas');
     const labelsRoot = container.querySelector<HTMLElement>('[data-labels]');
-    if (!canvas || !labelsRoot || !shouldRunHeavyMotion()) return;
+    if (!canvas || !labelsRoot) return;
+    if (!shouldRunHeavyMotion()) {
+      // No static illustration exists for this scene family — an empty
+      // canvas box would just be dead space, and the FlowSteps diagram
+      // below already carries the same steps as plain text. Collapse
+      // rather than leave a blank box for reduced-motion/mobile visitors.
+      container.remove();
+      return;
+    }
 
     const steps: string[] = JSON.parse(container.dataset.steps || '[]');
     const pulse = container.dataset.pulse === '1';

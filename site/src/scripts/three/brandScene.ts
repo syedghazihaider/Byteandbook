@@ -1,5 +1,5 @@
 import * as THREE from 'three';
-import { createBaseScene, readColorToken, addDragRotate, onTabHidden } from './utils';
+import { createBaseScene, readColorToken, addDragRotate, onTabHidden, getQualityTier, qualityScale } from './utils';
 
 export interface ScreenPosition {
   x: number;
@@ -76,7 +76,8 @@ export function createBrandScene(canvas: HTMLCanvasElement, opts: BrandSceneOpti
   }
 
   const curve = new THREE.CatmullRomCurve3(curvePoints);
-  const tubeGeo = new THREE.TubeGeometry(curve, 96, 0.012, 6, false);
+  const tubeSegments = Math.max(32, Math.round(96 * qualityScale(getQualityTier())));
+  const tubeGeo = new THREE.TubeGeometry(curve, tubeSegments, 0.012, 6, false);
   const tubeMat = new THREE.MeshBasicMaterial({ color: signalColor, transparent: true, opacity: 0.3 });
   const tube = new THREE.Mesh(tubeGeo, tubeMat);
   group.add(tube);

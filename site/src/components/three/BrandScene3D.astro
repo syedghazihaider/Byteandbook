@@ -24,8 +24,9 @@ const { steps } = Astro.props;
   document.querySelectorAll<HTMLElement>('[data-brand-scene]').forEach((container) => {
     const canvas = container.querySelector<HTMLCanvasElement>('canvas');
     const labelsRoot = container.querySelector<HTMLElement>('[data-labels]');
-    if (!canvas || !labelsRoot || !shouldRunHeavyMotion()) {
-      container.querySelector('p')?.remove();
+    if (!canvas || !labelsRoot) return;
+    if (!shouldRunHeavyMotion()) {
+      container.remove();
       return;
     }
 
