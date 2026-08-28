@@ -1,0 +1,46 @@
+---
+interface Props {
+  title: string;
+  description: string;
+}
+
+const { title, description } = Astro.props;
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    <!--
+      Compiled by the Tailwind CLI (npm run css:build) into a plain
+      static file, linked directly rather than imported into the Astro/
+      Vite module graph — see global.css and astro.config.mjs for why.
+    -->
+    <link rel="stylesheet" href="/styles.css" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Sora:wght@400;500;600;700;800&display=swap"
+      rel="stylesheet"
+    />
+    <slot name="head" />
+  </head>
+  <body>
+    <slot />
+    <script>
+      // Level 3: global scroll-reveal wiring. Adds .js-ready (which
+      // arms the [data-reveal] hidden-until-scrolled CSS) only when
+      // motion is actually going to run, so no-JS and reduced-motion
+      // visitors always see full content with no dependency on script
+      // timing.
+      import { initScrollReveal, prefersReducedMotion } from '../scripts/motion';
+      if (!prefersReducedMotion()) {
+        document.documentElement.classList.add('js-ready');
+      }
+      initScrollReveal();
+    </script>
+  </body>
+</html>
