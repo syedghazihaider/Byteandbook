@@ -1,0 +1,104 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Header from '../components/layout/Header.astro';
+import Footer from '../components/layout/Footer.astro';
+import Container from '../components/ui/Container.astro';
+import Card from '../components/ui/Card.astro';
+import Button from '../components/ui/Button.astro';
+import Icon from '../components/ui/Icon.astro';
+import AmbientField3D from '../components/three/AmbientField3D.astro';
+
+// Team bios, founding history, and client claims are deliberately
+// omitted — none were verified as genuine per the Phase 1 content-
+// integrity audit, and CLAUDE.md prohibits fabricating them. This page
+// covers positioning and approach only, which doesn't require
+// verification. Add real team/history content once confirmed.
+
+const principles = [
+  {
+    icon: 'code' as const,
+    title: 'One system, not four vendors',
+    description:
+      'Marketing, engineering, infrastructure, and design are usually bought separately and rarely talk to each other. We treat them as one connected discipline, because a campaign, a codebase, and a cloud deployment ultimately serve the same goal.',
+  },
+  {
+    icon: 'search' as const,
+    title: 'Explain the mechanism, not just the outcome',
+    description:
+      "Every service we offer is built to be understood, not just delivered — how SEO actually ranks a page, how a CI/CD pipeline actually ships code. That's reflected in how we present our own work, not just how we do it.",
+  },
+  {
+    icon: 'cpu' as const,
+    title: 'Specified for the real workload',
+    description:
+      'From hardware configurations to cloud architecture, recommendations start from the actual load a system needs to carry — not a generic package tier.',
+  },
+];
+---
+
+<BaseLayout
+  title="About — ByteAndBook"
+  description="ByteAndBook is a digital technology and growth agency built around one principle: marketing, engineering, and infrastructure work better as one connected system."
+>
+  <Header />
+
+  <main>
+    <section class="relative overflow-hidden pt-32 pb-16">
+      <AmbientField3D />
+      <Container class="relative max-w-3xl">
+        <span class="inline-block rounded-full border border-ink-700 bg-ink-900/60 px-4 py-1.5 text-xs font-semibold uppercase tracking-[0.18em] text-signal-400">
+          About ByteAndBook
+        </span>
+        <h1 class="mt-5 text-4xl font-bold text-ink-50 md:text-5xl">
+          Growth, engineering, and infrastructure, built as one discipline.
+        </h1>
+        <p class="mt-5 text-lg text-ink-300">
+          ByteAndBook exists because those three things are usually split
+          across separate vendors who don't talk to each other — a
+          marketing agency that doesn't understand the codebase, a dev
+          shop that doesn't think about ranking, an infrastructure team
+          that never sees the growth numbers. We work across all of it,
+          on purpose.
+        </p>
+      </Container>
+    </section>
+
+    <section class="py-16">
+      <Container>
+        <h2 class="text-2xl font-bold text-ink-50">How we work</h2>
+        <div class="mt-8 grid gap-6 md:grid-cols-3">
+          {principles.map((p) => (
+            <div data-reveal>
+              <Card class="h-full">
+                <div class="mb-4 flex h-12 w-12 items-center justify-center rounded-bb-sm bg-signal-500/10 text-signal-400">
+                  <Icon name={p.icon} class="h-6 w-6" />
+                </div>
+                <h3 class="text-lg font-semibold text-ink-50">{p.title}</h3>
+                <p class="mt-2 text-sm text-ink-300">{p.description}</p>
+              </Card>
+            </div>
+          ))}
+        </div>
+      </Container>
+    </section>
+
+    <section class="py-16">
+      <Container>
+        <div class="rounded-bb-lg border border-ink-700 bg-ink-900/60 px-8 py-14 text-center" data-reveal>
+          <h2 class="text-2xl font-bold text-ink-50 md:text-3xl">See how it applies to your project</h2>
+          <p class="mx-auto mt-3 max-w-xl text-ink-300">
+            Every service page breaks down exactly how that discipline
+            works — start there, or tell us directly what you're
+            building.
+          </p>
+          <div class="mt-7 flex flex-wrap items-center justify-center gap-4">
+            <Button href="/#services" variant="outline">Browse Services</Button>
+            <Button href="/contact" variant="primary">Start a Project</Button>
+          </div>
+        </div>
+      </Container>
+    </section>
+  </main>
+
+  <Footer />
+</BaseLayout>

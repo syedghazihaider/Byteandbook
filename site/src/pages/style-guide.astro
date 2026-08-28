@@ -1,0 +1,132 @@
+---
+// Internal-only reference page for Phase 4 review. Not linked in nav,
+// not part of the public site — verifies the token/Tailwind pipeline
+// and gives a visual checkpoint before Phase 5 (Homepage) begins.
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Container from '../components/ui/Container.astro';
+import Button from '../components/ui/Button.astro';
+import Card from '../components/ui/Card.astro';
+import SectionHeading from '../components/ui/SectionHeading.astro';
+
+const swatches = [
+  { name: 'ink-950', varName: '--color-ink-950' },
+  { name: 'ink-900', varName: '--color-ink-900' },
+  { name: 'ink-800', varName: '--color-ink-800' },
+  { name: 'ink-700', varName: '--color-ink-700' },
+  { name: 'ink-600', varName: '--color-ink-600' },
+  { name: 'ink-500', varName: '--color-ink-500' },
+  { name: 'ink-300', varName: '--color-ink-300' },
+  { name: 'ink-50',  varName: '--color-ink-50' },
+];
+
+const accents = [
+  { name: 'signal-700', varName: '--color-signal-700' },
+  { name: 'signal-600', varName: '--color-signal-600' },
+  { name: 'signal-500', varName: '--color-signal-500' },
+  { name: 'signal-400', varName: '--color-signal-400' },
+  { name: 'signal-300', varName: '--color-signal-300' },
+  { name: 'ember-600', varName: '--color-ember-600' },
+  { name: 'ember-500', varName: '--color-ember-500' },
+  { name: 'ember-400', varName: '--color-ember-400' },
+];
+
+const typeScale = [
+  ['5xl', 'text-5xl', 'Empowering growth through technology'],
+  ['4xl', 'text-4xl', 'Empowering growth through technology'],
+  ['3xl', 'text-3xl', 'Empowering growth through technology'],
+  ['2xl', 'text-2xl', 'Empowering growth through technology'],
+  ['xl', 'text-xl', 'Empowering growth through technology'],
+  ['lg', 'text-lg', 'Empowering growth through technology'],
+  ['base', 'text-base', 'Empowering growth through technology'],
+  ['sm', 'text-sm', 'Empowering growth through technology'],
+];
+---
+
+<BaseLayout title="Style Guide — ByteAndBook (internal)" description="Internal design system reference.">
+  <main class="py-16">
+    <Container class="flex flex-col gap-16">
+      <header>
+        <p class="text-xs font-semibold uppercase tracking-[0.18em] text-ink-400">Phase 4 — Design System</p>
+        <h1 class="mt-2 text-4xl font-bold text-ink-50">ByteAndBook Style Guide</h1>
+        <p class="mt-3 max-w-2xl text-ink-300">
+          "Obsidian &amp; Signal" — a graphite neutral base with one precise
+          signal-blue accent and a restrained ember highlight. Internal
+          reference only; not part of the public site.
+        </p>
+      </header>
+
+      <section>
+        <SectionHeading eyebrow="Color" heading="Neutral scale" />
+        <div class="mt-6 grid grid-cols-2 gap-4 sm:grid-cols-4 lg:grid-cols-8">
+          {swatches.map((s) => (
+            <div class="overflow-hidden rounded-bb-md border border-ink-700">
+              <div class="h-20" style={`background-color: var(${s.varName});`}></div>
+              <p class="bg-ink-900 px-3 py-2 text-xs text-ink-300">{s.name}</p>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      <section>
+        <SectionHeading eyebrow="Color" heading="Accents" />
+        <div class="mt-6 grid grid-cols-2 gap-4 sm:grid-cols-4 lg:grid-cols-8">
+          {accents.map((s) => (
+            <div class="overflow-hidden rounded-bb-md border border-ink-700">
+              <div class="h-20" style={`background-color: var(${s.varName});`}></div>
+              <p class="bg-ink-900 px-3 py-2 text-xs text-ink-300">{s.name}</p>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      <section>
+        <SectionHeading eyebrow="Typography" heading="Type scale" />
+        <p class="mt-2 text-sm text-ink-400">Display: Sora Variable &middot; Body: Inter Variable</p>
+        <div class="mt-6 flex flex-col gap-4">
+          {typeScale.map(([label, cls, sample]) => (
+            <div class="flex items-baseline gap-6 border-b border-ink-800 pb-4">
+              <span class="w-12 shrink-0 font-mono text-xs text-ink-500">{label}</span>
+              <span class={`${cls} font-display font-semibold text-ink-50`}>{sample}</span>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      <section>
+        <SectionHeading eyebrow="Components" heading="Buttons" />
+        <div class="mt-6 flex flex-wrap items-center gap-4">
+          <Button variant="primary">Start a project</Button>
+          <Button variant="outline">View our work</Button>
+          <Button variant="ghost">Learn more</Button>
+        </div>
+      </section>
+
+      <section>
+        <SectionHeading eyebrow="Components" heading="Cards" />
+        <div class="mt-6 grid gap-6 md:grid-cols-3">
+          <Card>
+            <div class="mb-4 flex h-12 w-12 items-center justify-center rounded-bb-sm bg-signal-500/10 text-signal-400">
+              ↗
+            </div>
+            <h3 class="text-lg font-semibold text-ink-50">Digital Marketing</h3>
+            <p class="mt-2 text-sm text-ink-300">Audience, campaigns, and measurable growth — explained visually, not with stock photos.</p>
+          </Card>
+          <Card>
+            <div class="mb-4 flex h-12 w-12 items-center justify-center rounded-bb-sm bg-signal-500/10 text-signal-400">
+              ◈
+            </div>
+            <h3 class="text-lg font-semibold text-ink-50">Cloud &amp; DevOps</h3>
+            <p class="mt-2 text-sm text-ink-300">Infrastructure that scales, shown through interactive systems diagrams.</p>
+          </Card>
+          <Card>
+            <div class="mb-4 flex h-12 w-12 items-center justify-center rounded-bb-sm bg-ember-500/10 text-ember-400">
+              ✦
+            </div>
+            <h3 class="text-lg font-semibold text-ink-50">Branding</h3>
+            <p class="mt-2 text-sm text-ink-300">Identity systems built from geometry, typography, and color — not templates.</p>
+          </Card>
+        </div>
+      </section>
+    </Container>
+  </main>
+</BaseLayout>
