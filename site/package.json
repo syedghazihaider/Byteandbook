@@ -1,0 +1,27 @@
+{
+  "name": "site",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "css:build": "tailwindcss -i ./src/styles/global.css -o ./public/styles.css --minify",
+    "dev": "npm run css:build && astro dev",
+    "build": "npm run css:build && astro build",
+    "preview": "astro preview",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "dependencies": {
+    "@astrojs/sitemap": "^3.7.3",
+    "astro": "^5.18.2",
+    "gsap": "^3.15.0",
+    "tailwindcss": "^3.4.19",
+    "three": "^0.185.1"
+  },
+  "overrides": {
+    "vite": "^7"
+  }
+}
