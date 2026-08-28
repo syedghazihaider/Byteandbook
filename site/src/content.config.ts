@@ -24,4 +24,33 @@ const services = defineCollection({
   }),
 });
 
-export const collections = { services };
+// V2-7: article architecture for the future Insights hub. No entries
+// exist yet — src/content/insights/ is deliberately empty (not even a
+// placeholder file), and there is deliberately no /insights/<slug>/
+// route yet either, per CLAUDE.md's rule against fabricating articles
+// or routes. The schema is ready so publishing a real, reviewed
+// article later just means adding one markdown file plus a small
+// getStaticPaths route — no schema/collection changes needed then.
+const insights = defineCollection({
+  loader: glob({ pattern: '**/*.md', base: './src/content/insights' }),
+  schema: z.object({
+    title: z.string(),
+    description: z.string().max(160),
+    publishedDate: z.coerce.date(),
+    updatedDate: z.coerce.date().optional(),
+    // Only ever set to a real, verified author — omitted (not a
+    // fallback "ByteAndBook Team" placeholder) when unset.
+    author: z.string().optional(),
+    category: z.enum(['Growth', 'Technology', 'Infrastructure', 'Creative', 'GEO & AI Search']),
+    relatedServices: z.array(z.string()).optional(),
+    tags: z.array(z.string()).optional(),
+    canonical: z.string().optional(),
+    featured: z.boolean().default(false),
+    // Draft articles never render on /insights/ or get a route — see
+    // insights/[slug].astro's getStaticPaths filter.
+    draft: z.boolean().default(false),
+    sources: z.array(z.object({ label: z.string(), url: z.string() })).optional(),
+  }),
+});
+
+export const collections = { services, insights };

@@ -1,39 +1,239 @@
 ---
-// V2-1: architecture-ready placeholder per CLAUDE.md ("This can initially
-// be an architecture-ready page if no articles exist yet"). No fabricated
-// articles. Full content collection + individual article routing is
-// scoped to V2-7. noindex until real articles exist.
+// V2-7: real, permanent Insights page, replacing the V2-1 placeholder.
+// Genuinely useful independent of article count — explains what gets
+// published and why, groups the real service taxonomy into knowledge
+// areas (real internal links, not filler), and explains AI
+// search/GEO honestly. The article feed below is wired to the empty
+// `insights` content collection (content.config.ts) and renders an
+// honest empty state rather than fabricated articles. Indexable — see
+// V2-7 report for the reasoning (same as /work/ in V2-5: substantial
+// permanent content independent of article count).
+import { getCollection } from 'astro:content';
 import BaseLayout from '../layouts/BaseLayout.astro';
 import Header from '../components/layout/Header.astro';
 import Footer from '../components/layout/Footer.astro';
 import Container from '../components/ui/Container.astro';
-import Button from '../components/ui/Button.astro';
+import SectionHeading from '../components/ui/SectionHeading.astro';
+import Icon from '../components/ui/Icon.astro';
+import StartProjectTrigger from '../components/project/StartProjectTrigger.astro';
+import InsightCard from '../components/insights/InsightCard.astro';
+import { pillarBadgeClass, pillarIconBgClass, type Pillar } from '../lib/pillarColors';
+
+const SITE_URL = 'https://byteandbook.com';
+const path = '/insights/';
+
+const services = (await getCollection('services')).sort((a, b) => a.data.order - b.data.order);
+const articles = (await getCollection('insights'))
+  .filter((a) => !a.data.draft)
+  .sort((a, b) => b.data.publishedDate.valueOf() - a.data.publishedDate.valueOf());
+
+const knowledgeAreas: { pillar: Pillar; description: string; slugs: string[] }[] = [
+  {
+    pillar: 'Technology',
+    description: 'Web and software engineering — architecture, build/deploy pipelines, and production reliability.',
+    slugs: ['web-development', 'software-development'],
+  },
+  {
+    pillar: 'Infrastructure',
+    description: 'DevOps, cloud architecture, and hardware — specified and operated around the real workload.',
+    slugs: ['devops', 'cloud', 'computer-hardware'],
+  },
+  {
+    pillar: 'Growth',
+    description: 'Marketing, SEO, social, and generative-engine optimization — how businesses actually get found.',
+    slugs: ['digital-marketing', 'seo', 'geo', 'social-media-marketing'],
+  },
+  {
+    pillar: 'Creative',
+    description: 'Brand systems and digital publishing — identity and content built to last, not templated.',
+    slugs: ['branding', 'ebook-publishing'],
+  },
+];
+
+const evidenceStandards = [
+  {
+    icon: 'check-circle' as const,
+    title: 'Grounded in real work',
+    description: 'Articles come from what we actually build and operate — not generic, reworded industry content.',
+  },
+  {
+    icon: 'shield' as const,
+    title: 'Sources cited, not invented',
+    description: 'Where an article references a fact, standard, or third-party data point, it links to a real source.',
+  },
+  {
+    icon: 'code' as const,
+    title: 'No fabricated metrics',
+    description: "We won't publish traffic, ranking, or performance numbers we can't back with real evidence.",
+  },
+];
+
+const breadcrumbJsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'BreadcrumbList',
+  itemListElement: [
+    { '@type': 'ListItem', position: 1, name: 'Home', item: `${SITE_URL}/` },
+    { '@type': 'ListItem', position: 2, name: 'Insights', item: `${SITE_URL}${path}` },
+  ],
+};
 ---
 
 <BaseLayout
   title="Insights — ByteAndBook"
-  description="ByteAndBook Insights — articles on DevOps, Cloud, SEO, GEO, AI search, web and software development, and digital publishing. Coming soon."
-  path="/insights/"
-  noindex
+  description="How ByteAndBook thinks about technology, growth, and AI search discovery — knowledge areas, evidence standards, and what we publish and why."
+  path={path}
+  jsonLd={[breadcrumbJsonLd]}
 >
   <Header />
 
-  <main id="main-content" tabindex="-1" class="flex min-h-[70vh] items-center pt-24">
-    <Container class="max-w-2xl text-center">
-      <span class="inline-block rounded-full border border-ink-700 bg-ink-900/60 px-4 py-1.5 text-xs font-semibold uppercase tracking-[0.18em] text-signal-400">
-        Insights
-      </span>
-      <h1 class="mt-5 text-3xl font-bold text-ink-50 md:text-4xl">Articles are coming soon</h1>
-      <p class="mx-auto mt-4 max-w-md text-ink-300">
-        Insights will cover DevOps, cloud, SEO, GEO, AI search, web and
-        software development, and digital publishing — with each article
-        on its own dedicated page.
-      </p>
-      <div class="mt-8 flex flex-wrap items-center justify-center gap-4">
-        <Button href="/services/" variant="primary">Browse Services</Button>
-        <Button href="/" variant="outline">Back to Home</Button>
-      </div>
-    </Container>
+  <main id="main-content" tabindex="-1">
+    <section class="pt-32 pb-16">
+      <Container class="max-w-3xl">
+        <nav class="mb-8 flex items-center gap-2 text-sm text-ink-300" aria-label="Breadcrumb">
+          <a href="/" class="hover:text-ink-200">Home</a>
+          <span>/</span>
+          <span class="text-ink-200">Insights</span>
+        </nav>
+
+        <span class="inline-block rounded-full border border-ink-700 bg-ink-900/60 px-4 py-1.5 text-xs font-semibold uppercase tracking-[0.18em] text-signal-400">
+          Insights
+        </span>
+        <h1 class="mt-5 text-4xl font-bold text-ink-50 md:text-5xl">Insights &amp; knowledge</h1>
+        <p class="mt-5 text-lg text-ink-300">
+          Practical explainers on the disciplines we work in — grounded in what we actually build, not
+          reworded industry content.
+        </p>
+      </Container>
+    </section>
+
+    <section class="border-t border-ink-800 py-16">
+      <Container class="max-w-3xl">
+        <SectionHeading eyebrow="What we publish" heading="Real explainers, not filler" />
+        <p class="mt-4 text-ink-300">
+          Insights will cover the same four disciplines the rest of the site is organized around —
+          technology, infrastructure, growth, and creative — plus a dedicated focus on AI search and
+          Generative Engine Optimization (GEO), since how businesses get discovered is changing. Every
+          article is written to explain how something actually works, the same standard the rest of
+          the site holds itself to.
+        </p>
+      </Container>
+    </section>
+
+    <section class="border-t border-ink-800 py-16">
+      <Container>
+        <SectionHeading eyebrow="Knowledge areas" heading="Organized the same way we work" align="center" class="mx-auto max-w-2xl" />
+        <div class="mt-10 grid gap-6 sm:grid-cols-2">
+          {knowledgeAreas.map((area) => (
+            <div class="rounded-bb-lg border border-ink-700 bg-ink-900/60 p-6" data-reveal>
+              <span class={`text-xs font-semibold uppercase tracking-[0.14em] ${pillarBadgeClass[area.pillar]}`}>
+                {area.pillar}
+              </span>
+              <p class="mt-2 text-sm text-ink-300">{area.description}</p>
+              <div class="mt-4 flex flex-wrap gap-2">
+                {area.slugs.map((slug) => {
+                  const service = services.find((s) => s.id === slug);
+                  return service ? (
+                    <a href={`/services/${slug}/`} class="rounded-full border border-ink-700 px-3 py-1 text-xs text-ink-300 hover:border-ink-600 hover:text-ink-100">
+                      {service.data.title}
+                    </a>
+                  ) : null;
+                })}
+              </div>
+            </div>
+          ))}
+        </div>
+      </Container>
+    </section>
+
+    <section class="border-t border-ink-800 py-16">
+      <Container class="max-w-3xl">
+        <div class="rounded-bb-lg border border-ink-700 bg-ink-900/60 p-8" data-reveal>
+          <div class="flex h-12 w-12 items-center justify-center rounded-bb-sm bg-signal-500/10 text-signal-400">
+            <Icon name="sparkles" class="h-6 w-6" />
+          </div>
+          <h2 class="mt-4 text-2xl font-bold text-ink-50">AI search &amp; GEO</h2>
+          <p class="mt-3 text-ink-300">
+            Traditional SEO optimizes a page to rank in a list of links a crawler indexes. GEO
+            (Generative Engine Optimization) optimizes the same underlying information so an AI
+            system — ChatGPT, Gemini, Copilot, Google's AI features — can accurately understand,
+            cite, and recommend a business when answering a question directly. They're related, not
+            identical: a site can rank well and still be poorly understood by an LLM if its
+            information isn't structured and entity-clear.
+          </p>
+          <p class="mt-3 text-ink-300">
+            We don't claim guaranteed AI citations or rankings — no one can promise how a given model
+            responds. What GEO work can do is remove the structural reasons a business gets
+            misunderstood or skipped.
+          </p>
+          <a href="/services/geo/" class={`mt-4 inline-flex items-center gap-1 text-sm font-medium ${pillarBadgeClass['Growth']}`}>
+            See the GEO service page →
+          </a>
+        </div>
+      </Container>
+    </section>
+
+    <section class="border-t border-ink-800 py-16">
+      <Container class="max-w-3xl">
+        <SectionHeading eyebrow="Evidence standards" heading="The same standard as our Work page" />
+        <div class="mt-10 grid gap-8 sm:grid-cols-2">
+          {evidenceStandards.map((item) => (
+            <div data-reveal>
+              <div class="flex items-start gap-4">
+                <div class="flex h-10 w-10 shrink-0 items-center justify-center rounded-bb-sm bg-signal-500/10 text-signal-400">
+                  <Icon name={item.icon} class="h-5 w-5" />
+                </div>
+                <div>
+                  <h3 class="text-sm font-semibold text-ink-50">{item.title}</h3>
+                  <p class="mt-1 text-sm text-ink-300">{item.description}</p>
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+        <p class="mt-8 text-sm text-ink-400">
+          See also how we apply the same standard to <a href="/work/" class="text-signal-400 hover:text-signal-300">project work and case studies</a>.
+        </p>
+      </Container>
+    </section>
+
+    <section class="border-t border-ink-800 py-16">
+      <Container>
+        <SectionHeading eyebrow="Articles" heading="Latest insights" align="center" class="mx-auto max-w-2xl" />
+
+        {articles.length > 0 ? (
+          <div class="mt-10 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+            {articles.map((article) => (
+              <InsightCard article={article} />
+            ))}
+          </div>
+        ) : (
+          <div class="mx-auto mt-10 max-w-xl rounded-bb-lg border border-ink-700 bg-ink-900/60 p-10 text-center" data-reveal>
+            <div class="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-signal-500/10 text-signal-400">
+              <Icon name="book-open" class="h-6 w-6" />
+            </div>
+            <p class="mt-5 text-ink-300">
+              The first articles are in progress. Until they're published, the knowledge areas and
+              service pages above cover the same ground — how each discipline actually works.
+            </p>
+          </div>
+        )}
+      </Container>
+    </section>
+
+    <section class="border-t border-ink-800 py-20">
+      <Container>
+        <div class="rounded-bb-lg border border-ink-700 bg-ink-900/60 px-8 py-16 text-center" data-reveal>
+          <h2 class="text-3xl font-bold text-ink-50 md:text-4xl">Have a project in mind?</h2>
+          <p class="mx-auto mt-4 max-w-xl text-ink-300">
+            Tell us what you're building — we'll scope it against the same process described on
+            every service page.
+          </p>
+          <div class="mt-8">
+            <StartProjectTrigger variant="primary">Start a Project</StartProjectTrigger>
+          </div>
+        </div>
+      </Container>
+    </section>
   </main>
 
   <Footer />

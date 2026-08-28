@@ -19,23 +19,21 @@ export default defineConfig({
   site: SITE_URL,
   integrations: [
     sitemap({
-      // Internal design-system reference page and /insights/ (still a
-      // genuine "coming later" placeholder, real content scoped to
-      // V2-7) are kept out of the sitemap, matching their noindex meta
-      // tag. /checkout/ stays excluded too: it's a payment workflow
-      // page for people who already have an order reference, not a
-      // search landing page — see the V2-4 report for why forcing it
-      // into the sitemap wouldn't help anyone. /terms/, /privacy/, and
-      // /refund-policy/ (V2-4) and /work/ (V2-5) all got real,
-      // substantial, permanent content and are indexable like any
-      // other professional-site page, so none of them are excluded
-      // here anymore. The 404 page is already excluded automatically
-      // by Astro/the sitemap integration and isn't a real content
-      // route.
+      // Internal design-system reference page is kept out of the
+      // sitemap, matching its noindex meta tag. /checkout/ stays
+      // excluded too: it's a payment workflow page for people who
+      // already have an order reference, not a search landing page —
+      // see the V2-4 report for why forcing it into the sitemap
+      // wouldn't help anyone. /terms/, /privacy/, /refund-policy/
+      // (V2-4), /work/ (V2-5), and /insights/ (V2-7) all got real,
+      // substantial, permanent content independent of article/case-
+      // study count and are indexable like any other professional-site
+      // page, so none of them are excluded here. The 404 page is
+      // already excluded automatically by Astro/the sitemap
+      // integration and isn't a real content route.
       filter: (page) =>
         !page.includes('/style-guide/') &&
-        !page.includes('/checkout/') &&
-        !page.includes('/insights/'),
+        !page.includes('/checkout/'),
     }),
   ],
 });

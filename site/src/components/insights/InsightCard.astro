@@ -1,0 +1,41 @@
+---
+// Renders one published Insights article summary. Not currently used
+// anywhere — the insights content collection is empty until a real,
+// reviewed article exists — but built to the full schema now (see
+// content.config.ts) so publishing the first one needs no template
+// work. Author only renders when the entry actually has one — never a
+// generic team-byline fallback standing in for an unverified name.
+import type { CollectionEntry } from 'astro:content';
+
+interface Props {
+  article: CollectionEntry<'insights'>;
+}
+const { article } = Astro.props;
+const { title, description, publishedDate, category, author, tags } = article.data;
+
+const formattedDate = publishedDate.toLocaleDateString('en-US', {
+  year: 'numeric',
+  month: 'long',
+  day: 'numeric',
+  timeZone: 'UTC',
+});
+---
+
+<a href={`/insights/${article.id}/`} class="block h-full">
+  <div class="flex h-full flex-col rounded-bb-lg border border-ink-700 bg-ink-900/60 p-6 transition-colors hover:border-ink-600">
+    <span class="text-xs font-semibold uppercase tracking-[0.14em] text-signal-400">{category}</span>
+    <h3 class="mt-3 text-lg font-semibold text-ink-50">{title}</h3>
+    <p class="mt-2 flex-1 text-sm text-ink-300">{description}</p>
+    <div class="mt-4 flex flex-wrap items-center gap-x-3 gap-y-1 border-t border-ink-800 pt-3 text-xs text-ink-400">
+      <time datetime={publishedDate.toISOString()}>{formattedDate}</time>
+      {author && <span>· {author}</span>}
+    </div>
+    {tags && tags.length > 0 && (
+      <div class="mt-3 flex flex-wrap gap-2">
+        {tags.map((tag) => (
+          <span class="rounded-full border border-ink-700 px-2.5 py-0.5 text-[11px] text-ink-400">{tag}</span>
+        ))}
+      </div>
+    )}
+  </div>
+</a>

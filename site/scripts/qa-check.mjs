@@ -49,19 +49,22 @@ const indexablePages = {
   // yet — indexable like any other professional-site page (see V2-5
   // report).
   '/work/': 'work/index.html',
+  // V2-7: /insights/ got real, substantial, permanent content
+  // (knowledge areas linking to real services, AI/GEO explanation,
+  // evidence standards) independent of article count — indexable like
+  // /work/ was in V2-5 (see V2-7 report).
+  '/insights/': 'insights/index.html',
   ...Object.fromEntries(SERVICE_SLUGS.map((s) => [`/services/${s}/`, `services/${s}/index.html`])),
 };
-// Pages that stay noindex: internal reference (style-guide), /insights/
-// (still a genuine "coming later" placeholder, real content scoped to
-// V2-7), and /checkout/ — a payment workflow page for people who
-// already have an order reference, not a search landing page, so it
-// stays out of the index/sitemap on purpose even though its V2-4
-// content is real (see V2-4 report).
+// Pages that stay noindex: internal reference (style-guide), and
+// /checkout/ — a payment workflow page for people who already have an
+// order reference, not a search landing page, so it stays out of the
+// index/sitemap on purpose even though its V2-4 content is real (see
+// V2-4 report).
 const nonIndexablePages = {
   '/404.html': '404.html',
   '/style-guide/': 'style-guide/index.html',
   '/checkout/': 'checkout/index.html',
-  '/insights/': 'insights/index.html',
 };
 const allPages = { ...indexablePages, ...nonIndexablePages };
 
@@ -157,7 +160,7 @@ for (const [route, relPath] of Object.entries(allPages)) {
     check(`${route}: Service schema present`, types.has('Service'));
     check(`${route}: BreadcrumbList schema present`, types.has('BreadcrumbList'));
   }
-  if (['/services/', '/process/', '/terms/', '/privacy/', '/refund-policy/', '/work/'].includes(route)) {
+  if (['/services/', '/process/', '/terms/', '/privacy/', '/refund-policy/', '/work/', '/insights/'].includes(route)) {
     check(`${route}: BreadcrumbList schema present`, types.has('BreadcrumbList'));
   }
   if (route === '/checkout/') {
@@ -188,9 +191,9 @@ for (const route of Object.keys(nonIndexablePages).filter((r) => r.endsWith('/')
   check(`robots.txt disallows ${route}`, robotsTxt.includes(`Disallow: ${route}`));
 }
 // Regression guard: these routes moved from noindex to indexable in
-// V2-4/V2-5 — make sure a future edit doesn't silently re-add them to
-// Disallow.
-for (const route of ['/terms/', '/privacy/', '/refund-policy/', '/work/']) {
+// V2-4/V2-5/V2-7 — make sure a future edit doesn't silently re-add them
+// to Disallow.
+for (const route of ['/terms/', '/privacy/', '/refund-policy/', '/work/', '/insights/']) {
   check(`robots.txt does NOT disallow ${route} (indexable)`, !robotsTxt.includes(`Disallow: ${route}`));
 }
 
@@ -206,7 +209,7 @@ const sitemapUrlCount = sitemapFiles.reduce(
   (n, f) => n + (readFileSync(join(DIST, f), 'utf-8').match(/<loc>/g) || []).length,
   0
 );
-check('sitemap contains exactly 20 indexable URLs', sitemapUrlCount === 20);
+check('sitemap contains exactly 21 indexable URLs', sitemapUrlCount === 21);
 
 // duplicate title/description check across all pages
 const titleValues = [...titles.values()];
@@ -595,6 +598,67 @@ check('services/web-development/ (Technology): pillar badge uses tech color', /t
 // Process timeline: connected visual present, heading hierarchy intact.
 const processHtmlV6 = readHtml('process/index.html');
 check('process/: connected timeline structure present (<ol> of stages)', /<ol[^>]*class="relative"/.test(processHtmlV6));
+
+// ---- 9. V2-7: Insights architecture + final pre-release regression --------
+const insightsHtml = readHtml('insights/index.html');
+const insightsNorm = norm(insightsHtml);
+
+check('insights/: no leftover "coming soon" placeholder text', !/articles are coming soon/i.test(insightsHtml) && !/coming soon/i.test(insightsHtml));
+check('insights/: real permanent content present (knowledge areas)', /knowledge areas/i.test(insightsNorm));
+check('insights/: AI search / GEO explanation present', /generative engine optimization|ai search/i.test(insightsNorm));
+check('insights/: evidence standards present', /evidence standard/i.test(insightsNorm));
+check('insights/: honest empty-article-state message present', /first articles are in progress/i.test(insightsNorm));
+check('insights/: links to at least 3 real service pages', (insightsHtml.match(/href="\/services\/[a-z-]+\/"/g) || []).length >= 3);
+check('insights/: links to /work/ (evidence-standard cross-link)', /href="\/work\/"/.test(insightsHtml));
+check('src/content.config.ts: insights collection schema exists', readFileSync(join(__dirname, '..', 'src', 'content.config.ts'), 'utf-8').includes("defineCollection"));
+check('src/content/insights/: no fake article files (collection is empty)', !existsSync(join(__dirname, '..', 'src', 'content', 'insights')) || readdirSync(join(__dirname, '..', 'src', 'content', 'insights')).length === 0);
+check('components/insights/InsightCard.astro exists', existsSync(join(__dirname, '..', 'src', 'components', 'insights', 'InsightCard.astro')));
+if (existsSync(join(__dirname, '..', 'src', 'components', 'insights', 'InsightCard.astro'))) {
+  const cardSrc = readFileSync(join(__dirname, '..', 'src', 'components', 'insights', 'InsightCard.astro'), 'utf-8');
+  // Matches a *quoted string literal* fallback (e.g. author || 'ByteAndBook Team')
+  // — not prose mentioning the phrase, which the file's own explanatory
+  // comment does deliberately.
+  check('InsightCard.astro: no hardcoded fallback author string literal', !/['"]ByteAndBook Team['"]/i.test(cardSrc));
+}
+
+// Work <-> Insights cross-link (internal linking improvement).
+check('work/: links to /insights/', /href="\/insights\/"/.test(workHtml));
+
+// GEO service page: SEO-vs-GEO clarification present, no guaranteed-
+// citation/ranking claims.
+const geoHtml = readHtml('services/geo/index.html');
+const geoNorm = norm(geoHtml);
+check('services/geo/: distinguishes SEO from GEO', /GEO and SEO are related, not identical/i.test(geoNorm));
+// Checks for an *affirmative* guarantee claim ("we guarantee...",
+// "guaranteed to rank/cite/recommend you"), not just the co-occurrence
+// of "guarantee" near "citation/ranking" — the page deliberately
+// contains an honest disclaimer ("we don't promise... guaranteed
+// citations"), which must NOT trip this check.
+check('services/geo/: does not promise guaranteed AI citations/ranking', !/we guarantee|guaranteed to (rank|cite|recommend)/i.test(geoNorm));
+check('services/geo/: explicitly disclaims guaranteed citations/ranking', /don't promise|do not promise|no one can (control|promise|guarantee)/i.test(geoNorm));
+
+// Homepage: new US-market FAQ present, FAQ content not duplicated
+// verbatim elsewhere (spot-check against the GEO/Insights pages, the
+// two other pages most likely to carry similar Q&A-style content).
+check('/: new "available outside the US" FAQ present', /available to businesses outside the us/i.test(norm(homeHtml)));
+
+// Final placeholder-text sweep: every real content page (i.e. every
+// indexable page, plus /checkout/ which legitimately still says
+// "in progress" honestly) must not contain the old generic V2-1
+// "placeholder" copy.
+for (const [route, relPath] of Object.entries(indexablePages)) {
+  const html = readHtml(relPath);
+  check(`${route}: no leftover "being finalized" placeholder text`, !html.includes('This page is being finalized'));
+}
+
+// robots.txt: legitimate public content isn't accidentally blocked, and
+// the backend API path was never added to Disallow (it isn't a page to
+// crawl, but it also isn't a "secret" that needs hiding via robots.txt
+// — real protection is server-side, covered by the V2-3 checks above).
+check('robots.txt: does not block /services/', !robotsTxt.includes('Disallow: /services'));
+check('robots.txt: does not block /work/', !robotsTxt.includes('Disallow: /work/'));
+check('robots.txt: does not block /insights/', !robotsTxt.includes('Disallow: /insights/'));
+check('robots.txt: does not block /terms/, /privacy/, or /refund-policy/', !/Disallow: \/(terms|privacy|refund-policy)\//.test(robotsTxt));
 
 // ---- Report ---------------------------------------------------------------
 console.log(`QA check: ${checks} assertions, ${failures.length} failure(s).`);
