@@ -29,8 +29,13 @@ export function createBrandScene(canvas: HTMLCanvasElement, opts: BrandSceneOpti
   camera.position.set(0, 0.4, 8);
   camera.lookAt(0, 0.2, 0);
 
+  // V2-6: Branding sits in the Creative pillar (see lib/pillarColors.ts)
+  // — retinted from the sitewide signal blue to the growth magenta/
+  // violet family, closer to the brief's "violet, pink" note for
+  // branding specifically and visually distinct from every
+  // Infrastructure/Technology-pillar scene.
   const inkColor = readColorToken('--bb-ink-400');
-  const signalColor = readColorToken('--bb-signal-400');
+  const signalColor = readColorToken('--bb-growth-400');
   const emberColor = readColorToken('--bb-ember-500');
 
   scene.add(new THREE.AmbientLight(0xffffff, 0.5));

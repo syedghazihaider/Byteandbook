@@ -4,14 +4,17 @@ interface Props {
   heading: string;
   align?: 'left' | 'center';
   class?: string;
+  /** V2-6: override the eyebrow's default text-signal-400, e.g. for a
+   *  pillar-colored section (see lib/pillarColors.ts). */
+  eyebrowClass?: string;
 }
-const { eyebrow, heading, align = 'left', class: className = '' } = Astro.props;
+const { eyebrow, heading, align = 'left', class: className = '', eyebrowClass = 'text-signal-400' } = Astro.props;
 const alignClass = align === 'center' ? 'text-center items-center' : 'text-left items-start';
 ---
 
 <div class={`flex flex-col gap-3 ${alignClass} ${className}`}>
   {eyebrow && (
-    <span class="text-xs font-semibold uppercase tracking-[0.18em] text-signal-400">
+    <span class={`text-xs font-semibold uppercase tracking-[0.18em] ${eyebrowClass}`}>
       {eyebrow}
     </span>
   )}

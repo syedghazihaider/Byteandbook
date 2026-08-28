@@ -11,28 +11,29 @@ import Icon from '../components/ui/Icon.astro';
 import StartProjectTrigger from '../components/project/StartProjectTrigger.astro';
 import HeroScene from '../components/three/HeroScene.astro';
 import CapabilitySystem3D from '../components/three/CapabilitySystem3D.astro';
+import { pillarIconBgClass, pillarBadgeClass, type Pillar } from '../lib/pillarColors';
 
 const services = (await getCollection('services')).sort((a, b) => a.data.order - b.data.order);
 
-const pillars = [
+const pillars: { name: Pillar; icon: 'trending-up' | 'code' | 'cloud' | 'palette'; description: string }[] = [
   {
     name: 'Growth',
-    icon: 'trending-up' as const,
+    icon: 'trending-up',
     description: 'Marketing, SEO, GEO, and social systems built to convert attention into measurable leads.',
   },
   {
     name: 'Technology',
-    icon: 'code' as const,
+    icon: 'code',
     description: 'Web and software engineering, built for real devices and real production traffic.',
   },
   {
     name: 'Infrastructure',
-    icon: 'cloud' as const,
+    icon: 'cloud',
     description: 'DevOps, cloud architecture, and hardware specified around the workload, not a template.',
   },
   {
     name: 'Creative',
-    icon: 'palette' as const,
+    icon: 'palette',
     description: 'Brand systems and digital publishing built from geometry and typography up.',
   },
 ];
@@ -96,7 +97,9 @@ const faqs = [
            motion) rather than shipping a decorative gradient blob as a
            stand-in for real interactive 3D. -->
       <div class="pointer-events-none absolute inset-0">
-        <div class="absolute inset-0 bg-[radial-gradient(60%_50%_at_50%_20%,rgba(56,102,240,0.16),transparent)]"></div>
+        <div class="absolute inset-0 bg-[radial-gradient(60%_50%_at_50%_20%,rgba(56,102,240,0.18),transparent)]"></div>
+        <div class="absolute inset-0 bg-[radial-gradient(45%_35%_at_82%_78%,rgba(214,64,159,0.10),transparent)]"></div>
+        <div class="absolute inset-0 bg-[radial-gradient(40%_30%_at_10%_85%,rgba(232,153,46,0.08),transparent)]"></div>
         <div
           class="absolute inset-0 opacity-[0.08]"
           style="background-image: linear-gradient(var(--bb-ink-300) 1px, transparent 1px), linear-gradient(90deg, var(--bb-ink-300) 1px, transparent 1px); background-size: 64px 64px;"
@@ -105,10 +108,10 @@ const faqs = [
       </div>
 
       <Container class="relative z-10 py-24 text-center">
-        <span class="inline-block rounded-full border border-ink-700 bg-ink-900/60 px-4 py-1.5 text-xs font-semibold uppercase tracking-[0.18em] text-signal-400">
+        <span class="inline-block rounded-full border border-signal-500/30 bg-ink-900/60 px-4 py-1.5 text-xs font-semibold uppercase tracking-[0.18em] text-signal-400">
           Digital Technology &amp; Growth Agency
         </span>
-        <h1 class="mx-auto mt-6 max-w-4xl text-5xl font-bold leading-[1.05] text-ink-50">
+        <h1 class="text-gradient-hero mx-auto mt-6 max-w-4xl text-5xl font-bold leading-[1.05] md:text-6xl">
           Growth, engineered like infrastructure.
         </h1>
         <p class="mx-auto mt-6 max-w-2xl text-lg text-ink-300">
@@ -132,7 +135,7 @@ const faqs = [
           {pillars.map((pillar) => (
             <div data-reveal>
               <Card>
-                <div class="mb-4 flex h-12 w-12 items-center justify-center rounded-bb-sm bg-signal-500/10 text-signal-400">
+                <div class={`mb-4 flex h-12 w-12 items-center justify-center rounded-bb-sm ${pillarIconBgClass[pillar.name]}`}>
                   <Icon name={pillar.icon} class="h-6 w-6" />
                 </div>
                 <h3 class="text-lg font-semibold text-ink-50">{pillar.name}</h3>
@@ -160,7 +163,7 @@ const faqs = [
             <a href={`/services/${service.id}/`} class="block" data-reveal data-service-card={i}>
               <Card class="h-full">
                 <div class="mb-4 flex items-center justify-between">
-                  <div class="flex h-12 w-12 items-center justify-center rounded-bb-sm bg-signal-500/10 text-signal-400">
+                  <div class={`flex h-12 w-12 items-center justify-center rounded-bb-sm ${pillarIconBgClass[service.data.pillar]}`}>
                     <Icon name={service.data.icon as any} class="h-6 w-6" />
                   </div>
                   <span class="text-xs font-semibold uppercase tracking-[0.14em] text-ink-300">
@@ -169,7 +172,7 @@ const faqs = [
                 </div>
                 <h3 class="text-lg font-semibold text-ink-50">{service.data.title}</h3>
                 <p class="mt-2 text-sm text-ink-300">{service.data.summary}</p>
-                <span class="mt-4 inline-flex items-center gap-1 text-sm font-medium text-signal-400 transition-transform group-hover:translate-x-1">
+                <span class={`mt-4 inline-flex items-center gap-1 text-sm font-medium transition-transform group-hover:translate-x-1 ${pillarBadgeClass[service.data.pillar]}`}>
                   Learn more →
                 </span>
               </Card>

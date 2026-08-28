@@ -20,6 +20,7 @@ import HardwareExplode3D from '../../components/three/HardwareExplode3D.astro';
 import DataEcosystem3D from '../../components/three/DataEcosystem3D.astro';
 import BrandScene3D from '../../components/three/BrandScene3D.astro';
 import BookScene3D from '../../components/three/BookScene3D.astro';
+import { pillarAccentVar, pillarBadgeClass, pillarDotClass, pillarIconBgClass } from '../../lib/pillarColors';
 
 export async function getStaticPaths() {
   const services = await getCollection('services');
@@ -127,7 +128,7 @@ const isEbook = service.id === 'ebook-publishing';
         </nav>
 
         <div class="max-w-3xl">
-          <span class="inline-block rounded-full border border-ink-700 bg-ink-900/60 px-4 py-1.5 text-xs font-semibold uppercase tracking-[0.18em] text-signal-400">
+          <span class={`inline-block rounded-full border border-ink-700 bg-ink-900/60 px-4 py-1.5 text-xs font-semibold uppercase tracking-[0.18em] ${pillarBadgeClass[service.data.pillar]}`}>
             {service.data.pillar}
           </span>
           <h1 class="mt-5 text-4xl font-bold text-ink-50 md:text-5xl">{service.data.title}</h1>
@@ -139,7 +140,7 @@ const isEbook = service.id === 'ebook-publishing';
     {isInfrastructure && service.data.flowSteps && (
       <section class="border-b border-ink-800 py-16">
         <Container>
-          <NodeGraph3D steps={service.data.flowSteps} pulse={isDevops} />
+          <NodeGraph3D steps={service.data.flowSteps} pulse={isDevops} accentVar={pillarAccentVar[service.data.pillar]} />
         </Container>
       </section>
     )}
@@ -147,7 +148,7 @@ const isEbook = service.id === 'ebook-publishing';
     {isDataEcosystem && service.data.flowSteps && (
       <section class="border-b border-ink-800 py-16">
         <Container>
-          <DataEcosystem3D steps={service.data.flowSteps} />
+          <DataEcosystem3D steps={service.data.flowSteps} accentVar={pillarAccentVar[service.data.pillar]} />
         </Container>
       </section>
     )}
@@ -199,7 +200,7 @@ const isEbook = service.id === 'ebook-publishing';
           <div class="mt-10 grid gap-x-8 gap-y-3 border-t border-ink-800 pt-8 sm:grid-cols-2">
             {service.data.capabilities.map((item) => (
               <div class="flex items-start gap-3 text-sm text-ink-200">
-                <span class="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-signal-400" />
+                <span class={`mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full ${pillarDotClass[service.data.pillar]}`} />
                 {item}
               </div>
             ))}
@@ -218,7 +219,7 @@ const isEbook = service.id === 'ebook-publishing';
             {related.map((r) => (
               <a href={`/services/${r.id}/`} class="block" data-reveal>
                 <Card class="h-full">
-                  <div class="mb-4 flex h-12 w-12 items-center justify-center rounded-bb-sm bg-signal-500/10 text-signal-400">
+                  <div class={`mb-4 flex h-12 w-12 items-center justify-center rounded-bb-sm ${pillarIconBgClass[r.data.pillar]}`}>
                     <Icon name={r.data.icon as any} class="h-6 w-6" />
                   </div>
                   <h3 class="text-lg font-semibold text-ink-50">{r.data.title}</h3>

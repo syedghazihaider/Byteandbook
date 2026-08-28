@@ -51,6 +51,44 @@
   --bb-ember-500: #e8992e; /* accent highlight only, never a base color */
   --bb-ember-400: #f0b45f;
 
+  /* ---- V2-6 pillar accent families ----
+     Directional per-CLAUDE.md's art-direction brief, applied selectively
+     (service badges/eyebrows, the services-overview grouping, and the
+     already-parameterized NodeGraph3D/DataEcosystem3D `accentVar` prop)
+     — never replacing `--bb-signal-*`, which stays the one consistent
+     color for the sitewide primary CTA ("Start a Project" must look the
+     same everywhere). Creative-pillar services (branding, eBook
+     publishing) reuse --bb-ember-*, already a warm gold/amber tone that
+     matches the brief's "warm gold" note — a fourth token would be
+     redundant. */
+  --bb-growth-600: #ab2f80; /* Growth pillar: Marketing/SEO/GEO/Social — warm magenta/violet */
+  --bb-growth-500: #d6409f;
+  --bb-growth-400: #e56bb8;
+  --bb-tech-500: #0ea5e9;   /* Technology pillar: Web/Software Development — electric sky blue */
+  --bb-tech-400: #38bdf8;
+  --bb-infra-600: #0d9488;  /* Infrastructure pillar: DevOps/Cloud/Hardware — teal */
+  --bb-infra-500: #14b8a6;
+  --bb-infra-400: #2dd4bf;
+
+  /* ---- V2-6 fix: RGB-channel twins of the *-500 accent tokens, for
+     Tailwind's opacity-modifier syntax (e.g. `bg-signal-500/10`).
+     Tailwind can only compute an alpha variant for a CSS-variable color
+     if the variable holds raw "R G B" channel numbers referenced via
+     `rgb(var(--x) / <alpha-value>)` in tailwind.config.mjs — a variable
+     holding a hex string (the tokens above, kept as-is for
+     readColorToken() in the Three.js scenes) cannot be given an alpha
+     channel at build time. Every `bg-*-500/NN` utility in this codebase
+     was silently producing no CSS rule at all before this was added —
+     confirmed via the compiled stylesheet while wiring up V2-6's pillar
+     icon backgrounds. Add a channel twin here (and a matching
+     `rgb(var(...) / <alpha-value>)` entry in tailwind.config.mjs) for
+     any further color that needs an opacity-modified utility. */
+  --bb-signal-500-rgb: 56 102 240;
+  --bb-ember-500-rgb: 232 153 46;
+  --bb-growth-500-rgb: 214 64 159;
+  --bb-tech-500-rgb: 14 165 233;
+  --bb-infra-500-rgb: 20 184 166;
+
   /* ---- Semantic surface/text roles (dark theme is the default brand surface) ---- */
   --bb-bg: var(--bb-ink-950);
   --bb-bg-elevated: var(--bb-ink-900);
@@ -89,6 +127,9 @@
   /* ---- Shadow / glow (used sparingly, on interactive/hover states only) ---- */
   --bb-shadow-elevated: 0 10px 40px -12px rgba(0, 0, 0, 0.55);
   --bb-shadow-glow: 0 0 0 1px rgba(56, 102, 240, 0.25), 0 12px 40px -8px rgba(56, 102, 240, 0.35);
+  /* V2-6: a stronger tier for hero-level/modal chrome, still restrained
+     (one soft outer glow, not a stacked neon halo). */
+  --bb-shadow-glow-strong: 0 0 0 1px rgba(96, 136, 245, 0.3), 0 20px 60px -12px rgba(56, 102, 240, 0.45);
 }
 
 @layer base {
@@ -106,6 +147,35 @@
     color: var(--bb-text);
     font-family: var(--bb-font-body);
     font-feature-settings: "ss01" 1;
+    /* V2-6: sitewide atmospheric wash — three large, very-low-opacity
+       radial gradients (signal, growth, ember) fixed behind all content.
+       Pure CSS, no blur filter (cheaper to paint), no effect on text
+       contrast since every content block already sits on a solid
+       ink-950/900 surface above it. Gives the "layered gradients / depth
+       / atmospheric lighting" the art-direction brief asks for without
+       adding any JS or WebGL cost. */
+    background-image:
+      radial-gradient(60rem 40rem at 15% -10%, rgba(56, 102, 240, 0.10), transparent 60%),
+      radial-gradient(50rem 36rem at 110% 20%, rgba(214, 64, 159, 0.07), transparent 60%),
+      radial-gradient(46rem 34rem at 50% 120%, rgba(232, 153, 46, 0.06), transparent 60%);
+    background-repeat: no-repeat;
+  }
+
+  /* Hero-weight gradient-clipped headline text — used sparingly (one
+     headline per page, at most) for the "bolder hero composition" the
+     brief asks for. Falls back to the solid ink-50 color if the browser
+     can't render a transparent-fill gradient text clip. */
+  .text-gradient-hero {
+    color: var(--bb-ink-50);
+    background: linear-gradient(100deg, var(--bb-ink-50) 25%, var(--bb-signal-300) 60%, var(--bb-ink-50) 85%);
+    -webkit-background-clip: text;
+    background-clip: text;
+  }
+  @supports (-webkit-background-clip: text) or (background-clip: text) {
+    .text-gradient-hero {
+      color: transparent;
+      -webkit-text-fill-color: transparent;
+    }
   }
 
   h1, h2, h3, h4 {
@@ -177,6 +247,16 @@
     opacity: 1;
     transform: translateY(0);
   }
+  /* V2-6: subtle stagger for reveal grids (pillar cards, service cards,
+     process stages, trust signals) — siblings that share a
+     [data-reveal] parent fade in a beat apart instead of all at once.
+     Capped at 6 explicit steps; anything past that reveals with the
+     6th's delay rather than growing unbounded. */
+  .js-ready [data-reveal]:nth-child(2) { transition-delay: 60ms; }
+  .js-ready [data-reveal]:nth-child(3) { transition-delay: 120ms; }
+  .js-ready [data-reveal]:nth-child(4) { transition-delay: 180ms; }
+  .js-ready [data-reveal]:nth-child(5) { transition-delay: 240ms; }
+  .js-ready [data-reveal]:nth-child(n+6) { transition-delay: 300ms; }
 
   @media (prefers-reduced-motion: reduce) {
     [data-animate] {
@@ -233,7 +313,10 @@
     background: var(--bb-bg-elevated);
     border: 1px solid var(--bb-border-strong);
     border-radius: var(--bb-radius-lg);
-    box-shadow: var(--bb-shadow-elevated);
+    /* V2-6: promoted to the stronger glow tier — restrained (one soft
+       outer glow), matching the rest of the phase's "premium, not
+       neon" direction. */
+    box-shadow: var(--bb-shadow-glow-strong);
     opacity: 0;
     transform: translateY(12px) scale(0.98);
     transition: opacity 0.2s ease-out, transform 0.2s ease-out;

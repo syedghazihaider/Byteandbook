@@ -517,6 +517,85 @@ const repoRoot = join(__dirname, '..', '..');
 check('legacy root index.html removed from working tree', !existsSync(join(repoRoot, 'index.html')));
 check('legacy root "byteandbook github.txt" removed from working tree', !existsSync(join(repoRoot, 'byteandbook github.txt')));
 
+// ---- 8. V2-6: US-market localization + visual-upgrade regression guards ---
+const stylesCss = readFileSync(join(DIST, 'styles.css'), 'utf-8');
+
+// US-market localization audit
+const FORBIDDEN_REGION_CUES = ['+92', 'PKR', 'Rs.', 'Karachi', 'Pakistan'];
+const FAKE_US_IDENTITY_CLAIMS = [
+  'Based in New York', 'US Headquarters', 'U.S. Headquarters', 'Delaware LLC', 'Wyoming LLC',
+];
+for (const relPath of allDistHtmlFiles) {
+  if (!existsSync(join(DIST, relPath))) continue;
+  const html = readHtml(relPath);
+  for (const cue of FORBIDDEN_REGION_CUES) {
+    check(`${relPath}: no Pakistan-specific cue "${cue}"`, !html.includes(cue));
+  }
+  for (const claim of FAKE_US_IDENTITY_CLAIMS) {
+    check(`${relPath}: no fake US legal-identity claim "${claim}"`, !html.includes(claim));
+  }
+}
+check('start-project-modal: phone placeholder uses a US-format example (+1)', homeHtml.includes('placeholder="+1 202 555 0123"'));
+check('start-project-modal: no +92 placeholder remains', !homeHtml.includes('+92'));
+check('start-project-modal: mobile field stays international (type="tel", no US-only pattern)', mobileTag.includes('type="tel"') && !mobileTag.includes('pattern='));
+check('start-project-modal: "Include your country code" guidance still present', /include your country code/i.test(norm(homeHtml)));
+
+// Visual-upgrade regression guards: reduced-motion + lazy-loading
+// architecture must survive the art-direction pass unchanged.
+check('styles.css: prefers-reduced-motion media query still present', stylesCss.includes('prefers-reduced-motion'));
+const baseLayoutScriptChunk = astroChunkFiles.find((f) => f.startsWith('BaseLayout.astro_astro_type_script'));
+check('BaseLayout script chunk exists (reduced-motion gate wiring)', !!baseLayoutScriptChunk);
+// The actual matchMedia('(prefers-reduced-motion: reduce)') check lives
+// in scripts/motion.ts, imported by BaseLayout's inline script — check
+// the real motion.*.js chunk, not BaseLayout's (which only imports and
+// calls it, and after minification contains neither string literally).
+const motionUtilChunk = astroChunkFiles.find((f) => f.startsWith('motion.'));
+check('motion.ts chunk exists', !!motionUtilChunk);
+if (motionUtilChunk) {
+  const motionChunkSrc = readFileSync(join(DIST, '_astro', motionUtilChunk), 'utf-8');
+  check('motion.ts chunk: prefers-reduced-motion check still wired up', /prefers-reduced-motion/i.test(motionChunkSrc));
+}
+// Each Level 1 3D scene still compiles to its own separate lazy-loaded
+// chunk (not inlined into a shared bundle) — confirms the V2-6 color
+// changes didn't collapse the dynamic-import architecture from Phase 11.
+const expectedSceneChunkPrefixes = ['heroScene', 'hardwareScene', 'brandScene', 'bookScene', 'nodeGraphScene', 'dataEcosystemScene', 'capabilityScene', 'ambientFieldScene'];
+for (const prefix of expectedSceneChunkPrefixes) {
+  check(`lazy-loading: separate compiled chunk exists for ${prefix}`, astroChunkFiles.some((f) => f.startsWith(prefix)));
+}
+
+// Pillar color system: new tokens/utilities actually compiled, and the
+// sitewide primary CTA color is untouched (Start a Project must look
+// identical everywhere regardless of pillar). Checked via plain
+// substring match against the exact Tailwind-escaped selector text
+// (confirmed by inspecting the real compiled output) rather than a
+// dynamically-built regex — the opacity-modifier utilities below only
+// compile at all because of the --bb-*-500-rgb / <alpha-value> fix
+// documented in global.css; this guards against that regressing.
+for (const selector of [
+  '.text-growth-400{', '.text-tech-400{', '.text-infra-400{',
+  '.bg-growth-500\\/10{', '.bg-tech-500\\/10{', '.bg-infra-500\\/10{', '.bg-signal-500\\/10{', '.bg-ember-500\\/10{',
+]) {
+  check(`styles.css: pillar/opacity utility ${selector} compiled`, stylesCss.includes(selector));
+}
+check('styles.css: --bb-growth-500 token defined', stylesCss.includes('--bb-growth-500'));
+check('styles.css: --bb-tech-500 token defined', stylesCss.includes('--bb-tech-500'));
+check('styles.css: --bb-infra-500 token defined', stylesCss.includes('--bb-infra-500'));
+check('styles.css: --bb-signal-500-rgb channel twin defined (opacity-modifier fix)', stylesCss.includes('--bb-signal-500-rgb'));
+
+// Service pages actually wire a pillar accent into their Level 1 scene
+// (or, for computer-hardware/branding, into the retinted .ts scene) —
+// spot-check one page per family rather than all 11.
+const devopsHtmlV6 = readHtml('services/devops/index.html');
+check('services/devops/ (Infrastructure): pillar badge uses infra color', /text-infra-400/.test(devopsHtmlV6));
+const seoHtmlV6 = readHtml('services/seo/index.html');
+check('services/seo/ (Growth): pillar badge uses growth color', /text-growth-400/.test(seoHtmlV6));
+const webDevHtmlV6 = readHtml('services/web-development/index.html');
+check('services/web-development/ (Technology): pillar badge uses tech color', /text-tech-400/.test(webDevHtmlV6));
+
+// Process timeline: connected visual present, heading hierarchy intact.
+const processHtmlV6 = readHtml('process/index.html');
+check('process/: connected timeline structure present (<ol> of stages)', /<ol[^>]*class="relative"/.test(processHtmlV6));
+
 // ---- Report ---------------------------------------------------------------
 console.log(`QA check: ${checks} assertions, ${failures.length} failure(s).`);
 if (failures.length > 0) {

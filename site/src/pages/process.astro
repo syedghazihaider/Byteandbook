@@ -117,18 +117,26 @@ const breadcrumbJsonLd = {
     </section>
 
     <section class="border-t border-ink-800 py-16">
-      <Container>
-        <div class="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-          {stages.map((stage) => (
-            <div data-reveal>
-              <Card class="h-full">
-                <span class="font-display text-3xl font-bold text-ink-700">{stage.step}</span>
-                <h2 class="mt-3 text-lg font-semibold text-ink-50">{stage.title}</h2>
+      <Container class="max-w-3xl">
+        <ol class="relative">
+          <!-- V2-6: single connecting line spanning the whole timeline,
+               positioned to run through each stage's circle center,
+               rather than a per-item pseudo-element — avoids trimming
+               logic for the first/last item and stays correct regardless
+               of how many stages exist. Purely decorative. -->
+          <div class="absolute left-6 top-6 bottom-6 w-px bg-gradient-to-b from-signal-500/50 via-ink-700 to-ink-700 sm:left-7" aria-hidden="true"></div>
+          {stages.map((stage, i) => (
+            <li class="relative flex gap-4 pb-10 last:pb-0 sm:gap-6" data-reveal>
+              <div class="relative z-10 flex h-12 w-12 shrink-0 items-center justify-center rounded-full border-2 border-signal-500/50 bg-ink-950 font-display text-base font-bold text-signal-400 sm:h-14 sm:w-14 sm:text-lg">
+                {stage.step}
+              </div>
+              <Card class="flex-1">
+                <h2 class="text-lg font-semibold text-ink-50">{stage.title}</h2>
                 <p class="mt-2 text-sm text-ink-300">{stage.description}</p>
               </Card>
-            </div>
+            </li>
           ))}
-        </div>
+        </ol>
       </Container>
     </section>
 

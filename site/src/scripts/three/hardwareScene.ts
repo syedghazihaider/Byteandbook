@@ -37,8 +37,12 @@ export function createHardwareScene(canvas: HTMLCanvasElement, opts: HardwareOpt
   camera.position.set(0, 1.2, 8);
   camera.lookAt(0, 0, 0);
 
-  const signal = readColorToken('--bb-signal-400');
-  const signalDim = readColorToken('--bb-signal-600');
+  // V2-6: Hardware is grouped under the Infrastructure pillar (see
+  // lib/pillarColors.ts) — retinted from the sitewide signal blue to the
+  // infra teal family so this page reads distinctly from every other
+  // Level 1 scene rather than repeating the primary brand blue.
+  const signal = readColorToken('--bb-infra-400');
+  const signalDim = readColorToken('--bb-infra-600');
   const ink = readColorToken('--bb-ink-400');
   const ember = readColorToken('--bb-ember-500');
 

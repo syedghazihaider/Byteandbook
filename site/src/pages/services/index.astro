@@ -13,13 +13,14 @@ import Card from '../../components/ui/Card.astro';
 import Button from '../../components/ui/Button.astro';
 import Icon from '../../components/ui/Icon.astro';
 import StartProjectTrigger from '../../components/project/StartProjectTrigger.astro';
+import { pillarBadgeClass, pillarIconBgClass, type Pillar } from '../../lib/pillarColors';
 
 const services = (await getCollection('services')).sort((a, b) => a.data.order - b.data.order);
 
 const SITE_URL = 'https://byteandbook.com';
 const path = '/services/';
 
-const pillars = ['Growth', 'Technology', 'Infrastructure', 'Creative'] as const;
+const pillars: Pillar[] = ['Growth', 'Technology', 'Infrastructure', 'Creative'];
 const grouped = pillars.map((pillar) => ({
   pillar,
   services: services.filter((s) => s.data.pillar === pillar),
@@ -71,19 +72,19 @@ const breadcrumbJsonLd = {
     {grouped.map((group) => group.services.length > 0 && (
       <section class="border-t border-ink-800 py-16">
         <Container>
-          <SectionHeading eyebrow={group.pillar} heading={`${group.pillar} services`} />
+          <SectionHeading eyebrow={group.pillar} heading={`${group.pillar} services`} eyebrowClass={pillarBadgeClass[group.pillar]} />
           <div class="mt-10 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
             {group.services.map((service, i) => (
               <a href={`/services/${service.id}/`} class="block" data-reveal data-service-card={i}>
                 <Card class="h-full">
                   <div class="mb-4 flex items-center justify-between">
-                    <div class="flex h-12 w-12 items-center justify-center rounded-bb-sm bg-signal-500/10 text-signal-400">
+                    <div class={`flex h-12 w-12 items-center justify-center rounded-bb-sm ${pillarIconBgClass[group.pillar]}`}>
                       <Icon name={service.data.icon as any} class="h-6 w-6" />
                     </div>
                   </div>
                   <h3 class="text-lg font-semibold text-ink-50">{service.data.title}</h3>
                   <p class="mt-2 text-sm text-ink-300">{service.data.summary}</p>
-                  <span class="mt-4 inline-flex items-center gap-1 text-sm font-medium text-signal-400">
+                  <span class={`mt-4 inline-flex items-center gap-1 text-sm font-medium ${pillarBadgeClass[group.pillar]}`}>
                     Learn more →
                   </span>
                 </Card>
