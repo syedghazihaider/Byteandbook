@@ -1,0 +1,43 @@
+---
+// V2-1: route placeholder only. The real checkout/payments architecture
+// (merchant integration, order/reference linking, Terms + Refund Policy
+// references) is scoped to V2-4 per CLAUDE.md — no payment functionality,
+// merchant credentials, or invented payment methods belong here yet.
+// noindex: this route isn't ready to be discovered/ranked until it has
+// real functionality behind it.
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Header from '../components/layout/Header.astro';
+import Footer from '../components/layout/Footer.astro';
+import Container from '../components/ui/Container.astro';
+import Button from '../components/ui/Button.astro';
+---
+
+<BaseLayout
+  title="Checkout — ByteAndBook"
+  description="ByteAndBook checkout and payments — coming soon."
+  path="/checkout/"
+  noindex
+>
+  <Header />
+
+  <main id="main-content" tabindex="-1" class="flex min-h-[70vh] items-center pt-24">
+    <Container class="max-w-2xl text-center">
+      <span class="inline-block rounded-full border border-ink-700 bg-ink-900/60 px-4 py-1.5 text-xs font-semibold uppercase tracking-[0.18em] text-signal-400">
+        Checkout
+      </span>
+      <h1 class="mt-5 text-3xl font-bold text-ink-50 md:text-4xl">Payments architecture is in progress</h1>
+      <p class="mx-auto mt-4 max-w-md text-ink-300">
+        Checkout is only used once a project scope and quotation have been
+        confirmed. This page will support that flow once payment
+        infrastructure is connected — until then, project requests are
+        handled directly.
+      </p>
+      <div class="mt-8 flex flex-wrap items-center justify-center gap-4">
+        <Button href="/contact/" variant="primary">Start a Project</Button>
+        <Button href="/" variant="outline">Back to Home</Button>
+      </div>
+    </Container>
+  </main>
+
+  <Footer />
+</BaseLayout>

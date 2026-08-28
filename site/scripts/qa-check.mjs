@@ -36,18 +36,29 @@ const indexablePages = {
   '/': 'index.html',
   '/about/': 'about/index.html',
   '/contact/': 'contact/index.html',
+  '/services/': 'services/index.html',
+  '/process/': 'process/index.html',
   ...Object.fromEntries(SERVICE_SLUGS.map((s) => [`/services/${s}/`, `services/${s}/index.html`])),
 };
+// V2-1: standalone route architecture for pages whose full content is
+// scoped to later phases (V2-4/V2-5/V2-7) — present, linked, and built,
+// but not yet indexed until real content/functionality lands.
 const nonIndexablePages = {
   '/404.html': '404.html',
   '/style-guide/': 'style-guide/index.html',
+  '/checkout/': 'checkout/index.html',
+  '/terms/': 'terms/index.html',
+  '/privacy/': 'privacy/index.html',
+  '/refund-policy/': 'refund-policy/index.html',
+  '/work/': 'work/index.html',
+  '/insights/': 'insights/index.html',
 };
 const allPages = { ...indexablePages, ...nonIndexablePages };
 
 for (const [route, relPath] of Object.entries(allPages)) {
   check(`route exists: ${route} -> dist/${relPath}`, existsSync(join(DIST, relPath)));
 }
-check('exactly 16 known routes defined in this check', Object.keys(allPages).length === 16);
+check('exactly 24 known routes defined in this check', Object.keys(allPages).length === 24);
 
 // ---- 2. Core static assets --------------------------------------------
 check('styles.css exists', existsSync(join(DIST, 'styles.css')));
@@ -132,8 +143,11 @@ for (const [route, relPath] of Object.entries(allPages)) {
   }
   check(`${route}: Organization schema present`, types.has('Organization'));
   check(`${route}: WebSite schema present`, types.has('WebSite'));
-  if (route.startsWith('/services/')) {
+  if (route.startsWith('/services/') && route !== '/services/') {
     check(`${route}: Service schema present`, types.has('Service'));
+    check(`${route}: BreadcrumbList schema present`, types.has('BreadcrumbList'));
+  }
+  if (route === '/services/' || route === '/process/') {
     check(`${route}: BreadcrumbList schema present`, types.has('BreadcrumbList'));
   }
   if (route === '/') {
@@ -152,17 +166,23 @@ const robotsTxt = readFileSync(join(DIST, 'robots.txt'), 'utf-8');
 check('robots.txt references sitemap-index.xml', robotsTxt.includes('https://byteandbook.com/sitemap-index.xml'));
 check('robots.txt disallows /style-guide/', robotsTxt.includes('Disallow: /style-guide/'));
 check('robots.txt disallows /404.html', robotsTxt.includes('Disallow: /404.html'));
+for (const route of Object.keys(nonIndexablePages).filter((r) => r.endsWith('/'))) {
+  check(`robots.txt disallows ${route}`, robotsTxt.includes(`Disallow: ${route}`));
+}
 
 for (const f of sitemapFiles) {
   const xml = readFileSync(join(DIST, f), 'utf-8');
   check(`${f}: does not list /style-guide/`, !xml.includes('/style-guide/'));
   check(`${f}: does not list /404.html`, !xml.includes('/404.html'));
+  for (const route of Object.keys(nonIndexablePages).filter((r) => r.endsWith('/'))) {
+    check(`${f}: does not list ${route}`, !xml.includes(`>https://byteandbook.com${route}<`));
+  }
 }
 const sitemapUrlCount = sitemapFiles.reduce(
   (n, f) => n + (readFileSync(join(DIST, f), 'utf-8').match(/<loc>/g) || []).length,
   0
 );
-check('sitemap contains exactly 14 indexable URLs', sitemapUrlCount === 14);
+check('sitemap contains exactly 16 indexable URLs', sitemapUrlCount === 16);
 
 // duplicate title/description check across all pages
 const titleValues = [...titles.values()];

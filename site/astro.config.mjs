@@ -19,12 +19,20 @@ export default defineConfig({
   site: SITE_URL,
   integrations: [
     sitemap({
-      // Internal design-system reference page — not public marketing
-      // content, kept out of the sitemap (Phase 9). It's also marked
-      // noindex on the page itself and disallowed in robots.txt; the
-      // 404 page is already excluded automatically by Astro/the
-      // sitemap integration and isn't a real content route.
-      filter: (page) => !page.includes('/style-guide/'),
+      // Internal design-system reference page and V2-1 route
+      // placeholders (checkout/terms/privacy/refund-policy/work/
+      // insights — real content scoped to later V2 phases) are kept
+      // out of the sitemap, matching their noindex meta tag. The 404
+      // page is already excluded automatically by Astro/the sitemap
+      // integration and isn't a real content route.
+      filter: (page) =>
+        !page.includes('/style-guide/') &&
+        !page.includes('/checkout/') &&
+        !page.includes('/terms/') &&
+        !page.includes('/privacy/') &&
+        !page.includes('/refund-policy/') &&
+        !page.includes('/work/') &&
+        !page.includes('/insights/'),
     }),
   ],
 });

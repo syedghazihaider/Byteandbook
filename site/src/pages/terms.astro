@@ -1,0 +1,39 @@
+---
+// V2-1: route placeholder only. Full legal Terms of Service content is
+// scoped to V2-4 (Checkout + Legal Architecture) per CLAUDE.md — no
+// legal text is drafted here, and no claim of legal review is made.
+// noindex: incomplete legal content shouldn't be indexed/ranked yet.
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Header from '../components/layout/Header.astro';
+import Footer from '../components/layout/Footer.astro';
+import Container from '../components/ui/Container.astro';
+import Button from '../components/ui/Button.astro';
+---
+
+<BaseLayout
+  title="Terms of Service — ByteAndBook"
+  description="ByteAndBook Terms of Service — in progress."
+  path="/terms/"
+  noindex
+>
+  <Header />
+
+  <main id="main-content" tabindex="-1" class="flex min-h-[70vh] items-center pt-24">
+    <Container class="max-w-2xl text-center">
+      <span class="inline-block rounded-full border border-ink-700 bg-ink-900/60 px-4 py-1.5 text-xs font-semibold uppercase tracking-[0.18em] text-signal-400">
+        Terms of Service
+      </span>
+      <h1 class="mt-5 text-3xl font-bold text-ink-50 md:text-4xl">This page is being finalized</h1>
+      <p class="mx-auto mt-4 max-w-md text-ink-300">
+        Our full Terms of Service, including the Start Project and order
+        confirmation workflow, will be published here.
+      </p>
+      <div class="mt-8 flex flex-wrap items-center justify-center gap-4">
+        <Button href="/contact/" variant="primary">Contact Us</Button>
+        <Button href="/" variant="outline">Back to Home</Button>
+      </div>
+    </Container>
+  </main>
+
+  <Footer />
+</BaseLayout>

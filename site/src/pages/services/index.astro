@@ -1,0 +1,113 @@
+---
+// V2-1: standalone Services overview page — replaces the homepage
+// "#services" anchor as the primary navigation destination. Homepage
+// keeps its own services preview section; this page is the real,
+// linkable, indexable destination every "Services" nav item points to.
+import { getCollection } from 'astro:content';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Header from '../../components/layout/Header.astro';
+import Footer from '../../components/layout/Footer.astro';
+import Container from '../../components/ui/Container.astro';
+import SectionHeading from '../../components/ui/SectionHeading.astro';
+import Card from '../../components/ui/Card.astro';
+import Button from '../../components/ui/Button.astro';
+import Icon from '../../components/ui/Icon.astro';
+
+const services = (await getCollection('services')).sort((a, b) => a.data.order - b.data.order);
+
+const SITE_URL = 'https://byteandbook.com';
+const path = '/services/';
+
+const pillars = ['Growth', 'Technology', 'Infrastructure', 'Creative'] as const;
+const grouped = pillars.map((pillar) => ({
+  pillar,
+  services: services.filter((s) => s.data.pillar === pillar),
+}));
+
+const breadcrumbJsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'BreadcrumbList',
+  itemListElement: [
+    { '@type': 'ListItem', position: 1, name: 'Home', item: `${SITE_URL}/` },
+    { '@type': 'ListItem', position: 2, name: 'Services', item: `${SITE_URL}${path}` },
+  ],
+};
+---
+
+<BaseLayout
+  title="Services — ByteAndBook"
+  description="ByteAndBook's services span Growth, Technology, Infrastructure, and Creative — digital marketing, SEO, GEO, web and software development, DevOps, cloud, hardware, branding, and eBook publishing."
+  path={path}
+  jsonLd={[breadcrumbJsonLd]}
+>
+  <Header />
+
+  <main id="main-content" tabindex="-1">
+    <section class="pt-32 pb-16">
+      <Container>
+        <nav class="mb-8 flex items-center gap-2 text-sm text-ink-300" aria-label="Breadcrumb">
+          <a href="/" class="hover:text-ink-200">Home</a>
+          <span>/</span>
+          <span class="text-ink-200">Services</span>
+        </nav>
+
+        <div class="max-w-3xl">
+          <span class="inline-block rounded-full border border-ink-700 bg-ink-900/60 px-4 py-1.5 text-xs font-semibold uppercase tracking-[0.18em] text-signal-400">
+            Services
+          </span>
+          <h1 class="mt-5 text-4xl font-bold text-ink-50 md:text-5xl">
+            Four disciplines, eleven services, one connected system.
+          </h1>
+          <p class="mt-5 text-lg text-ink-300">
+            Every service below has its own dedicated page explaining how it
+            actually works — capabilities, process, and where it connects to
+            the rest of what we build.
+          </p>
+        </div>
+      </Container>
+    </section>
+
+    {grouped.map((group) => group.services.length > 0 && (
+      <section class="border-t border-ink-800 py-16">
+        <Container>
+          <SectionHeading eyebrow={group.pillar} heading={`${group.pillar} services`} />
+          <div class="mt-10 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+            {group.services.map((service, i) => (
+              <a href={`/services/${service.id}/`} class="block" data-reveal data-service-card={i}>
+                <Card class="h-full">
+                  <div class="mb-4 flex items-center justify-between">
+                    <div class="flex h-12 w-12 items-center justify-center rounded-bb-sm bg-signal-500/10 text-signal-400">
+                      <Icon name={service.data.icon as any} class="h-6 w-6" />
+                    </div>
+                  </div>
+                  <h3 class="text-lg font-semibold text-ink-50">{service.data.title}</h3>
+                  <p class="mt-2 text-sm text-ink-300">{service.data.summary}</p>
+                  <span class="mt-4 inline-flex items-center gap-1 text-sm font-medium text-signal-400">
+                    Learn more →
+                  </span>
+                </Card>
+              </a>
+            ))}
+          </div>
+        </Container>
+      </section>
+    ))}
+
+    <section class="border-t border-ink-800 py-20">
+      <Container>
+        <div class="rounded-bb-lg border border-ink-700 bg-ink-900/60 px-8 py-16 text-center" data-reveal>
+          <h2 class="text-3xl font-bold text-ink-50 md:text-4xl">Not sure which service fits?</h2>
+          <p class="mx-auto mt-4 max-w-xl text-ink-300">
+            Tell us what you're building and which of these disciplines it
+            touches — we'll scope it from there.
+          </p>
+          <div class="mt-8">
+            <Button href="/contact/" variant="primary">Start a Project</Button>
+          </div>
+        </div>
+      </Container>
+    </section>
+  </main>
+
+  <Footer />
+</BaseLayout>

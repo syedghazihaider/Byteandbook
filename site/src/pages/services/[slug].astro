@@ -73,7 +73,7 @@ const breadcrumbJsonLd = {
   '@type': 'BreadcrumbList',
   itemListElement: [
     { '@type': 'ListItem', position: 1, name: 'Home', item: `${SITE_URL}/` },
-    { '@type': 'ListItem', position: 2, name: 'Services', item: `${SITE_URL}/#services` },
+    { '@type': 'ListItem', position: 2, name: 'Services', item: `${SITE_URL}/services/` },
     { '@type': 'ListItem', position: 3, name: service.data.title, item: canonicalUrl },
   ],
 };
@@ -120,7 +120,7 @@ const isEbook = service.id === 'ebook-publishing';
         <nav class="mb-8 flex items-center gap-2 text-sm text-ink-300" aria-label="Breadcrumb">
           <a href="/" class="hover:text-ink-200">Home</a>
           <span>/</span>
-          <a href="/#services" class="hover:text-ink-200">Services</a>
+          <a href="/services/" class="hover:text-ink-200">Services</a>
           <span>/</span>
           <span class="text-ink-200">{service.data.title}</span>
         </nav>

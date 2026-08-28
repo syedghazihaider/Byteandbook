@@ -1,0 +1,40 @@
+---
+// V2-1: route placeholder only. Full case-study/social-proof architecture
+// is scoped to V2-5 per CLAUDE.md. No fabricated case studies, clients,
+// logos, or results are placed here — an honest capabilities statement
+// only. noindex until real, verifiable content exists.
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Header from '../components/layout/Header.astro';
+import Footer from '../components/layout/Footer.astro';
+import Container from '../components/ui/Container.astro';
+import Button from '../components/ui/Button.astro';
+---
+
+<BaseLayout
+  title="Work — ByteAndBook"
+  description="ByteAndBook project work and case studies — in progress."
+  path="/work/"
+  noindex
+>
+  <Header />
+
+  <main id="main-content" tabindex="-1" class="flex min-h-[70vh] items-center pt-24">
+    <Container class="max-w-2xl text-center">
+      <span class="inline-block rounded-full border border-ink-700 bg-ink-900/60 px-4 py-1.5 text-xs font-semibold uppercase tracking-[0.18em] text-signal-400">
+        Work
+      </span>
+      <h1 class="mt-5 text-3xl font-bold text-ink-50 md:text-4xl">Case studies are in progress</h1>
+      <p class="mx-auto mt-4 max-w-md text-ink-300">
+        We only publish verified project work here — no placeholder case
+        studies or invented results. Check the individual service pages
+        for how each discipline actually works in the meantime.
+      </p>
+      <div class="mt-8 flex flex-wrap items-center justify-center gap-4">
+        <Button href="/services/" variant="primary">Browse Services</Button>
+        <Button href="/" variant="outline">Back to Home</Button>
+      </div>
+    </Container>
+  </main>
+
+  <Footer />
+</BaseLayout>

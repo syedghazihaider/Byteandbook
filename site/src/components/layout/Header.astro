@@ -2,14 +2,15 @@
 import Container from '../ui/Container.astro';
 import Button from '../ui/Button.astro';
 
-// Absolute paths back to homepage anchors — bare "#services" only
-// resolves correctly while already on "/", and breaks from every
-// other route (service pages, contact, etc.) introduced from Phase 6
-// onward.
+// V2-1: true multi-page primary navigation. Every entry is a standalone
+// route — no homepage-anchor destinations (/#services, /#approach) for
+// primary nav, per the V2-1 correction. Homepage anchors remain valid
+// only for in-page scrolling on the homepage itself.
 const navLinks = [
-  { label: 'Services', href: '/#services' },
-  { label: 'Approach', href: '/#approach' },
+  { label: 'Services', href: '/services/' },
+  { label: 'Process', href: '/process/' },
   { label: 'About', href: '/about/' },
+  { label: 'Contact', href: '/contact/' },
 ];
 ---
 
