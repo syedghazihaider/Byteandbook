@@ -38,18 +38,24 @@ const indexablePages = {
   '/contact/': 'contact/index.html',
   '/services/': 'services/index.html',
   '/process/': 'process/index.html',
+  // V2-4: /terms/, /privacy/, and /refund-policy/ got real published
+  // content, replacing the V2-1 noindex placeholders — indexable like
+  // any other professional-site legal page (see V2-4 report).
+  '/terms/': 'terms/index.html',
+  '/privacy/': 'privacy/index.html',
+  '/refund-policy/': 'refund-policy/index.html',
   ...Object.fromEntries(SERVICE_SLUGS.map((s) => [`/services/${s}/`, `services/${s}/index.html`])),
 };
-// V2-1: standalone route architecture for pages whose full content is
-// scoped to later phases (V2-4/V2-5/V2-7) — present, linked, and built,
-// but not yet indexed until real content/functionality lands.
+// Pages that stay noindex: internal reference (style-guide), pages
+// whose real content is still scoped to a later phase (work/insights —
+// V2-5/V2-7), and /checkout/ — a payment workflow page for people who
+// already have an order reference, not a search landing page, so it
+// stays out of the index/sitemap on purpose even though its V2-4
+// content is real (see V2-4 report).
 const nonIndexablePages = {
   '/404.html': '404.html',
   '/style-guide/': 'style-guide/index.html',
   '/checkout/': 'checkout/index.html',
-  '/terms/': 'terms/index.html',
-  '/privacy/': 'privacy/index.html',
-  '/refund-policy/': 'refund-policy/index.html',
   '/work/': 'work/index.html',
   '/insights/': 'insights/index.html',
 };
@@ -147,8 +153,16 @@ for (const [route, relPath] of Object.entries(allPages)) {
     check(`${route}: Service schema present`, types.has('Service'));
     check(`${route}: BreadcrumbList schema present`, types.has('BreadcrumbList'));
   }
-  if (route === '/services/' || route === '/process/') {
+  if (['/services/', '/process/', '/terms/', '/privacy/', '/refund-policy/'].includes(route)) {
     check(`${route}: BreadcrumbList schema present`, types.has('BreadcrumbList'));
+  }
+  if (route === '/checkout/') {
+    // Explicitly NOT fabricated per the V2-4 brief: no LocalBusiness,
+    // Review, AggregateRating, or payment-provider schema anywhere —
+    // checked globally below, but asserted here too since /checkout/
+    // is the page most tempting to over-decorate with fake trust
+    // signals.
+    check(`${route}: no fabricated Review/AggregateRating/LocalBusiness schema`, !types.has('Review') && !types.has('AggregateRating') && !types.has('LocalBusiness'));
   }
   if (route === '/') {
     check(`${route}: FAQPage schema present`, types.has('FAQPage'));
@@ -169,6 +183,11 @@ check('robots.txt disallows /404.html', robotsTxt.includes('Disallow: /404.html'
 for (const route of Object.keys(nonIndexablePages).filter((r) => r.endsWith('/'))) {
   check(`robots.txt disallows ${route}`, robotsTxt.includes(`Disallow: ${route}`));
 }
+// V2-4 regression guard: these three moved from noindex to indexable —
+// make sure a future edit doesn't silently re-add them to Disallow.
+for (const route of ['/terms/', '/privacy/', '/refund-policy/']) {
+  check(`robots.txt does NOT disallow ${route} (indexable since V2-4)`, !robotsTxt.includes(`Disallow: ${route}`));
+}
 
 for (const f of sitemapFiles) {
   const xml = readFileSync(join(DIST, f), 'utf-8');
@@ -182,7 +201,7 @@ const sitemapUrlCount = sitemapFiles.reduce(
   (n, f) => n + (readFileSync(join(DIST, f), 'utf-8').match(/<loc>/g) || []).length,
   0
 );
-check('sitemap contains exactly 16 indexable URLs', sitemapUrlCount === 16);
+check('sitemap contains exactly 19 indexable URLs', sitemapUrlCount === 19);
 
 // duplicate title/description check across all pages
 const titleValues = [...titles.values()];
@@ -334,6 +353,96 @@ check('start-project-modal: no other endpoint referenced', (modalScript.match(/f
 check('start-project-modal: <form> has no method="get"', !/<form[^>]*method="get"/i.test(homeHtml));
 check('start-project-modal: no leftover V2-2 console payload logging', !/console\.(debug|log)\(/.test(modalScript));
 check('start-project-modal: honeypot field present', /name="website"/.test(homeHtml) && /class="sp-hp"/.test(homeHtml));
+
+// ---- 6. V2-4: legal + checkout content ------------------------------------
+const termsHtml = readHtml('terms/index.html');
+const privacyHtml = readHtml('privacy/index.html');
+const refundHtml = readHtml('refund-policy/index.html');
+const checkoutHtml = readHtml('checkout/index.html');
+// Astro preserves template source line-wrapping verbatim in compiled
+// HTML text nodes (a browser collapses it visually on render; a
+// literal-phrase regex against the raw file would not) — normalize
+// before any multi-word phrase match below.
+const norm = (html) => html.replace(/\s+/g, ' ');
+const termsNorm = norm(termsHtml);
+const privacyHtmlNormalized = norm(privacyHtml);
+const refundNorm = norm(refundHtml);
+const checkoutNorm = norm(checkoutHtml);
+
+// Placeholder text must be gone from all four pages.
+for (const [label, html] of [
+  ['/terms/', termsHtml], ['/privacy/', privacyHtml],
+  ['/refund-policy/', refundHtml], ['/checkout/', checkoutHtml],
+]) {
+  check(`${label}: no leftover "being finalized" placeholder text`, !html.includes('This page is being finalized'));
+  check(`${label}: no leftover "coming soon" placeholder text`, !/coming soon/i.test(html));
+}
+
+// Terms: business-model rules actually present.
+check('terms/: states project request is not a confirmed order', /project request/i.test(termsNorm) && /does not create an? (order|binding contract)/i.test(termsNorm));
+check('terms/: states confirmed-order payments are non-refundable', /non-refundable/i.test(termsNorm));
+check('terms/: references applicable-law exception', /applicable law/i.test(termsNorm));
+check('terms/: covers third-party costs', /third-party/i.test(termsNorm));
+check('terms/: covers intellectual property', /intellectual property/i.test(termsNorm));
+check('terms/: covers governing law without an ugly bracket placeholder', /governing law/i.test(termsNorm) && !/\[INSERT/i.test(termsNorm) && !/TBD|TODO/.test(termsNorm));
+
+// Refund Policy: the A-H structure's core rules.
+check('refund-policy/: states project request does not place an order', /does not place an order/i.test(refundNorm));
+check('refund-policy/: states confirmed-order payments are non-refundable', /non-refundable/i.test(refundNorm));
+check('refund-policy/: preserves applicable-law exception', /applicable law/i.test(refundNorm));
+check('refund-policy/: covers third-party costs', /third-party/i.test(refundNorm));
+check('refund-policy/: does not imply duplicate payments are kept', /does not keep a payment made in error/i.test(refundNorm));
+
+// Privacy Policy: reflects the actual Start Project form fields.
+for (const term of ['full name', 'mobile', 'WhatsApp', 'project description', 'reference ID', 'rate limiting']) {
+  check(`privacy/: mentions "${term}"`, new RegExp(term, 'i').test(privacyHtmlNormalized));
+}
+check('privacy/: contact is info@byteandbook.com', privacyHtml.includes('mailto:info@byteandbook.com'));
+check('privacy/: does not claim guaranteed compliance', !/guarantee(s|d)?\s+(GDPR|CCPA)/i.test(privacyHtmlNormalized));
+check('privacy/: accurately states no tracking cookies/analytics', /does not use analytics/i.test(privacyHtmlNormalized));
+
+// Centralized Terms Version: present and identical across all three
+// legal pages, and in sync with the PHP backend's own copy.
+const versionOnPage = (html) => html.match(/Terms Version:\s*([^<\s]+)/)?.[1];
+const termsVersionValue = versionOnPage(termsHtml);
+check('terms/: Terms Version present', !!termsVersionValue);
+check('privacy/: Terms Version matches terms/', versionOnPage(privacyHtml) === termsVersionValue);
+check('refund-policy/: Terms Version matches terms/', versionOnPage(refundHtml) === termsVersionValue);
+if (existsSync(join(DIST, API_REL_PATH)) && termsVersionValue) {
+  const phpSource = readFileSync(join(DIST, API_REL_PATH), 'utf-8');
+  const phpVersionMatch = phpSource.match(/TERMS_VERSION = '([^']+)'/);
+  check('project-request.php: TERMS_VERSION matches the published legal pages', phpVersionMatch?.[1] === termsVersionValue);
+}
+
+// Checkout: honest state only — no fabricated merchant integration,
+// bank details, or payment buttons that go nowhere.
+check('checkout/: no payment method is marked "Available" (none are configured yet)', !/>Available</.test(checkoutHtml));
+check('checkout/: future methods are explicitly marked "Not yet available"', checkoutHtml.includes('Not yet available'));
+check('checkout/: no embedded PayPal/Stripe SDK script', !/js\.stripe\.com|paypal\.com\/sdk/i.test(checkoutHtml));
+check('checkout/: no literal IBAN/routing-number labels', !/\bIBAN\b/i.test(checkoutHtml) && !/routing number/i.test(checkoutHtml));
+check('checkout/: no credit-card input fields', !/name="card|autocomplete="cc-/i.test(checkoutHtml));
+check('checkout/: explains checkout is only for an approved reference', /approved project reference|quotation/i.test(checkoutNorm));
+check('checkout/: stays noindex (workflow page, not a search landing page)', /<meta name="robots" content="noindex, nofollow"/.test(checkoutHtml));
+
+// No fake reviews/ratings/testimonials anywhere in the built output.
+for (const relPath of allDistHtmlFiles) {
+  if (!existsSync(join(DIST, relPath))) continue;
+  const html = readHtml(relPath);
+  const blocks = jsonLdBlocks(html);
+  for (const b of blocks) {
+    try {
+      const parsed = JSON.parse(b);
+      const nodes = Array.isArray(parsed['@graph']) ? parsed['@graph'] : [parsed];
+      for (const n of nodes) {
+        check(`${relPath}: no fabricated Review schema`, n['@type'] !== 'Review');
+        check(`${relPath}: no fabricated AggregateRating schema`, n['@type'] !== 'AggregateRating');
+        check(`${relPath}: no fabricated LocalBusiness schema`, n['@type'] !== 'LocalBusiness');
+      }
+    } catch {
+      // already flagged as invalid JSON-LD above
+    }
+  }
+}
 
 // ---- Report ---------------------------------------------------------------
 console.log(`QA check: ${checks} assertions, ${failures.length} failure(s).`);

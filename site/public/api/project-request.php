@@ -57,7 +57,7 @@ register_shutdown_function(static function (): void {
 // Mirrors src/lib/legal.ts. The server is authoritative: whatever the
 // client submits is validated for presence/acceptance only, never used
 // in place of this value in the email record.
-const TERMS_VERSION = '2026-08-v1';
+const TERMS_VERSION = '2026-08-v2';
 
 const RECIPIENT_EMAIL = 'info@byteandbook.com';
 

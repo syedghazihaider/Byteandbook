@@ -1,41 +1,90 @@
 ---
-// V2-1: route placeholder only. The real checkout/payments architecture
-// (merchant integration, order/reference linking, Terms + Refund Policy
-// references) is scoped to V2-4 per CLAUDE.md — no payment functionality,
-// merchant credentials, or invented payment methods belong here yet.
-// noindex: this route isn't ready to be discovered/ranked until it has
-// real functionality behind it.
+// V2-4: real, honest Checkout / Payments page, replacing the V2-1
+// placeholder. No merchant gateway is configured, so this page does not
+// pretend one exists — no bank details, no PayPal/Stripe buttons, no
+// order-reference lookup form (there is no backend to verify a
+// reference against). Instead it explains the real payment flow and
+// gives a trustworthy path to it: email info@byteandbook.com with an
+// existing project reference. Stays noindex — a checkout/workflow page
+// isn't a search landing page, and forcing it into the sitemap would
+// just inflate the URL count without benefiting anyone.
 import BaseLayout from '../layouts/BaseLayout.astro';
 import Header from '../components/layout/Header.astro';
 import Footer from '../components/layout/Footer.astro';
 import Container from '../components/ui/Container.astro';
 import Button from '../components/ui/Button.astro';
 import StartProjectTrigger from '../components/project/StartProjectTrigger.astro';
+import PaymentMethodCard from '../components/checkout/PaymentMethodCard.astro';
+
+const EMAIL = 'info@byteandbook.com';
+const mailtoHref = `mailto:${EMAIL}?subject=${encodeURIComponent('Payment for project reference: ')}`;
+
+const futureMethods = [
+  { name: 'Bank Transfer', description: 'Direct transfer using invoice-provided account details.' },
+  { name: 'Invoice Payment', description: 'Pay against a ByteAndBook-issued invoice.' },
+  { name: 'PayPal', description: 'Pay via PayPal once enabled for your region.' },
+  { name: 'Stripe (Card Payment)', description: 'Pay by card once a merchant provider is configured.' },
+  { name: 'ACH Transfer', description: 'Where eligible, for supported bank accounts.' },
+];
 ---
 
 <BaseLayout
   title="Checkout — ByteAndBook"
-  description="ByteAndBook checkout and payments — coming soon."
+  description="ByteAndBook checkout — payments are arranged after project scope and quotation approval."
   path="/checkout/"
   noindex
 >
   <Header />
 
-  <main id="main-content" tabindex="-1" class="flex min-h-[70vh] items-center pt-24">
-    <Container class="max-w-2xl text-center">
+  <main id="main-content" tabindex="-1" class="pt-32 pb-24">
+    <Container class="max-w-2xl">
       <span class="inline-block rounded-full border border-ink-700 bg-ink-900/60 px-4 py-1.5 text-xs font-semibold uppercase tracking-[0.18em] text-signal-400">
         Checkout
       </span>
-      <h1 class="mt-5 text-3xl font-bold text-ink-50 md:text-4xl">Payments architecture is in progress</h1>
-      <p class="mx-auto mt-4 max-w-md text-ink-300">
-        Checkout is only used once a project scope and quotation have been
-        confirmed. This page will support that flow once payment
-        infrastructure is connected — until then, project requests are
-        handled directly.
+      <h1 class="mt-5 text-4xl font-bold text-ink-50 md:text-5xl">Payments</h1>
+      <p class="mt-5 text-lg text-ink-300">
+        Use checkout only after receiving a ByteAndBook quotation and project reference. Payment for
+        custom work is never taken before scope has been agreed.
       </p>
-      <div class="mt-8 flex flex-wrap items-center justify-center gap-4">
-        <StartProjectTrigger variant="primary">Start a Project</StartProjectTrigger>
-        <Button href="/" variant="outline">Back to Home</Button>
+
+      <div class="mt-10 rounded-bb-lg border border-ink-700 bg-ink-900/60 p-8 text-center" data-reveal>
+        <h2 class="text-xl font-semibold text-ink-50">Have an approved project reference?</h2>
+        <p class="mx-auto mt-3 max-w-md text-sm text-ink-300">
+          Payments are arranged after project scope and quotation approval. If you already have a
+          ByteAndBook project reference (format <span class="font-mono text-ink-200">BB-2026-XXXXX</span>),
+          contact us with it and we'll send secure payment instructions.
+        </p>
+        <div class="mt-7">
+          <Button href={mailtoHref} variant="primary">Email info@byteandbook.com</Button>
+        </div>
+      </div>
+
+      <div class="mt-12">
+        <h2 class="text-lg font-semibold text-ink-50">Future payment methods</h2>
+        <p class="mt-2 text-sm text-ink-300">
+          The methods below are the ones we plan to support. None are configured yet — this list is
+          informational only, not a way to pay right now.
+        </p>
+        <div class="mt-5 grid gap-3">
+          {futureMethods.map((method) => (
+            <PaymentMethodCard name={method.name} description={method.description} />
+          ))}
+        </div>
+      </div>
+
+      <div class="mt-12 border-t border-ink-800 pt-8 text-sm text-ink-300">
+        <p>
+          By proceeding to payment once instructions are provided, you acknowledge our
+          <a href="/terms/" class="text-signal-400 hover:text-signal-300">Terms of Service</a> and
+          <a href="/refund-policy/" class="text-signal-400 hover:text-signal-300">Refund &amp; Cancellation Policy</a> —
+          once an order is confirmed and payment received, it is non-refundable except as those pages
+          describe.
+        </p>
+      </div>
+
+      <div class="mt-10 flex flex-wrap items-center justify-center gap-4">
+        <StartProjectTrigger variant="outline">Don't have a reference yet? Start a Project</StartProjectTrigger>
+        <Button href="/" variant="ghost">Back to Home</Button>
       </div>
     </Container>
   </main>

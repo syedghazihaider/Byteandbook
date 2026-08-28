@@ -3,9 +3,6 @@ Allow: /
 Disallow: /style-guide/
 Disallow: /404.html
 Disallow: /checkout/
-Disallow: /terms/
-Disallow: /privacy/
-Disallow: /refund-policy/
 Disallow: /work/
 Disallow: /insights/
 

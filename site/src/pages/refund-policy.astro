@@ -1,38 +1,161 @@
 ---
-// V2-1: route placeholder only. Full Refund & Cancellation Policy content
-// is scoped to V2-4 per CLAUDE.md — no legal text is drafted here, and
-// no claim that these terms override mandatory consumer law is made.
-// noindex: incomplete legal content shouldn't be indexed/ranked yet.
+// V2-4: real Refund & Cancellation Policy, replacing the V2-1
+// placeholder. Structure follows CLAUDE.md's A-H sections exactly.
+// Now indexable — same reasoning as /terms/ and /privacy/.
 import BaseLayout from '../layouts/BaseLayout.astro';
 import Header from '../components/layout/Header.astro';
 import Footer from '../components/layout/Footer.astro';
 import Container from '../components/ui/Container.astro';
-import Button from '../components/ui/Button.astro';
+import LegalToc from '../components/legal/LegalToc.astro';
+import { TERMS_VERSION } from '../lib/legal';
+
+const SITE_URL = 'https://byteandbook.com';
+const path = '/refund-policy/';
+const lastUpdated = 'August 2026';
+
+const sections = [
+  { id: 'project-request', label: 'Project request' },
+  { id: 'before-confirmation', label: 'Before confirmation' },
+  { id: 'confirmed-order', label: 'Confirmed order' },
+  { id: 'cancellation', label: 'Cancellation' },
+  { id: 'third-party-costs', label: 'Third-party costs' },
+  { id: 'scope-changes', label: 'Scope changes' },
+  { id: 'payment-errors', label: 'Duplicate / technical payment errors' },
+  { id: 'contact', label: 'Contact' },
+];
+
+const breadcrumbJsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'BreadcrumbList',
+  itemListElement: [
+    { '@type': 'ListItem', position: 1, name: 'Home', item: `${SITE_URL}/` },
+    { '@type': 'ListItem', position: 2, name: 'Refund & Cancellation Policy', item: `${SITE_URL}${path}` },
+  ],
+};
 ---
 
 <BaseLayout
   title="Refund & Cancellation Policy — ByteAndBook"
-  description="ByteAndBook Refund & Cancellation Policy — in progress."
-  path="/refund-policy/"
-  noindex
+  description="ByteAndBook's Refund & Cancellation Policy — how project requests, order confirmation, payments, and cancellations work."
+  path={path}
+  jsonLd={[breadcrumbJsonLd]}
 >
   <Header />
 
-  <main id="main-content" tabindex="-1" class="flex min-h-[70vh] items-center pt-24">
-    <Container class="max-w-2xl text-center">
-      <span class="inline-block rounded-full border border-ink-700 bg-ink-900/60 px-4 py-1.5 text-xs font-semibold uppercase tracking-[0.18em] text-signal-400">
-        Refund &amp; Cancellation Policy
-      </span>
-      <h1 class="mt-5 text-3xl font-bold text-ink-50 md:text-4xl">This page is being finalized</h1>
-      <p class="mx-auto mt-4 max-w-md text-ink-300">
-        Our full Refund &amp; Cancellation Policy, covering confirmed
-        orders and deposits, will be published here.
-      </p>
-      <div class="mt-8 flex flex-wrap items-center justify-center gap-4">
-        <Button href="/contact/" variant="primary">Contact Us</Button>
-        <Button href="/" variant="outline">Back to Home</Button>
-      </div>
-    </Container>
+  <main id="main-content" tabindex="-1">
+    <section class="pt-32 pb-12">
+      <Container class="max-w-3xl">
+        <nav class="mb-8 flex items-center gap-2 text-sm text-ink-300" aria-label="Breadcrumb">
+          <a href="/" class="hover:text-ink-200">Home</a>
+          <span>/</span>
+          <span class="text-ink-200">Refund &amp; Cancellation Policy</span>
+        </nav>
+
+        <span class="inline-block rounded-full border border-ink-700 bg-ink-900/60 px-4 py-1.5 text-xs font-semibold uppercase tracking-[0.18em] text-signal-400">
+          Legal
+        </span>
+        <h1 class="mt-5 text-4xl font-bold text-ink-50 md:text-5xl">Refund &amp; Cancellation Policy</h1>
+        <p class="mt-5 text-lg text-ink-300">
+          This policy explains exactly when a project request becomes a confirmed order, and what
+          happens if you cancel before or after that point.
+        </p>
+        <p class="mt-4 text-sm text-ink-400">
+          Last updated: {lastUpdated} · Terms Version: {TERMS_VERSION}
+        </p>
+      </Container>
+    </section>
+
+    <section class="border-t border-ink-800 py-10">
+      <Container class="max-w-3xl">
+        <LegalToc items={sections} />
+      </Container>
+    </section>
+
+    <section class="py-10">
+      <Container class="max-w-3xl">
+        <div class="prose-service space-y-12 text-ink-300">
+          <section id="project-request">
+            <h2 class="text-2xl font-bold text-ink-50">A. Project request</h2>
+            <p class="mt-3">
+              Submitting an inquiry through the Start a Project form, or by direct email, is a project
+              request only. It does not place an order and does not create a payment obligation.
+            </p>
+          </section>
+
+          <section id="before-confirmation">
+            <h2 class="text-2xl font-bold text-ink-50">B. Before confirmation</h2>
+            <p class="mt-3">
+              No custom project becomes a confirmed order until you have accepted the agreed
+              commercial conditions and scope, and ByteAndBook has received any required payment or
+              deposit. You may withdraw a project request at any point before confirmation at no cost.
+            </p>
+          </section>
+
+          <section id="confirmed-order">
+            <h2 class="text-2xl font-bold text-ink-50">C. Confirmed order</h2>
+            <p class="mt-3">
+              Once an order is confirmed and the required payment or deposit has been received,
+              payments are non-refundable — subject to (a) any applicable law that requires otherwise,
+              and (b) any exception ByteAndBook expressly agrees to in writing.
+            </p>
+          </section>
+
+          <section id="cancellation">
+            <h2 class="text-2xl font-bold text-ink-50">D. Cancellation</h2>
+            <p class="mt-3">
+              Cancelling a project after confirmation does not automatically entitle you to
+              reimbursement. Work already performed up to the point of cancellation is not refunded.
+            </p>
+          </section>
+
+          <section id="third-party-costs">
+            <h2 class="text-2xl font-bold text-ink-50">E. Third-party costs</h2>
+            <p class="mt-3">
+              Where a project involves third-party costs already committed or incurred on your behalf
+              — for example, where applicable, domains, hosting, cloud infrastructure, software
+              licenses, APIs, advertising spend, platform fees, plugins, stock/media licenses, or
+              external contractors/vendors — those costs may be non-refundable regardless of the
+              status of the ByteAndBook engagement itself. Not every category applies to every
+              project.
+            </p>
+          </section>
+
+          <section id="scope-changes">
+            <h2 class="text-2xl font-bold text-ink-50">F. Scope changes</h2>
+            <p class="mt-3">
+              Major changes to an agreed scope after confirmation may require a revised quote and/or
+              timeline before work continues. A scope change is not itself a cancellation and does not
+              trigger a refund.
+            </p>
+          </section>
+
+          <section id="payment-errors">
+            <h2 class="text-2xl font-bold text-ink-50">G. Duplicate / technical payment errors</h2>
+            <p class="mt-3">
+              ByteAndBook does not keep a payment made in error — a genuine duplicate charge or a
+              technical payment-processing mistake. If you believe this has happened, contact us
+              immediately at info@byteandbook.com with your reference ID and payment details; we will
+              investigate and correct genuine errors.
+            </p>
+          </section>
+
+          <section id="contact">
+            <h2 class="text-2xl font-bold text-ink-50">H. Contact</h2>
+            <p class="mt-3">
+              For any question about this policy, or a genuine billing issue, contact
+              <a href="mailto:info@byteandbook.com" class="text-signal-400 hover:text-signal-300">info@byteandbook.com</a>.
+            </p>
+          </section>
+        </div>
+
+        <div class="mt-16 rounded-bb-lg border border-ink-700 bg-ink-900/60 p-8 text-center" data-reveal>
+          <h2 class="text-xl font-semibold text-ink-50">Have a billing question?</h2>
+          <p class="mx-auto mt-3 max-w-md text-sm text-ink-300">
+            Contact us at <a href="mailto:info@byteandbook.com" class="text-signal-400 hover:text-signal-300">info@byteandbook.com</a> with your reference ID.
+          </p>
+        </div>
+      </Container>
+    </section>
   </main>
 
   <Footer />

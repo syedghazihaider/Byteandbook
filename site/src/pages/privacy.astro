@@ -1,38 +1,238 @@
 ---
-// V2-1: route placeholder only. Full Privacy Policy content is scoped to
-// V2-4 per CLAUDE.md — no legal text is drafted here, and no claim of
-// guaranteed GDPR/CCPA compliance is made. noindex: incomplete legal
-// content shouldn't be indexed/ranked yet.
+// V2-4: real Privacy Policy, replacing the V2-1 placeholder. Grounded
+// only in what the site actually collects — the Start Project modal's
+// fields (StartProjectModal.astro) and what the V2-3 backend
+// (public/api/project-request.php) actually does with them (email
+// delivery + temporary rate-limit metadata, no database). No claims
+// about compliance frameworks, retention periods, or practices that
+// don't exist. Now indexable — same reasoning as /terms/.
 import BaseLayout from '../layouts/BaseLayout.astro';
 import Header from '../components/layout/Header.astro';
 import Footer from '../components/layout/Footer.astro';
 import Container from '../components/ui/Container.astro';
-import Button from '../components/ui/Button.astro';
+import LegalToc from '../components/legal/LegalToc.astro';
+import { TERMS_VERSION } from '../lib/legal';
+
+const SITE_URL = 'https://byteandbook.com';
+const path = '/privacy/';
+const lastUpdated = 'August 2026';
+
+const sections = [
+  { id: 'introduction', label: 'Introduction' },
+  { id: 'information-we-collect', label: 'Information we collect' },
+  { id: 'why-we-collect-it', label: 'Why we collect it' },
+  { id: 'project-inquiry-handling', label: 'Project inquiry handling' },
+  { id: 'communications', label: 'Communications' },
+  { id: 'security', label: 'Security' },
+  { id: 'service-providers', label: 'Service providers' },
+  { id: 'data-retention', label: 'Data retention' },
+  { id: 'cookies-tracking', label: 'Cookies and tracking' },
+  { id: 'your-rights', label: 'Your rights' },
+  { id: 'childrens-privacy', label: "Children's privacy" },
+  { id: 'changes-to-this-policy', label: 'Changes to this policy' },
+  { id: 'contact', label: 'Contact' },
+];
+
+const breadcrumbJsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'BreadcrumbList',
+  itemListElement: [
+    { '@type': 'ListItem', position: 1, name: 'Home', item: `${SITE_URL}/` },
+    { '@type': 'ListItem', position: 2, name: 'Privacy Policy', item: `${SITE_URL}${path}` },
+  ],
+};
 ---
 
 <BaseLayout
   title="Privacy Policy — ByteAndBook"
-  description="ByteAndBook Privacy Policy — in progress."
-  path="/privacy/"
-  noindex
+  description="How ByteAndBook collects and uses the information submitted through project requests. No hidden tracking — read our full Privacy Policy."
+  path={path}
+  jsonLd={[breadcrumbJsonLd]}
 >
   <Header />
 
-  <main id="main-content" tabindex="-1" class="flex min-h-[70vh] items-center pt-24">
-    <Container class="max-w-2xl text-center">
-      <span class="inline-block rounded-full border border-ink-700 bg-ink-900/60 px-4 py-1.5 text-xs font-semibold uppercase tracking-[0.18em] text-signal-400">
-        Privacy Policy
-      </span>
-      <h1 class="mt-5 text-3xl font-bold text-ink-50 md:text-4xl">This page is being finalized</h1>
-      <p class="mx-auto mt-4 max-w-md text-ink-300">
-        Our full Privacy Policy, covering how project inquiry data is
-        handled, will be published here.
-      </p>
-      <div class="mt-8 flex flex-wrap items-center justify-center gap-4">
-        <Button href="/contact/" variant="primary">Contact Us</Button>
-        <Button href="/" variant="outline">Back to Home</Button>
-      </div>
-    </Container>
+  <main id="main-content" tabindex="-1">
+    <section class="pt-32 pb-12">
+      <Container class="max-w-3xl">
+        <nav class="mb-8 flex items-center gap-2 text-sm text-ink-300" aria-label="Breadcrumb">
+          <a href="/" class="hover:text-ink-200">Home</a>
+          <span>/</span>
+          <span class="text-ink-200">Privacy Policy</span>
+        </nav>
+
+        <span class="inline-block rounded-full border border-ink-700 bg-ink-900/60 px-4 py-1.5 text-xs font-semibold uppercase tracking-[0.18em] text-signal-400">
+          Legal
+        </span>
+        <h1 class="mt-5 text-4xl font-bold text-ink-50 md:text-5xl">Privacy Policy</h1>
+        <p class="mt-5 text-lg text-ink-300">
+          This policy explains what information ByteAndBook actually collects through this website,
+          why, and what we do with it. It only describes real, current practices.
+        </p>
+        <p class="mt-4 text-sm text-ink-400">
+          Last updated: {lastUpdated} · Terms Version: {TERMS_VERSION}
+        </p>
+      </Container>
+    </section>
+
+    <section class="border-t border-ink-800 py-10">
+      <Container class="max-w-3xl">
+        <LegalToc items={sections} />
+      </Container>
+    </section>
+
+    <section class="py-10">
+      <Container class="max-w-3xl">
+        <div class="prose-service space-y-12 text-ink-300">
+          <section id="introduction">
+            <h2 class="text-2xl font-bold text-ink-50">1. Introduction</h2>
+            <p class="mt-3">
+              ByteAndBook ("we", "us") respects your privacy. This policy covers the ByteAndBook
+              website and the project-request process. We do not claim certified compliance with any
+              specific privacy law (such as GDPR or CCPA) — this policy describes our actual practices
+              in plain terms.
+            </p>
+          </section>
+
+          <section id="information-we-collect">
+            <h2 class="text-2xl font-bold text-ink-50">2. Information we collect</h2>
+            <p class="mt-3">
+              When you submit a project request through the Start a Project form, we collect: your
+              full name, email address, mobile/WhatsApp number, company or brand name (if provided),
+              the service(s) you selected (including a description if you chose "Other"), your project
+              description, and — if provided — your budget range, desired timeline, and preferred
+              contact method. We also record your Terms acceptance and Privacy acknowledgement, a
+              system-generated reference ID, and the submission timestamp.
+            </p>
+            <p class="mt-3">
+              If you email us directly at info@byteandbook.com instead of using the form, whatever you
+              include in that email is received the same way any email is — handled by our mailbox,
+              not by any separate system on this website.
+            </p>
+          </section>
+
+          <section id="why-we-collect-it">
+            <h2 class="text-2xl font-bold text-ink-50">3. Why we collect it</h2>
+            <p class="mt-3">
+              We collect this information solely to understand, respond to, and (where relevant) scope
+              and quote your project request. We do not use it for advertising, and we do not sell it.
+            </p>
+          </section>
+
+          <section id="project-inquiry-handling">
+            <h2 class="text-2xl font-bold text-ink-50">4. Project inquiry handling</h2>
+            <p class="mt-3">
+              When you submit the Start a Project form, the information is validated and emailed
+              directly to info@byteandbook.com. The website does not store your submission in a
+              database. Our backend also applies basic anti-abuse measures — a hidden honeypot field
+              and short-term rate limiting — described further in Cookies and tracking (section 9).
+            </p>
+          </section>
+
+          <section id="communications">
+            <h2 class="text-2xl font-bold text-ink-50">5. Communications</h2>
+            <p class="mt-3">
+              We use the contact details you provide to follow up about your project request — by
+              email, WhatsApp/mobile, or your stated preferred contact method. We do not add you to a
+              marketing list from a project request; there is no separate marketing-consent checkbox
+              because there is no marketing list to opt into at this time.
+            </p>
+          </section>
+
+          <section id="security">
+            <h2 class="text-2xl font-bold text-ink-50">6. Security</h2>
+            <p class="mt-3">
+              Project requests are submitted over HTTPS. Our submission endpoint validates input
+              server-side, rejects requests from unexpected origins, and applies rate limiting to
+              reduce abuse. No security measure is perfect, and we cannot guarantee absolute security
+              of information transmitted over the internet.
+            </p>
+          </section>
+
+          <section id="service-providers">
+            <h2 class="text-2xl font-bold text-ink-50">7. Service providers</h2>
+            <p class="mt-3">
+              Our website is hosted on Namecheap shared hosting, which processes project-request
+              submissions to deliver them by email and provides the mailbox that receives them. Fonts
+              are served by Google Fonts (see section 9). We do not currently use any analytics,
+              advertising, or marketing-automation service provider.
+            </p>
+          </section>
+
+          <section id="data-retention">
+            <h2 class="text-2xl font-bold text-ink-50">8. Data retention</h2>
+            <p class="mt-3">
+              Project request content is delivered by email and is not stored in a website database.
+              Emails themselves remain in our business mailbox for as long as reasonably necessary to
+              respond to and manage your inquiry; we have not yet finalized a fixed maximum retention
+              period for that mailbox and will update this policy when we do. Technical rate-limiting
+              metadata (see section 9) is short-lived and automatically ages out — it is not a record
+              of your submission content.
+            </p>
+          </section>
+
+          <section id="cookies-tracking">
+            <h2 class="text-2xl font-bold text-ink-50">9. Cookies and tracking</h2>
+            <p class="mt-3">
+              This website does not use analytics, advertising pixels, or tracking cookies, and does
+              not use browser storage (such as localStorage) to track you across visits. The only
+              third-party resource loaded is Google Fonts (typeface files), which is functional, not
+              tracking-related.
+            </p>
+            <p class="mt-3">
+              Our project-request backend applies short-term, IP-based rate limiting purely to reduce
+              spam/abuse of the submission endpoint. It stores a hashed version of your IP address
+              together with a small list of request timestamps, in a location outside the public
+              website, for a rolling ten-minute window — not your submission content, and not used for
+              tracking or profiling. If our use of cookies or tracking changes, we will update this
+              section.
+            </p>
+          </section>
+
+          <section id="your-rights">
+            <h2 class="text-2xl font-bold text-ink-50">10. Your rights</h2>
+            <p class="mt-3">
+              You can ask us what information we hold about you, request that we correct it, or ask us
+              to delete a project-request email from our mailbox, by contacting
+              info@byteandbook.com. We will respond and act on reasonable requests. Depending on where
+              you live, you may also have additional rights under local law; this policy does not
+              limit those rights.
+            </p>
+          </section>
+
+          <section id="childrens-privacy">
+            <h2 class="text-2xl font-bold text-ink-50">11. Children's privacy</h2>
+            <p class="mt-3">
+              This website is intended for business inquiries and is not directed at children. We do
+              not knowingly collect information from children.
+            </p>
+          </section>
+
+          <section id="changes-to-this-policy">
+            <h2 class="text-2xl font-bold text-ink-50">12. Changes to this policy</h2>
+            <p class="mt-3">
+              If our data practices change, we will update this page and the Terms Version shown at
+              the top. Continued use of the project-request form after an update constitutes
+              acknowledgement of the current policy.
+            </p>
+          </section>
+
+          <section id="contact">
+            <h2 class="text-2xl font-bold text-ink-50">13. Contact</h2>
+            <p class="mt-3">
+              For any privacy question or request, contact
+              <a href="mailto:info@byteandbook.com" class="text-signal-400 hover:text-signal-300">info@byteandbook.com</a>.
+            </p>
+          </section>
+        </div>
+
+        <div class="mt-16 rounded-bb-lg border border-ink-700 bg-ink-900/60 p-8 text-center" data-reveal>
+          <h2 class="text-xl font-semibold text-ink-50">Have a privacy question?</h2>
+          <p class="mx-auto mt-3 max-w-md text-sm text-ink-300">
+            Reach us at <a href="mailto:info@byteandbook.com" class="text-signal-400 hover:text-signal-300">info@byteandbook.com</a>.
+          </p>
+        </div>
+      </Container>
+    </section>
   </main>
 
   <Footer />
