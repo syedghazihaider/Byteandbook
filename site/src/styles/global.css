@@ -123,6 +123,36 @@
     border-radius: var(--bb-radius-sm);
   }
 
+  /* Phase 10: keyboard-only "Skip to main content" link. Sits offscreen
+     until focused, then docks in the top-left corner above everything
+     else — the fixed header is z-50, so this needs to outrank it. */
+  .skip-link {
+    position: fixed;
+    top: 1rem;
+    left: 1rem;
+    z-index: 100;
+    transform: translateY(-150%);
+    background-color: var(--bb-bg-elevated-2);
+    color: var(--bb-text);
+    border: 1px solid var(--bb-border-strong);
+    border-radius: var(--bb-radius-sm);
+    padding: 0.75rem 1.25rem;
+    font-size: var(--bb-text-sm);
+    font-weight: 600;
+    transition: transform 0.2s ease;
+  }
+  .skip-link:focus {
+    transform: translateY(0);
+  }
+
+  /* The skip link's target (tabindex="-1", see each page's <main>) only
+     needs to receive DOM focus so subsequent Tab presses continue from
+     inside the content — it shouldn't draw an outline around the whole
+     page. This is the standard pattern for skip-link targets. */
+  main:focus {
+    outline: none;
+  }
+
   /* Global reduced-motion guard: any element opting into motion via
      [data-animate] is neutralized here in one place, rather than every
      Level 1/2 component needing its own media query. */

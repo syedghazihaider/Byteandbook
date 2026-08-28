@@ -48,10 +48,10 @@ const typeScale = [
   path="/style-guide/"
   noindex
 >
-  <main class="py-16">
+  <main id="main-content" tabindex="-1" class="py-16">
     <Container class="flex flex-col gap-16">
       <header>
-        <p class="text-xs font-semibold uppercase tracking-[0.18em] text-ink-400">Phase 4 — Design System</p>
+        <p class="text-xs font-semibold uppercase tracking-[0.18em] text-ink-300">Phase 4 — Design System</p>
         <h1 class="mt-2 text-4xl font-bold text-ink-50">ByteAndBook Style Guide</h1>
         <p class="mt-3 max-w-2xl text-ink-300">
           "Obsidian &amp; Signal" — a graphite neutral base with one precise
@@ -86,11 +86,11 @@ const typeScale = [
 
       <section>
         <SectionHeading eyebrow="Typography" heading="Type scale" />
-        <p class="mt-2 text-sm text-ink-400">Display: Sora Variable &middot; Body: Inter Variable</p>
+        <p class="mt-2 text-sm text-ink-300">Display: Sora Variable &middot; Body: Inter Variable</p>
         <div class="mt-6 flex flex-col gap-4">
           {typeScale.map(([label, cls, sample]) => (
             <div class="flex items-baseline gap-6 border-b border-ink-800 pb-4">
-              <span class="w-12 shrink-0 font-mono text-xs text-ink-500">{label}</span>
+              <span class="w-12 shrink-0 font-mono text-xs text-ink-300">{label}</span>
               <span class={`${cls} font-display font-semibold text-ink-50`}>{sample}</span>
             </div>
           ))}

@@ -114,10 +114,10 @@ const isEbook = service.id === 'ebook-publishing';
 >
   <Header />
 
-  <main>
+  <main id="main-content" tabindex="-1">
     <section class="pt-32 pb-16">
       <Container>
-        <nav class="mb-8 flex items-center gap-2 text-sm text-ink-400" aria-label="Breadcrumb">
+        <nav class="mb-8 flex items-center gap-2 text-sm text-ink-300" aria-label="Breadcrumb">
           <a href="/" class="hover:text-ink-200">Home</a>
           <span>/</span>
           <a href="/#services" class="hover:text-ink-200">Services</a>
@@ -178,7 +178,7 @@ const isEbook = service.id === 'ebook-publishing';
     {service.data.flowSteps && service.data.flowSteps.length > 0 && (
       <section class="border-y border-ink-800 bg-ink-900/40 py-16" data-reveal>
         <Container>
-          <h2 class="text-center text-sm font-semibold uppercase tracking-[0.18em] text-ink-400">
+          <h2 class="text-center text-sm font-semibold uppercase tracking-[0.18em] text-ink-300">
             How it works
           </h2>
           <div class="mt-10">

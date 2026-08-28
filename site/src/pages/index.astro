@@ -87,7 +87,7 @@ const faqs = [
 >
   <Header />
 
-  <main id="top">
+  <main id="main-content" tabindex="-1">
     <!-- Hero -->
     <section class="relative flex min-h-screen items-center overflow-hidden pt-24">
       <!-- Static placeholder backdrop for the Phase 7 Level-1 3D hero
@@ -162,7 +162,7 @@ const faqs = [
                   <div class="flex h-12 w-12 items-center justify-center rounded-bb-sm bg-signal-500/10 text-signal-400">
                     <Icon name={service.data.icon as any} class="h-6 w-6" />
                   </div>
-                  <span class="text-xs font-semibold uppercase tracking-[0.14em] text-ink-500">
+                  <span class="text-xs font-semibold uppercase tracking-[0.14em] text-ink-300">
                     {service.data.pillar}
                   </span>
                 </div>
@@ -207,6 +207,7 @@ const faqs = [
                   viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75"
                   stroke-linecap="round" stroke-linejoin="round"
                   class="h-5 w-5 shrink-0 text-ink-400 transition-transform duration-200 group-open:rotate-45"
+                  aria-hidden="true"
                 >
                   <line x1="12" y1="5" x2="12" y2="19" />
                   <line x1="5" y1="12" x2="19" y2="12" />

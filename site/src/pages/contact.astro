@@ -32,7 +32,7 @@ const briefPoints = [
 >
   <Header />
 
-  <main class="pt-32 pb-24">
+  <main id="main-content" tabindex="-1" class="pt-32 pb-24">
     <Container class="max-w-3xl">
       <div class="relative overflow-hidden">
         <AmbientField3D />
@@ -50,7 +50,7 @@ const briefPoints = [
 
       <div class="mt-10 flex flex-col items-start gap-4 rounded-bb-lg border border-ink-700 bg-ink-900/60 p-8 sm:flex-row sm:items-center sm:justify-between">
         <div>
-          <p class="text-xs font-semibold uppercase tracking-[0.14em] text-ink-500">Email</p>
+          <p class="text-xs font-semibold uppercase tracking-[0.14em] text-ink-300">Email</p>
           <a href={`mailto:${EMAIL}`} class="mt-1 block text-2xl font-semibold text-ink-50 hover:text-signal-300">
             {EMAIL}
           </a>
@@ -65,6 +65,7 @@ const briefPoints = [
           >
             Copy
           </button>
+          <span class="sr-only" role="status" aria-live="polite" data-copy-status></span>
         </div>
       </div>
 
@@ -78,7 +79,7 @@ const briefPoints = [
             </li>
           ))}
         </ul>
-        <p class="mt-6 text-sm text-ink-400">
+        <p class="mt-6 text-sm text-ink-300">
           None of this is required to reach out — if you're not sure yet,
           send what you have and we'll ask.
         </p>
@@ -91,14 +92,17 @@ const briefPoints = [
 
 <script>
   const button = document.querySelector<HTMLButtonElement>('[data-copy-email]');
+  const status = document.querySelector<HTMLElement>('[data-copy-status]');
   button?.addEventListener('click', async () => {
     const email = button.dataset.email ?? '';
     try {
       await navigator.clipboard.writeText(email);
       const original = button.textContent;
       button.textContent = 'Copied';
+      if (status) status.textContent = `Copied ${email} to clipboard`;
       setTimeout(() => {
         button.textContent = original;
+        if (status) status.textContent = '';
       }, 1600);
     } catch {
       // Clipboard API unavailable/denied — the mailto: button and the

@@ -20,6 +20,9 @@ interface Props {
 }
 const { name, class: className = 'h-6 w-6' } = Astro.props;
 
+// Every usage in this codebase pairs the icon with an adjacent visible
+// text label (card titles, nav items) — the icon itself is decorative
+// and shouldn't be separately announced to screen readers.
 const common = {
   viewBox: '0 0 24 24',
   fill: 'none',
@@ -27,6 +30,7 @@ const common = {
   'stroke-width': '1.75',
   'stroke-linecap': 'round',
   'stroke-linejoin': 'round',
+  'aria-hidden': 'true',
 };
 ---
 
