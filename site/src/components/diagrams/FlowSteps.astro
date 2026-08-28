@@ -1,0 +1,62 @@
+---
+// Static structural version of the per-service visual-concept flow
+// (CLAUDE.md's "Website -> Crawler -> Index -> ..." style diagrams).
+// Level 2 motion (below) staggers this same markup in on scroll — the
+// diagram is never rebuilt for animation, only enhanced.
+interface Props {
+  steps: string[];
+}
+const { steps } = Astro.props;
+---
+
+<div class="flex flex-wrap items-start justify-center gap-x-1 gap-y-8" data-flow>
+  {steps.map((step, i) => (
+    <Fragment>
+      <div class="flex w-28 flex-col items-center gap-3 text-center sm:w-32" data-flow-node>
+        <div class="flex h-12 w-12 items-center justify-center rounded-full border border-ink-600 bg-ink-900 font-display text-base font-semibold text-signal-400">
+          {i + 1}
+        </div>
+        <span class="text-xs font-medium leading-snug text-ink-200">{step}</span>
+      </div>
+      {i < steps.length - 1 && (
+        <svg
+          viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75"
+          stroke-linecap="round" stroke-linejoin="round"
+          class="mt-4 h-5 w-5 shrink-0 text-ink-600"
+          data-flow-arrow
+        >
+          <polyline points="9 6 15 12 9 18" />
+        </svg>
+      )}
+    </Fragment>
+  ))}
+</div>
+
+<script>
+  import { prefersReducedMotion } from '../../scripts/motion';
+
+  if (!prefersReducedMotion()) {
+    const containers = document.querySelectorAll<HTMLElement>('[data-flow]');
+    if (containers.length > 0) {
+      const { gsap } = await import('gsap');
+      const { ScrollTrigger } = await import('gsap/ScrollTrigger');
+      gsap.registerPlugin(ScrollTrigger);
+
+      containers.forEach((container) => {
+        const targets = container.querySelectorAll('[data-flow-node], [data-flow-arrow]');
+        gsap.from(targets, {
+          opacity: 0,
+          y: 14,
+          duration: 0.5,
+          stagger: 0.09,
+          ease: 'power2.out',
+          scrollTrigger: {
+            trigger: container,
+            start: 'top 82%',
+            once: true,
+          },
+        });
+      });
+    }
+  }
+</script>
