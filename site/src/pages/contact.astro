@@ -14,6 +14,7 @@ import Container from '../components/ui/Container.astro';
 import Card from '../components/ui/Card.astro';
 import Button from '../components/ui/Button.astro';
 import AmbientField3D from '../components/three/AmbientField3D.astro';
+import StartProjectTrigger from '../components/project/StartProjectTrigger.astro';
 
 const EMAIL = 'info@byteandbook.com';
 
@@ -42,15 +43,28 @@ const briefPoints = [
           </span>
           <h1 class="mt-5 text-4xl font-bold text-ink-50 md:text-5xl">Start a project</h1>
           <p class="mt-5 text-lg text-ink-300">
-            Email us directly and tell us what you're building — there's no
-            form to fill out, just a real inbox on the other end.
+            Use the project request form for the fastest path to a scoped
+            reply, or email us directly if you'd rather write it yourself
+            — either way, a real inbox is on the other end.
           </p>
         </div>
       </div>
 
-      <div class="mt-10 flex flex-col items-start gap-4 rounded-bb-lg border border-ink-700 bg-ink-900/60 p-8 sm:flex-row sm:items-center sm:justify-between">
+      <div class="mt-10 rounded-bb-lg border border-ink-700 bg-ink-900/60 p-8 text-center">
+        <p class="text-xs font-semibold uppercase tracking-[0.14em] text-ink-300">Fastest way to reach us</p>
+        <h2 class="mt-2 text-xl font-semibold text-ink-50">Request a project</h2>
+        <p class="mx-auto mt-2 max-w-md text-sm text-ink-300">
+          Tell us what you need — service(s), a short description, and how
+          to reach you. This is a project request, not an order.
+        </p>
+        <div class="mt-6">
+          <StartProjectTrigger variant="primary">Start a Project</StartProjectTrigger>
+        </div>
+      </div>
+
+      <div class="mt-6 flex flex-col items-start gap-4 rounded-bb-lg border border-ink-700 bg-ink-900/60 p-8 sm:flex-row sm:items-center sm:justify-between">
         <div>
-          <p class="text-xs font-semibold uppercase tracking-[0.14em] text-ink-300">Email</p>
+          <p class="text-xs font-semibold uppercase tracking-[0.14em] text-ink-300">Or email directly</p>
           <a href={`mailto:${EMAIL}`} class="mt-1 block text-2xl font-semibold text-ink-50 hover:text-signal-300">
             {EMAIL}
           </a>

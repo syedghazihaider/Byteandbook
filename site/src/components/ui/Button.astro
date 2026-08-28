@@ -5,9 +5,13 @@ interface Props {
   href?: string;
   variant?: 'primary' | 'outline' | 'ghost';
   class?: string;
+  // Forwarded as-is to the rendered element — lets callers (e.g.
+  // StartProjectTrigger) attach type="button", data-*, or aria-*
+  // attributes without this component needing to know about them.
+  [key: string]: unknown;
 }
 
-const { href, variant = 'primary', class: className = '' } = Astro.props;
+const { href, variant = 'primary', class: className = '', ...rest } = Astro.props;
 const Tag = href ? 'a' : 'button';
 
 const base =
@@ -27,6 +31,6 @@ const variants = {
 };
 ---
 
-<Tag href={href} class={`${base} ${variants[variant]} ${className}`}>
+<Tag href={href} class={`${base} ${variants[variant]} ${className}`} {...rest}>
   <slot />
 </Tag>

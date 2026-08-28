@@ -8,6 +8,7 @@ import SectionHeading from '../components/ui/SectionHeading.astro';
 import Card from '../components/ui/Card.astro';
 import Button from '../components/ui/Button.astro';
 import Icon from '../components/ui/Icon.astro';
+import StartProjectTrigger from '../components/project/StartProjectTrigger.astro';
 import HeroScene from '../components/three/HeroScene.astro';
 import CapabilitySystem3D from '../components/three/CapabilitySystem3D.astro';
 
@@ -117,7 +118,7 @@ const faqs = [
           disconnected vendors.
         </p>
         <div class="mt-10 flex flex-wrap items-center justify-center gap-4">
-          <Button href="/contact/" variant="primary">Start a Project</Button>
+          <StartProjectTrigger variant="primary">Start a Project</StartProjectTrigger>
           <Button href="/services/" variant="outline">Explore Services</Button>
         </div>
       </Container>
@@ -238,7 +239,7 @@ const faqs = [
             touches — we'll scope it from there.
           </p>
           <div class="mt-8">
-            <Button href="/contact/" variant="primary">Start a Project</Button>
+            <StartProjectTrigger variant="primary">Start a Project</StartProjectTrigger>
           </div>
         </div>
       </Container>

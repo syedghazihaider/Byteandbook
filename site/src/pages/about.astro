@@ -7,6 +7,7 @@ import Card from '../components/ui/Card.astro';
 import Button from '../components/ui/Button.astro';
 import Icon from '../components/ui/Icon.astro';
 import AmbientField3D from '../components/three/AmbientField3D.astro';
+import StartProjectTrigger from '../components/project/StartProjectTrigger.astro';
 
 // Team bios, founding history, and client claims are deliberately
 // omitted — none were verified as genuine per the Phase 1 content-
@@ -94,7 +95,7 @@ const principles = [
           </p>
           <div class="mt-7 flex flex-wrap items-center justify-center gap-4">
             <Button href="/services/" variant="outline">Browse Services</Button>
-            <Button href="/contact/" variant="primary">Start a Project</Button>
+            <StartProjectTrigger variant="primary">Start a Project</StartProjectTrigger>
           </div>
         </div>
       </Container>

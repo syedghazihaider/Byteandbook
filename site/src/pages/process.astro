@@ -10,6 +10,7 @@ import Footer from '../components/layout/Footer.astro';
 import Container from '../components/ui/Container.astro';
 import Card from '../components/ui/Card.astro';
 import Button from '../components/ui/Button.astro';
+import StartProjectTrigger from '../components/project/StartProjectTrigger.astro';
 import Icon from '../components/ui/Icon.astro';
 
 const SITE_URL = 'https://byteandbook.com';
@@ -153,7 +154,7 @@ const breadcrumbJsonLd = {
             conversation.
           </p>
           <div class="mt-8 flex flex-wrap items-center justify-center gap-4">
-            <Button href="/contact/" variant="primary">Start a Project</Button>
+            <StartProjectTrigger variant="primary">Start a Project</StartProjectTrigger>
             <Button href="/services/" variant="outline">Browse Services</Button>
           </div>
         </div>

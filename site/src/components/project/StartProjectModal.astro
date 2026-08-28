@@ -1,0 +1,411 @@
+---
+// V2-2: single site-wide "Start a Project" dialog, rendered once here
+// (included by BaseLayout on every page) and opened by any
+// StartProjectTrigger via delegated click handling. Service checkboxes
+// are generated from the services content collection — the same source
+// of truth /services/ and every service page already use — so this
+// list can never drift from the real service set.
+//
+// Frontend-only per V2-2 scope: submission is validated and assembled
+// into the shape V2-3's backend will consume, then simulated (no
+// network call, nothing sent anywhere). The success state says so
+// explicitly rather than implying a real email was sent.
+import { getCollection } from 'astro:content';
+import { TERMS_VERSION } from '../../lib/legal';
+
+const services = (await getCollection('services')).sort((a, b) => a.data.order - b.data.order);
+
+const budgetOptions = [
+  'Not sure yet',
+  'Under $500',
+  '$500–$1,500',
+  '$1,500–$5,000',
+  '$5,000–$10,000',
+  '$10,000+',
+  'Prefer to discuss',
+];
+
+const timelineOptions = [
+  'As soon as possible',
+  'Within 2 weeks',
+  'Within 1 month',
+  '1–3 months',
+  '3+ months',
+  'Flexible / Not sure',
+];
+
+const contactOptions = ['Email', 'WhatsApp', 'Phone Call'];
+---
+
+<dialog id="start-project-dialog" class="sp-dialog" aria-labelledby="sp-title" aria-describedby="sp-desc">
+  <div class="sp-panel" data-sp-panel>
+    <div class="sp-panel-header">
+      <div>
+        <h2 id="sp-title" class="text-xl font-bold text-ink-50">Request a Project</h2>
+        <p id="sp-desc" class="mt-1 text-sm text-ink-300">
+          Tell us what you need — this is a project request, not an order.
+        </p>
+      </div>
+      <button type="button" class="sp-close" data-sp-close aria-label="Close dialog">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" class="h-5 w-5" aria-hidden="true">
+          <line x1="6" y1="6" x2="18" y2="18" />
+          <line x1="18" y1="6" x2="6" y2="18" />
+        </svg>
+      </button>
+    </div>
+
+    <!-- Form view -->
+    <form data-sp-form novalidate class="sp-form">
+      <div role="alert" class="sp-error-summary hidden" data-sp-error-summary></div>
+
+      <div class="sp-field">
+        <label for="sp-fullName" class="sp-label">Full Name <span aria-hidden="true">*</span></label>
+        <input id="sp-fullName" name="fullName" type="text" required maxlength="120" autocomplete="name" class="sp-input" aria-describedby="sp-fullName-error" />
+        <p id="sp-fullName-error" class="sp-field-error" data-sp-error="fullName"></p>
+      </div>
+
+      <div class="sp-field">
+        <label for="sp-email" class="sp-label">Email Address <span aria-hidden="true">*</span></label>
+        <input id="sp-email" name="email" type="email" required maxlength="254" autocomplete="email" class="sp-input" aria-describedby="sp-email-error" />
+        <p id="sp-email-error" class="sp-field-error" data-sp-error="email"></p>
+      </div>
+
+      <div class="sp-field">
+        <label for="sp-mobile" class="sp-label">Mobile / WhatsApp Number <span aria-hidden="true">*</span></label>
+        <input
+          id="sp-mobile"
+          name="mobile"
+          type="tel"
+          required
+          maxlength="24"
+          placeholder="+92 300 1234567"
+          autocomplete="tel"
+          class="sp-input"
+          aria-describedby="sp-mobile-hint sp-mobile-error"
+        />
+        <p id="sp-mobile-hint" class="sp-hint">Include your country code.</p>
+        <p id="sp-mobile-error" class="sp-field-error" data-sp-error="mobile"></p>
+      </div>
+
+      <div class="sp-field">
+        <label for="sp-company" class="sp-label">Company / Brand Name</label>
+        <input id="sp-company" name="company" type="text" maxlength="160" autocomplete="organization" class="sp-input" />
+      </div>
+
+      <fieldset class="sp-field">
+        <legend class="sp-label">Service(s) <span aria-hidden="true">*</span></legend>
+        <div class="sp-checkbox-grid" data-sp-service-list>
+          {services.map((service) => (
+            <label class="sp-checkbox">
+              <input type="checkbox" name="services" value={service.id} />
+              <span>{service.data.title}</span>
+            </label>
+          ))}
+          <label class="sp-checkbox">
+            <input type="checkbox" name="services" value="other" data-sp-other-toggle />
+            <span>Other</span>
+          </label>
+        </div>
+        <p id="sp-services-error" class="sp-field-error" data-sp-error="services"></p>
+
+        <div class="sp-field mt-3 hidden" data-sp-other-wrap>
+          <label for="sp-otherService" class="sp-label">Please specify the service you need <span aria-hidden="true">*</span></label>
+          <input id="sp-otherService" name="otherService" type="text" maxlength="160" class="sp-input" aria-describedby="sp-otherService-error" />
+          <p id="sp-otherService-error" class="sp-field-error" data-sp-error="otherService"></p>
+        </div>
+      </fieldset>
+
+      <div class="sp-field">
+        <label for="sp-description" class="sp-label">Tell us what you need <span aria-hidden="true">*</span></label>
+        <p id="sp-description-hint" class="sp-hint">Briefly describe your goal, problem, current setup, or expected outcome.</p>
+        <textarea
+          id="sp-description"
+          name="description"
+          required
+          minlength="20"
+          maxlength="2000"
+          rows="4"
+          class="sp-input"
+          aria-describedby="sp-description-hint sp-description-error"
+        ></textarea>
+        <p id="sp-description-error" class="sp-field-error" data-sp-error="description"></p>
+      </div>
+
+      <div class="sp-field-row">
+        <div class="sp-field">
+          <label for="sp-budget" class="sp-label">Budget Range</label>
+          <select id="sp-budget" name="budget" class="sp-input">
+            <option value="">Select a range (optional)</option>
+            {budgetOptions.map((option) => <option value={option}>{option}</option>)}
+          </select>
+        </div>
+
+        <div class="sp-field">
+          <label for="sp-timeline" class="sp-label">Desired Timeline</label>
+          <select id="sp-timeline" name="timeline" class="sp-input">
+            <option value="">Select a timeline (optional)</option>
+            {timelineOptions.map((option) => <option value={option}>{option}</option>)}
+          </select>
+        </div>
+      </div>
+
+      <div class="sp-field">
+        <label for="sp-preferredContact" class="sp-label">Preferred Contact Method</label>
+        <select id="sp-preferredContact" name="preferredContact" class="sp-input">
+          <option value="">No preference</option>
+          {contactOptions.map((option) => <option value={option}>{option}</option>)}
+        </select>
+      </div>
+
+      <div class="sp-field">
+        <label class="sp-checkbox sp-checkbox-legal">
+          <input type="checkbox" name="termsAccepted" required aria-describedby="sp-terms-error" />
+          <span>
+            I agree to the ByteAndBook <a href="/terms/" target="_blank" rel="noopener" class="sp-link">Terms of Service</a>
+            and acknowledge the <a href="/refund-policy/" target="_blank" rel="noopener" class="sp-link">Refund &amp; Cancellation Policy</a>.
+          </span>
+        </label>
+        <p id="sp-terms-error" class="sp-field-error" data-sp-error="termsAccepted"></p>
+      </div>
+
+      <div class="sp-field">
+        <label class="sp-checkbox sp-checkbox-legal">
+          <input type="checkbox" name="privacyAcknowledged" required aria-describedby="sp-privacy-error" />
+          <span>
+            I have read and acknowledge the <a href="/privacy/" target="_blank" rel="noopener" class="sp-link">Privacy Policy</a>.
+          </span>
+        </label>
+        <p id="sp-privacy-error" class="sp-field-error" data-sp-error="privacyAcknowledged"></p>
+      </div>
+
+      <p class="sp-hint">
+        Submitting this form does not place an order or create a payment obligation — we'll follow up to scope and quote the work first.
+      </p>
+
+      <div class="sp-actions">
+        <button type="submit" class="sp-submit" data-sp-submit>Submit Project Request</button>
+      </div>
+    </form>
+
+    <!-- Success view -->
+    <div class="sp-success hidden" data-sp-success>
+      <h3 class="text-lg font-semibold text-ink-50" tabindex="-1">Your request is ready</h3>
+      <p class="mt-3 text-sm text-ink-300">
+        Your project request is ready to submit, but secure email delivery
+        will be enabled in the next implementation phase. Nothing has been
+        sent yet — no backend is connected in this build.
+      </p>
+      <div class="sp-actions">
+        <button type="button" class="sp-submit" data-sp-close-success>Close</button>
+      </div>
+    </div>
+  </div>
+</dialog>
+
+<script define:vars={{ termsVersion: TERMS_VERSION }}>
+  const dialog = document.getElementById('start-project-dialog');
+  const panel = dialog?.querySelector('[data-sp-panel]');
+  const form = dialog?.querySelector('[data-sp-form]');
+  const successView = dialog?.querySelector('[data-sp-success]');
+  const errorSummary = dialog?.querySelector('[data-sp-error-summary]');
+  const otherToggle = dialog?.querySelector('[data-sp-other-toggle]');
+  const otherWrap = dialog?.querySelector('[data-sp-other-wrap]');
+  const otherInput = document.getElementById('sp-otherService');
+  const submitBtn = dialog?.querySelector('[data-sp-submit]');
+
+  if (dialog && panel && form && successView && errorSummary && otherToggle && otherWrap && otherInput && submitBtn) {
+    let lastFocused = null;
+
+    const openAnimated = () => {
+      dialog.showModal();
+      document.documentElement.style.overflow = 'hidden';
+      requestAnimationFrame(() => panel.classList.add('is-visible'));
+    };
+
+    const closeAnimated = () => {
+      panel.classList.remove('is-visible');
+      document.documentElement.style.overflow = '';
+      // Reset is driven directly from here rather than the dialog's
+      // native 'close' event — that event does not fire reliably in
+      // every environment (verified against a bare, unstyled <dialog>
+      // with no other page code involved), so relying on it silently
+      // leaves stale data/state in the form for the next open. `finish`
+      // is guarded to run exactly once regardless of which trigger
+      // (transition end vs. the reduced-motion/fallback timeout) gets
+      // there first.
+      let finished = false;
+      const finish = () => {
+        if (finished) return;
+        finished = true;
+        panel.removeEventListener('transitionend', onEnd);
+        if (dialog.open) dialog.close();
+        resetForm();
+      };
+      const onEnd = () => finish();
+      panel.addEventListener('transitionend', onEnd);
+      setTimeout(finish, 220);
+    };
+
+    const resetForm = () => {
+      form.reset();
+      form.classList.remove('hidden');
+      successView.classList.add('hidden');
+      errorSummary.classList.add('hidden');
+      errorSummary.textContent = '';
+      otherWrap.classList.add('hidden');
+      otherInput.required = false;
+      form.querySelectorAll('[data-sp-error]').forEach((el) => (el.textContent = ''));
+      form.querySelectorAll('[aria-invalid="true"]').forEach((el) => el.removeAttribute('aria-invalid'));
+      submitBtn.disabled = false;
+      submitBtn.textContent = 'Submit Project Request';
+    };
+
+    const preselectService = (slug) => {
+      if (!slug) return;
+      const checkbox = form.querySelector(`input[name="services"][value="${CSS.escape(slug)}"]`);
+      if (checkbox && !checkbox.checked) checkbox.checked = true;
+    };
+
+    const openModal = (trigger, slug) => {
+      lastFocused = trigger ?? document.activeElement;
+      openAnimated();
+      preselectService(slug);
+      const firstField = document.getElementById('sp-fullName');
+      firstField?.focus();
+    };
+
+    document.addEventListener('click', (event) => {
+      const trigger = event.target.closest('[data-start-project-trigger]');
+      if (!trigger) return;
+      event.preventDefault();
+      openModal(trigger, trigger.dataset.preselectService || '');
+    });
+
+    const doClose = () => {
+      closeAnimated();
+      lastFocused?.focus();
+    };
+
+    dialog.querySelectorAll('[data-sp-close], [data-sp-close-success]').forEach((btn) => {
+      btn.addEventListener('click', doClose);
+    });
+
+    // Native Escape fires 'cancel' — intercept so the close is animated
+    // and focus returns to the trigger, instead of closing instantly.
+    dialog.addEventListener('cancel', (event) => {
+      event.preventDefault();
+      doClose();
+    });
+
+    // Backdrop click: target === dialog only when the click lands
+    // outside the panel (the panel is transparent-backed inside a
+    // padding-less dialog, so this is the standard native-<dialog>
+    // backdrop-click technique).
+    dialog.addEventListener('click', (event) => {
+      if (event.target === dialog) doClose();
+    });
+
+    otherToggle.addEventListener('change', () => {
+      if (otherToggle.checked) {
+        otherWrap.classList.remove('hidden');
+        otherInput.required = true;
+      } else {
+        otherWrap.classList.add('hidden');
+        otherInput.required = false;
+        otherInput.value = '';
+        const err = form.querySelector('[data-sp-error="otherService"]');
+        if (err) err.textContent = '';
+        otherInput.removeAttribute('aria-invalid');
+      }
+    });
+
+    const setFieldError = (name, message) => {
+      const field = form.querySelector(`[name="${name}"]`) || document.getElementById(`sp-${name}`);
+      const errorEl = form.querySelector(`[data-sp-error="${name}"]`);
+      if (errorEl) errorEl.textContent = message;
+      if (field) field.setAttribute('aria-invalid', 'true');
+    };
+
+    const clearFieldErrors = () => {
+      form.querySelectorAll('[data-sp-error]').forEach((el) => (el.textContent = ''));
+      form.querySelectorAll('[aria-invalid]').forEach((el) => el.removeAttribute('aria-invalid'));
+    };
+
+    const validate = (data) => {
+      const errors = {};
+
+      if (!data.fullName.trim()) errors.fullName = 'Please enter your full name.';
+      if (!data.email.trim()) errors.email = 'Please enter your email address.';
+      else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(data.email)) errors.email = 'Please enter a valid email address.';
+      if (!data.mobile.trim()) errors.mobile = 'Please enter a mobile or WhatsApp number, including your country code.';
+
+      if (data.services.length === 0) errors.services = 'Please select at least one service.';
+      if (data.services.includes('other') && !data.otherService.trim()) {
+        errors.otherService = 'Please specify the service you need.';
+      }
+
+      if (!data.description.trim() || data.description.trim().length < 20) {
+        errors.description = 'Please describe your project in at least 20 characters.';
+      }
+
+      if (!data.termsAccepted) errors.termsAccepted = 'You must agree to the Terms of Service and Refund & Cancellation Policy.';
+      if (!data.privacyAcknowledged) errors.privacyAcknowledged = 'You must acknowledge the Privacy Policy.';
+
+      return errors;
+    };
+
+    form.addEventListener('submit', async (event) => {
+      event.preventDefault();
+      clearFieldErrors();
+      errorSummary.classList.add('hidden');
+      errorSummary.textContent = '';
+
+      const formData = new FormData(form);
+      const data = {
+        fullName: String(formData.get('fullName') || ''),
+        email: String(formData.get('email') || ''),
+        mobile: String(formData.get('mobile') || ''),
+        company: String(formData.get('company') || ''),
+        services: formData.getAll('services').map(String),
+        otherService: String(formData.get('otherService') || ''),
+        description: String(formData.get('description') || ''),
+        budget: String(formData.get('budget') || ''),
+        timeline: String(formData.get('timeline') || ''),
+        preferredContact: String(formData.get('preferredContact') || ''),
+        termsAccepted: formData.get('termsAccepted') === 'on',
+        privacyAcknowledged: formData.get('privacyAcknowledged') === 'on',
+      };
+
+      const errors = validate(data);
+      const errorKeys = Object.keys(errors);
+
+      if (errorKeys.length > 0) {
+        errorKeys.forEach((key) => setFieldError(key, errors[key]));
+        errorSummary.textContent = `Please fix ${errorKeys.length} field${errorKeys.length > 1 ? 's' : ''} below.`;
+        errorSummary.classList.remove('hidden');
+        const firstErrorField =
+          form.querySelector(`[name="${errorKeys[0]}"]`) || document.getElementById(`sp-${errorKeys[0]}`);
+        firstErrorField?.focus();
+        return;
+      }
+
+      submitBtn.disabled = true;
+      submitBtn.textContent = 'Submitting…';
+
+      // V2-2 is frontend-only: no network call exists yet. This is the
+      // exact payload shape the V2-3 backend will receive — assembled
+      // and validated here, but deliberately not sent anywhere.
+      const submission = {
+        ...data,
+        termsVersion: termsVersion,
+      };
+      console.debug('[ByteAndBook] Project request ready (V2-3 will submit this):', submission);
+
+      await new Promise((resolve) => setTimeout(resolve, 700));
+
+      form.classList.add('hidden');
+      successView.classList.remove('hidden');
+      successView.querySelector('h3')?.focus();
+    });
+  }
+</script>

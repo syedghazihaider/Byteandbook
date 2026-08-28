@@ -1,0 +1,27 @@
+---
+// Drop-in replacement for a "Start a Project" <Button href="/contact/">
+// — renders identical styling but opens the single site-wide
+// StartProjectModal (rendered once in BaseLayout) instead of navigating.
+// `service` maps to a services-collection id (e.g. "devops") to
+// preselect that service when the modal opens; the click-delegation
+// listener that reads this attribute lives in StartProjectModal.astro.
+import Button from '../ui/Button.astro';
+
+interface Props {
+  service?: string;
+  variant?: 'primary' | 'outline' | 'ghost';
+  class?: string;
+}
+
+const { service, variant = 'primary', class: className = '' } = Astro.props;
+---
+
+<Button
+  type="button"
+  variant={variant}
+  class={className}
+  data-start-project-trigger
+  data-preselect-service={service ?? ''}
+>
+  <slot />
+</Button>

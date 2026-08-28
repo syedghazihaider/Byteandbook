@@ -12,6 +12,7 @@ import Footer from '../../components/layout/Footer.astro';
 import Container from '../../components/ui/Container.astro';
 import Button from '../../components/ui/Button.astro';
 import Card from '../../components/ui/Card.astro';
+import StartProjectTrigger from '../../components/project/StartProjectTrigger.astro';
 import Icon from '../../components/ui/Icon.astro';
 import FlowSteps from '../../components/diagrams/FlowSteps.astro';
 import NodeGraph3D from '../../components/three/NodeGraph3D.astro';
@@ -241,7 +242,7 @@ const isEbook = service.id === 'ebook-publishing';
             scope it against the process above.
           </p>
           <div class="mt-7">
-            <Button href="/contact/" variant="primary">Start a Project</Button>
+            <StartProjectTrigger service={service.id} variant="primary">Start a Project</StartProjectTrigger>
           </div>
         </div>
       </Container>

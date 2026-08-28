@@ -190,6 +190,85 @@ const descValues = [...descriptions.values()];
 check('no duplicate <title> across pages', new Set(titleValues).size === titleValues.length);
 check('no duplicate meta description across pages', new Set(descValues).size === descValues.length);
 
+// ---- 4. V2-2: Start Project modal + legacy-content guard ------------------
+// The modal is rendered once in BaseLayout, so it (and its form fields)
+// appear in every page's static HTML — checked here against the
+// homepage as a representative page rather than repeating per route.
+const homeHtml = readHtml('index.html');
+
+check('start-project-modal: <dialog> present', /<dialog id="start-project-dialog"/.test(homeHtml));
+check('start-project-modal: aria-labelledby present', /aria-labelledby="sp-title"/.test(homeHtml));
+check('start-project-modal: aria-describedby present', /aria-describedby="sp-desc"/.test(homeHtml));
+
+// Required-field attributes (QA items 12-16 of the V2-2 brief)
+check('start-project-modal: fullName required', /name="fullName"[^>]*required/.test(homeHtml));
+const emailTag = /<input[^>]*name="email"[^>]*>/.exec(homeHtml)?.[0] ?? '';
+check('start-project-modal: email required', emailTag.includes('required'));
+check('start-project-modal: email type=email', emailTag.includes('type="email"'));
+
+const mobileTag = /<input[^>]*name="mobile"[^>]*>/.exec(homeHtml)?.[0] ?? '';
+check('start-project-modal: mobile required', mobileTag.includes('required'));
+check('start-project-modal: description required', /<textarea[^>]*name="description"[^>]*>/.test(homeHtml) && (/<textarea[^>]*name="description"[^>]*>/.exec(homeHtml)?.[0] ?? '').includes('required'));
+check('start-project-modal: termsAccepted checkbox required', (/<input[^>]*name="termsAccepted"[^>]*>/.exec(homeHtml)?.[0] ?? '').includes('required'));
+check('start-project-modal: privacyAcknowledged checkbox required', (/<input[^>]*name="privacyAcknowledged"[^>]*>/.exec(homeHtml)?.[0] ?? '').includes('required'));
+check('start-project-modal: terms checkbox unchecked by default', !(/<input[^>]*name="termsAccepted"[^>]*>/.exec(homeHtml)?.[0] ?? '').includes('checked'));
+check('start-project-modal: privacy checkbox unchecked by default', !(/<input[^>]*name="privacyAcknowledged"[^>]*>/.exec(homeHtml)?.[0] ?? '').includes('checked'));
+
+// Other-service support
+check('start-project-modal: "Other" service checkbox present', /name="services" value="other"/.test(homeHtml));
+check('start-project-modal: other-service specify field present', /name="otherService"/.test(homeHtml));
+
+// Service checklist sourced from the content collection (all 11 slugs)
+for (const slug of SERVICE_SLUGS) {
+  check(`start-project-modal: service checkbox for ${slug}`, homeHtml.includes(`name="services" value="${slug}"`));
+}
+
+// Terms/Privacy/Refund links inside the modal resolve to the standalone
+// legal pages (also covered generically by the internal-link check
+// above, asserted explicitly here per the V2-2 QA checklist).
+check('start-project-modal: links to /terms/', /href="\/terms\/"/.test(homeHtml));
+check('start-project-modal: links to /privacy/', /href="\/privacy\/"/.test(homeHtml));
+check('start-project-modal: links to /refund-policy/', /href="\/refund-policy\/"/.test(homeHtml));
+
+// Start Project trigger presence on the pages named in the V2-2 brief
+const triggerPages = {
+  '/ (homepage)': 'index.html',
+  '/services/': 'services/index.html',
+  '/services/devops/ (individual service page)': 'services/devops/index.html',
+  '/process/': 'process/index.html',
+  '/about/': 'about/index.html',
+  '/contact/': 'contact/index.html',
+};
+for (const [label, relPath] of Object.entries(triggerPages)) {
+  const html = readHtml(relPath);
+  check(`${label}: Start Project trigger present`, /data-start-project-trigger/.test(html));
+}
+
+// Individual-service preselection wiring
+const devopsHtml = readHtml('services/devops/index.html');
+check('services/devops/: preselects "devops"', /data-preselect-service="devops"/.test(devopsHtml));
+
+// Legacy/forbidden contact info must not appear anywhere in the built
+// output (V2-2 brief: strict across all files changed this phase).
+const FORBIDDEN_STRINGS = [
+  'andbookbyte@gmail.com',
+  '346-908-1336',
+  '347-847-1904',
+  '347)847-1904',
+  '7234 fairchild',
+  'Alexandria, Virginia',
+];
+const allDistHtmlFiles = [...Object.values(allPages)];
+for (const relPath of allDistHtmlFiles) {
+  if (!existsSync(join(DIST, relPath))) continue;
+  const html = readHtml(relPath);
+  for (const forbidden of FORBIDDEN_STRINGS) {
+    check(`${relPath}: does not contain forbidden legacy text "${forbidden}"`, !html.includes(forbidden));
+  }
+  // No public phone number: no tel: links anywhere on the live site.
+  check(`${relPath}: no tel: link`, !/href="tel:/.test(html));
+}
+
 // ---- Report ---------------------------------------------------------------
 console.log(`QA check: ${checks} assertions, ${failures.length} failure(s).`);
 if (failures.length > 0) {

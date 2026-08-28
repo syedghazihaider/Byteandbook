@@ -12,6 +12,7 @@ import SectionHeading from '../../components/ui/SectionHeading.astro';
 import Card from '../../components/ui/Card.astro';
 import Button from '../../components/ui/Button.astro';
 import Icon from '../../components/ui/Icon.astro';
+import StartProjectTrigger from '../../components/project/StartProjectTrigger.astro';
 
 const services = (await getCollection('services')).sort((a, b) => a.data.order - b.data.order);
 
@@ -102,7 +103,7 @@ const breadcrumbJsonLd = {
             touches — we'll scope it from there.
           </p>
           <div class="mt-8">
-            <Button href="/contact/" variant="primary">Start a Project</Button>
+            <StartProjectTrigger variant="primary">Start a Project</StartProjectTrigger>
           </div>
         </div>
       </Container>
