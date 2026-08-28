@@ -1,17 +1,17 @@
 ---
-// V2-2: single site-wide "Start a Project" dialog, rendered once here
+// Single site-wide "Start a Project" dialog, rendered once here
 // (included by BaseLayout on every page) and opened by any
 // StartProjectTrigger via delegated click handling. Service checkboxes
 // are generated from the services content collection — the same source
 // of truth /services/ and every service page already use — so this
 // list can never drift from the real service set.
 //
-// Frontend-only per V2-2 scope: submission is validated and assembled
-// into the shape V2-3's backend will consume, then simulated (no
-// network call, nothing sent anywhere). The success state says so
-// explicitly rather than implying a real email was sent.
+// V2-3: client-side validation still runs first (fast feedback, no
+// round-trip needed for obviously-invalid input), but the authoritative
+// checks are server-side in public/api/project-request.php — this
+// submits there via fetch() and shows whatever the server actually
+// decided, including its real reference ID.
 import { getCollection } from 'astro:content';
-import { TERMS_VERSION } from '../../lib/legal';
 
 const services = (await getCollection('services')).sort((a, b) => a.data.order - b.data.order);
 
@@ -57,6 +57,15 @@ const contactOptions = ['Email', 'WhatsApp', 'Phone Call'];
     <!-- Form view -->
     <form data-sp-form novalidate class="sp-form">
       <div role="alert" class="sp-error-summary hidden" data-sp-error-summary></div>
+
+      <!-- Honeypot: invisible to real users (off-screen, unreachable by
+           tab, hidden from screen readers), matched server-side in
+           project-request.php. Any value here means a bot filled every
+           field on the page — never fill this in manually. -->
+      <div class="sp-hp" aria-hidden="true">
+        <label for="sp-website">Website</label>
+        <input id="sp-website" name="website" type="text" tabindex="-1" autocomplete="off" />
+      </div>
 
       <div class="sp-field">
         <label for="sp-fullName" class="sp-label">Full Name <span aria-hidden="true">*</span></label>
@@ -189,11 +198,10 @@ const contactOptions = ['Email', 'WhatsApp', 'Phone Call'];
 
     <!-- Success view -->
     <div class="sp-success hidden" data-sp-success>
-      <h3 class="text-lg font-semibold text-ink-50" tabindex="-1">Your request is ready</h3>
-      <p class="mt-3 text-sm text-ink-300">
-        Your project request is ready to submit, but secure email delivery
-        will be enabled in the next implementation phase. Nothing has been
-        sent yet — no backend is connected in this build.
+      <h3 class="text-lg font-semibold text-ink-50" tabindex="-1">Your project request has been received.</h3>
+      <p class="mt-3 text-sm text-ink-300" data-sp-reference></p>
+      <p class="mt-2 text-sm text-ink-300">
+        We'll review your requirements and contact you using the details you provided.
       </p>
       <div class="sp-actions">
         <button type="button" class="sp-submit" data-sp-close-success>Close</button>
@@ -202,7 +210,7 @@ const contactOptions = ['Email', 'WhatsApp', 'Phone Call'];
   </div>
 </dialog>
 
-<script define:vars={{ termsVersion: TERMS_VERSION }}>
+<script>
   const dialog = document.getElementById('start-project-dialog');
   const panel = dialog?.querySelector('[data-sp-panel]');
   const form = dialog?.querySelector('[data-sp-form]');
@@ -212,8 +220,9 @@ const contactOptions = ['Email', 'WhatsApp', 'Phone Call'];
   const otherWrap = dialog?.querySelector('[data-sp-other-wrap]');
   const otherInput = document.getElementById('sp-otherService');
   const submitBtn = dialog?.querySelector('[data-sp-submit]');
+  const referenceEl = dialog?.querySelector('[data-sp-reference]');
 
-  if (dialog && panel && form && successView && errorSummary && otherToggle && otherWrap && otherInput && submitBtn) {
+  if (dialog && panel && form && successView && errorSummary && otherToggle && otherWrap && otherInput && submitBtn && referenceEl) {
     let lastFocused = null;
 
     const openAnimated = () => {
@@ -252,6 +261,7 @@ const contactOptions = ['Email', 'WhatsApp', 'Phone Call'];
       successView.classList.add('hidden');
       errorSummary.classList.add('hidden');
       errorSummary.textContent = '';
+      referenceEl.textContent = '';
       otherWrap.classList.add('hidden');
       otherInput.required = false;
       form.querySelectorAll('[data-sp-error]').forEach((el) => (el.textContent = ''));
@@ -354,8 +364,12 @@ const contactOptions = ['Email', 'WhatsApp', 'Phone Call'];
       return errors;
     };
 
+    let submitting = false;
+
     form.addEventListener('submit', async (event) => {
       event.preventDefault();
+      if (submitting) return; // blocks duplicate submissions from rapid/double clicks
+
       clearFieldErrors();
       errorSummary.classList.add('hidden');
       errorSummary.textContent = '';
@@ -374,6 +388,9 @@ const contactOptions = ['Email', 'WhatsApp', 'Phone Call'];
         preferredContact: String(formData.get('preferredContact') || ''),
         termsAccepted: formData.get('termsAccepted') === 'on',
         privacyAcknowledged: formData.get('privacyAcknowledged') === 'on',
+        // Honeypot — always empty for real users; forwarded as-is so
+        // the server can silently no-op on bot submissions.
+        website: String(formData.get('website') || ''),
       };
 
       const errors = validate(data);
@@ -389,23 +406,59 @@ const contactOptions = ['Email', 'WhatsApp', 'Phone Call'];
         return;
       }
 
+      submitting = true;
       submitBtn.disabled = true;
       submitBtn.textContent = 'Submitting…';
 
-      // V2-2 is frontend-only: no network call exists yet. This is the
-      // exact payload shape the V2-3 backend will receive — assembled
-      // and validated here, but deliberately not sent anywhere.
-      const submission = {
-        ...data,
-        termsVersion: termsVersion,
-      };
-      console.debug('[ByteAndBook] Project request ready (V2-3 will submit this):', submission);
+      try {
+        // POST only — form data is never placed in the URL/query string,
+        // and nothing about the submission is logged to the console.
+        const response = await fetch('/api/project-request.php', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(data),
+        });
 
-      await new Promise((resolve) => setTimeout(resolve, 700));
+        let payload = null;
+        try {
+          payload = await response.json();
+        } catch {
+          payload = null;
+        }
 
-      form.classList.add('hidden');
-      successView.classList.remove('hidden');
-      successView.querySelector('h3')?.focus();
+        if (response.ok && payload && payload.ok) {
+          referenceEl.textContent = `Reference: ${payload.referenceId}`;
+          form.classList.add('hidden');
+          successView.classList.remove('hidden');
+          successView.querySelector('h3')?.focus();
+          return;
+        }
+
+        if (payload && payload.errors && typeof payload.errors === 'object') {
+          const serverErrorKeys = Object.keys(payload.errors);
+          serverErrorKeys.forEach((key) => setFieldError(key, payload.errors[key]));
+          errorSummary.textContent = payload.error || 'Please correct the highlighted fields.';
+          errorSummary.classList.remove('hidden');
+          const firstErrorField =
+            form.querySelector(`[name="${serverErrorKeys[0]}"]`) || document.getElementById(`sp-${serverErrorKeys[0]}`);
+          firstErrorField?.focus();
+        } else {
+          errorSummary.textContent =
+            (payload && payload.error) ||
+            'We could not submit your request right now. Please try again, or email info@byteandbook.com directly.';
+          errorSummary.classList.remove('hidden');
+        }
+      } catch {
+        // Network failure (offline, DNS, CORS, etc.) — no details about
+        // the error are logged; the message stays generic and actionable.
+        errorSummary.textContent =
+          'We could not reach the server. Please check your connection and try again, or email info@byteandbook.com directly.';
+        errorSummary.classList.remove('hidden');
+      } finally {
+        submitting = false;
+        submitBtn.disabled = false;
+        submitBtn.textContent = 'Submit Project Request';
+      }
     });
   }
 </script>

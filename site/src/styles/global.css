@@ -204,6 +204,19 @@
     max-height: min(88vh, 900px);
     overflow: visible;
   }
+
+  /* V2-3 honeypot field: off-screen (not display:none/visibility:hidden,
+     which some bots specifically detect and skip) plus aria-hidden on
+     the wrapper and tabindex="-1" on the input, so it's unreachable by
+     real keyboard/screen-reader users but still fillable by bots that
+     blindly populate every input on the page. */
+  .sp-hp {
+    position: absolute;
+    left: -9999px;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+  }
   .sp-dialog::backdrop {
     background: rgba(8, 9, 12, 0.72);
     backdrop-filter: blur(4px);

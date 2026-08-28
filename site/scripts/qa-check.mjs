@@ -269,6 +269,72 @@ for (const relPath of allDistHtmlFiles) {
   check(`${relPath}: no tel: link`, !/href="tel:/.test(html));
 }
 
+// ---- 5. V2-3: project-request backend — static checks ---------------------
+// PHP isn't executed here (no PHP runtime in this Node QA script); the
+// real functional/security behavior was verified via SSH against the
+// actual Namecheap PHP 8.1 runtime during V2-3 development (see the
+// phase report). These are static source-presence checks that catch
+// obvious regressions — the endpoint file disappearing, a security
+// control being deleted, a secret being committed, etc.
+const API_REL_PATH = 'api/project-request.php';
+check('project-request.php: exists in deployable dist/api/', existsSync(join(DIST, API_REL_PATH)));
+
+if (existsSync(join(DIST, API_REL_PATH))) {
+  const phpSource = readFileSync(join(DIST, API_REL_PATH), 'utf-8');
+
+  check('project-request.php: POST-only (rejects non-POST methods)', /REQUEST_METHOD'\]\s*!==\s*'POST'/.test(phpSource));
+  check('project-request.php: server-side email validation (FILTER_VALIDATE_EMAIL)', phpSource.includes('FILTER_VALIDATE_EMAIL'));
+  check('project-request.php: server-side mobile validation', /mobile/i.test(phpSource) && /preg_match/.test(phpSource));
+  check('project-request.php: Terms validation', phpSource.includes('termsAccepted'));
+  check('project-request.php: Privacy validation', phpSource.includes('privacyAcknowledged'));
+  check('project-request.php: Other-service validation', phpSource.includes('otherService'));
+  check('project-request.php: project-description length validation', /description.*mb_strlen|mb_strlen.*description/s.test(phpSource));
+  check('project-request.php: rate-limit protection', phpSource.includes('RATE_LIMIT_MAX_REQUESTS') && phpSource.includes('rate_limit_check'));
+  check('project-request.php: Origin/Referer validation', phpSource.includes('validate_origin') && phpSource.includes('HTTP_ORIGIN'));
+  check('project-request.php: honeypot protection', phpSource.includes("data['website']"));
+  check('project-request.php: CRLF/header-injection protection', phpSource.includes('strip_header_injection'));
+  check('project-request.php: no wildcard CORS', !phpSource.includes("Access-Control-Allow-Origin: *"));
+  check('project-request.php: uses central Terms Version constant', phpSource.includes('TERMS_VERSION'));
+  check('project-request.php: recipient is info@byteandbook.com', phpSource.includes("RECIPIENT_EMAIL = 'info@byteandbook.com'"));
+  check('project-request.php: does not spoof client email as From address', !/From:\s*['"]?\s*\$\{?email/i.test(phpSource));
+
+  // Forbidden legacy contact strings + no committed secrets. Heuristic
+  // secret scan: common credential-assignment patterns with a non-empty
+  // literal value — flags anything that looks like a hardcoded
+  // password/API key/SMTP credential landing in this file by accident.
+  for (const forbidden of FORBIDDEN_STRINGS) {
+    check(`project-request.php: does not contain forbidden legacy text "${forbidden}"`, !phpSource.includes(forbidden));
+  }
+  const secretPatterns = [
+    /\$smtp_pass(word)?\s*=\s*['"][^'"]+['"]/i,
+    /\bpassword\s*=\s*['"][^'"]+['"]/i,
+    /\bapi[_-]?key\s*=\s*['"][^'"]+['"]/i,
+    /\bsecret\s*=\s*['"][^'"]{6,}['"]/i,
+    /-----BEGIN (RSA |OPENSSH |EC )?PRIVATE KEY-----/,
+  ];
+  for (const pattern of secretPatterns) {
+    check(`project-request.php: no hardcoded secret matching ${pattern}`, !pattern.test(phpSource));
+  }
+}
+
+// Frontend wiring: fetch() POST to the one intended endpoint, no
+// leftover V2-2 console logging of submission data, no GET/query-string
+// path for form data. The modal's <script> has no define:vars, so Astro
+// bundles it as a normal external module chunk (same as every other
+// plain <script> in this codebase, e.g. Header.astro) rather than
+// inlining it — the actual logic lives in that chunk, not in index.html.
+const astroChunkFiles = existsSync(join(DIST, '_astro')) ? readdirSync(join(DIST, '_astro')) : [];
+const modalChunkName = astroChunkFiles.find((f) => f.startsWith('StartProjectModal.astro_astro_type_script'));
+check('start-project-modal: compiled script chunk exists', !!modalChunkName);
+const modalScript = modalChunkName ? readFileSync(join(DIST, '_astro', modalChunkName), 'utf-8') : '';
+
+check('start-project-modal: fetch() targets /api/project-request.php', modalScript.includes("fetch(\"/api/project-request.php\"") || modalScript.includes("fetch('/api/project-request.php'"));
+check('start-project-modal: fetch() uses method: \'POST\'', /fetch\(["']\/api\/project-request\.php["'],\s*\{[^}]*method:\s*["']POST["']/.test(modalScript));
+check('start-project-modal: no other endpoint referenced', (modalScript.match(/fetch\(/g) || []).length === 1);
+check('start-project-modal: <form> has no method="get"', !/<form[^>]*method="get"/i.test(homeHtml));
+check('start-project-modal: no leftover V2-2 console payload logging', !/console\.(debug|log)\(/.test(modalScript));
+check('start-project-modal: honeypot field present', /name="website"/.test(homeHtml) && /class="sp-hp"/.test(homeHtml));
+
 // ---- Report ---------------------------------------------------------------
 console.log(`QA check: ${checks} assertions, ${failures.length} failure(s).`);
 if (failures.length > 0) {
