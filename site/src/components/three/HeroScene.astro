@@ -1,0 +1,56 @@
+---
+// Level 1 homepage hero visual. Absolutely positioned over the static
+// CSS grid/glow backdrop already in index.astro — that backdrop is the
+// reduced-motion / no-WebGL / no-JS / render-failure fallback; this
+// canvas mounts on top of it whenever shouldRunHeavyMotion() allows it,
+// which now includes mobile viewports (at the compact quality tier —
+// see scripts/three/utils.ts).
+---
+
+<div class="pointer-events-none absolute inset-0" data-hero-scene>
+  <canvas class="h-full w-full" aria-hidden="true"></canvas>
+</div>
+
+<script>
+  import { createHeroScene } from '../../scripts/three/heroScene';
+  import { shouldRunHeavyMotion, onVisibilityChange, safeMountScene } from '../../scripts/motion';
+
+  const container = document.querySelector<HTMLElement>('[data-hero-scene]');
+  const canvas = container?.querySelector<HTMLCanvasElement>('canvas');
+
+  if (container && canvas && shouldRunHeavyMotion()) {
+    let scene: ReturnType<typeof createHeroScene> | null = null;
+    let scrollTrigger: import('gsap/ScrollTrigger').ScrollTrigger | null = null;
+
+    onVisibilityChange(
+      container,
+      async () => {
+        scene = safeMountScene(() => createHeroScene(canvas));
+        if (!scene) {
+          container.remove();
+          return;
+        }
+        scene.start();
+
+        if (!scrollTrigger) {
+          const { gsap } = await import('gsap');
+          const { ScrollTrigger } = await import('gsap/ScrollTrigger');
+          gsap.registerPlugin(ScrollTrigger);
+          const heroSection = container.closest('section');
+          scrollTrigger = ScrollTrigger.create({
+            trigger: heroSection ?? container,
+            start: 'top top',
+            end: 'bottom top',
+            scrub: true,
+            onUpdate: (self) => scene?.setScrollProgress(self.progress),
+          });
+        }
+      },
+      () => {
+        scene?.stop();
+        scene?.dispose();
+        scene = null;
+      }
+    );
+  }
+</script>

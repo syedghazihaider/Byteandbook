@@ -1,0 +1,33 @@
+---
+// Restrained ambient backdrop for About/Contact — sparse, static-camera
+// point drift, no lines, no pointer parallax. Sits behind hero text at
+// low opacity; never the primary storytelling element on these pages.
+---
+
+<div class="pointer-events-none absolute inset-0" data-ambient-field>
+  <canvas class="h-full w-full" aria-hidden="true"></canvas>
+</div>
+
+<script>
+  import { createAmbientFieldScene } from '../../scripts/three/ambientFieldScene';
+  import { shouldRunHeavyMotion, onVisibilityChange, safeMountScene } from '../../scripts/motion';
+
+  const container = document.querySelector<HTMLElement>('[data-ambient-field]');
+  const canvas = container?.querySelector<HTMLCanvasElement>('canvas');
+
+  if (container && canvas && shouldRunHeavyMotion()) {
+    let scene: ReturnType<typeof createAmbientFieldScene> | null = null;
+    onVisibilityChange(
+      container,
+      () => {
+        scene = safeMountScene(() => createAmbientFieldScene(canvas));
+        scene?.start();
+      },
+      () => {
+        scene?.stop();
+        scene?.dispose();
+        scene = null;
+      }
+    );
+  }
+</script>

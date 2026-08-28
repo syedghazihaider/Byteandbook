@@ -1,0 +1,89 @@
+---
+// Level 1 showcase for Cloud and DevOps: renders the same flow-step
+// data driving the static FlowSteps diagram as a 3D connected pipeline.
+// `pulse` gives DevOps a traveling CI/CD indicator while Cloud stays a
+// calm orbit — same component, distinct motion per service.
+interface Props {
+  steps: string[];
+  pulse?: boolean;
+  accentVar?: string;
+}
+const { steps, pulse = false, accentVar } = Astro.props;
+---
+
+<div
+  class="relative mx-auto h-[300px] w-full max-w-4xl sm:h-[360px]"
+  data-node-graph
+  data-steps={JSON.stringify(steps)}
+  data-pulse={pulse ? '1' : '0'}
+  data-accent-var={accentVar ?? ''}
+>
+  <canvas class="h-full w-full" aria-hidden="true"></canvas>
+  <div class="pointer-events-none absolute inset-0" data-labels></div>
+</div>
+
+<script>
+  import { createNodeGraphScene } from '../../scripts/three/nodeGraphScene';
+  import { shouldRunHeavyMotion, onVisibilityChange, safeMountScene } from '../../scripts/motion';
+
+  document.querySelectorAll<HTMLElement>('[data-node-graph]').forEach((container) => {
+    const canvas = container.querySelector<HTMLCanvasElement>('canvas');
+    const labelsRoot = container.querySelector<HTMLElement>('[data-labels]');
+    if (!canvas || !labelsRoot) return;
+    if (!shouldRunHeavyMotion()) {
+      // No static illustration exists for this scene family — an empty
+      // canvas box would just be dead space, and the FlowSteps diagram
+      // below already carries the same steps as plain text. Collapse
+      // rather than leave a blank box for reduced-motion/no-WebGL
+      // visitors (mobile no longer hits this branch on its own).
+      container.remove();
+      return;
+    }
+
+    const steps: string[] = JSON.parse(container.dataset.steps || '[]');
+    const pulse = container.dataset.pulse === '1';
+    const accentVar = container.dataset.accentVar || undefined;
+
+    const labelEls = steps.map((label) => {
+      const el = document.createElement('div');
+      el.className =
+        'absolute -translate-x-1/2 translate-y-3 whitespace-nowrap rounded-full border border-ink-700 bg-ink-950/85 px-2.5 py-1 text-[11px] font-medium text-ink-200 opacity-0 transition-opacity duration-200';
+      el.textContent = label;
+      labelsRoot.appendChild(el);
+      return el;
+    });
+
+    let handle: ReturnType<typeof createNodeGraphScene> | null = null;
+    onVisibilityChange(
+      container,
+      () => {
+        handle = safeMountScene(() =>
+          createNodeGraphScene(canvas, {
+            steps,
+            pulse,
+            accentVar,
+            onUpdate: (positions) => {
+              positions.forEach((pos, i) => {
+                const el = labelEls[i];
+                if (!el) return;
+                el.style.left = `${pos.x}px`;
+                el.style.top = `${pos.y}px`;
+                el.style.opacity = pos.visible ? '1' : '0';
+              });
+            },
+          })
+        );
+        if (!handle) {
+          container.remove();
+          return;
+        }
+        handle.start();
+      },
+      () => {
+        handle?.stop();
+        handle?.dispose();
+        handle = null;
+      }
+    );
+  });
+</script>
