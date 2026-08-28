@@ -16,7 +16,6 @@ const { count } = Astro.props;
 </div>
 
 <script>
-  import { createCapabilityScene } from '../../scripts/three/capabilityScene';
   import { shouldRunHeavyMotion, onVisibilityChange, safeMountScene } from '../../scripts/motion';
 
   const container = document.querySelector<HTMLElement>('[data-capability-scene]');
@@ -24,7 +23,7 @@ const { count } = Astro.props;
 
   if (container && canvas && shouldRunHeavyMotion()) {
     const count = Number(container.dataset.count || '0');
-    let scene: ReturnType<typeof createCapabilityScene> | null = null;
+    let scene: ReturnType<typeof import('../../scripts/three/capabilityScene')['createCapabilityScene']> | null = null;
 
     const cards = document.querySelectorAll<HTMLElement>('[data-service-card]');
     const bindCardEvents = () => {
@@ -39,7 +38,8 @@ const { count } = Astro.props;
 
     onVisibilityChange(
       container,
-      () => {
+      async () => {
+        const { createCapabilityScene } = await import('../../scripts/three/capabilityScene');
         scene = safeMountScene(() => createCapabilityScene(canvas, count));
         if (!scene) return;
         scene.start();

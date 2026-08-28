@@ -12,19 +12,23 @@
 </div>
 
 <script>
-  import { createHeroScene } from '../../scripts/three/heroScene';
   import { shouldRunHeavyMotion, onVisibilityChange, safeMountScene } from '../../scripts/motion';
 
   const container = document.querySelector<HTMLElement>('[data-hero-scene]');
   const canvas = container?.querySelector<HTMLCanvasElement>('canvas');
 
   if (container && canvas && shouldRunHeavyMotion()) {
-    let scene: ReturnType<typeof createHeroScene> | null = null;
+    let scene: ReturnType<typeof import('../../scripts/three/heroScene')['createHeroScene']> | null = null;
     let scrollTrigger: import('gsap/ScrollTrigger').ScrollTrigger | null = null;
 
     onVisibilityChange(
       container,
       async () => {
+        // Dynamic import: the ~530kB shared Three.js chunk is only
+        // fetched once shouldRunHeavyMotion() has already passed and
+        // this scene is actually about to mount — reduced-motion/no-
+        // WebGL visitors never download it at all.
+        const { createHeroScene } = await import('../../scripts/three/heroScene');
         scene = safeMountScene(() => createHeroScene(canvas));
         if (!scene) {
           container.remove();

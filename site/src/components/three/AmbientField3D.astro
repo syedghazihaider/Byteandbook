@@ -9,17 +9,17 @@
 </div>
 
 <script>
-  import { createAmbientFieldScene } from '../../scripts/three/ambientFieldScene';
   import { shouldRunHeavyMotion, onVisibilityChange, safeMountScene } from '../../scripts/motion';
 
   const container = document.querySelector<HTMLElement>('[data-ambient-field]');
   const canvas = container?.querySelector<HTMLCanvasElement>('canvas');
 
   if (container && canvas && shouldRunHeavyMotion()) {
-    let scene: ReturnType<typeof createAmbientFieldScene> | null = null;
+    let scene: ReturnType<typeof import('../../scripts/three/ambientFieldScene')['createAmbientFieldScene']> | null = null;
     onVisibilityChange(
       container,
-      () => {
+      async () => {
+        const { createAmbientFieldScene } = await import('../../scripts/three/ambientFieldScene');
         scene = safeMountScene(() => createAmbientFieldScene(canvas));
         scene?.start();
       },

@@ -21,7 +21,6 @@ const { steps, accentVar } = Astro.props;
 </div>
 
 <script>
-  import { createDataEcosystemScene } from '../../scripts/three/dataEcosystemScene';
   import { shouldRunHeavyMotion, onVisibilityChange, safeMountScene } from '../../scripts/motion';
 
   document.querySelectorAll<HTMLElement>('[data-data-ecosystem]').forEach((container) => {
@@ -45,10 +44,11 @@ const { steps, accentVar } = Astro.props;
       return el;
     });
 
-    let handle: ReturnType<typeof createDataEcosystemScene> | null = null;
+    let handle: ReturnType<typeof import('../../scripts/three/dataEcosystemScene')['createDataEcosystemScene']> | null = null;
     onVisibilityChange(
       container,
-      () => {
+      async () => {
+        const { createDataEcosystemScene } = await import('../../scripts/three/dataEcosystemScene');
         handle = safeMountScene(() =>
           createDataEcosystemScene(canvas, {
             steps,

@@ -11,7 +11,6 @@
 </div>
 
 <script>
-  import { createBookScene } from '../../scripts/three/bookScene';
   import { shouldRunHeavyMotion, onVisibilityChange, safeMountScene } from '../../scripts/motion';
 
   document.querySelectorAll<HTMLElement>('[data-book-scene]').forEach((container) => {
@@ -22,10 +21,11 @@
       return;
     }
 
-    let handle: ReturnType<typeof createBookScene> | null = null;
+    let handle: ReturnType<typeof import('../../scripts/three/bookScene')['createBookScene']> | null = null;
     onVisibilityChange(
       container,
-      () => {
+      async () => {
+        const { createBookScene } = await import('../../scripts/three/bookScene');
         handle = safeMountScene(() => createBookScene(canvas));
         if (!handle) {
           container.remove();

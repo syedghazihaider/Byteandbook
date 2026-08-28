@@ -23,7 +23,6 @@
 </div>
 
 <script>
-  import { createHardwareScene } from '../../scripts/three/hardwareScene';
   import { shouldRunHeavyMotion, onVisibilityChange, safeMountScene } from '../../scripts/motion';
 
   const container = document.querySelector<HTMLElement>('[data-hardware-scene]');
@@ -34,12 +33,13 @@
   if (container && canvas && labelsRoot && toggle && shouldRunHeavyMotion()) {
     const labelEls = new Map<string, HTMLElement>();
 
-    let handle: ReturnType<typeof createHardwareScene> | null = null;
+    let handle: ReturnType<typeof import('../../scripts/three/hardwareScene')['createHardwareScene']> | null = null;
     let exploded = false;
 
     onVisibilityChange(
       container,
-      () => {
+      async () => {
+        const { createHardwareScene } = await import('../../scripts/three/hardwareScene');
         handle = safeMountScene(() =>
           createHardwareScene(canvas, {
             onUpdate: (labels) => {

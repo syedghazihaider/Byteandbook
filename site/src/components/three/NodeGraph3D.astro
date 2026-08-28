@@ -23,7 +23,6 @@ const { steps, pulse = false, accentVar } = Astro.props;
 </div>
 
 <script>
-  import { createNodeGraphScene } from '../../scripts/three/nodeGraphScene';
   import { shouldRunHeavyMotion, onVisibilityChange, safeMountScene } from '../../scripts/motion';
 
   document.querySelectorAll<HTMLElement>('[data-node-graph]').forEach((container) => {
@@ -53,10 +52,11 @@ const { steps, pulse = false, accentVar } = Astro.props;
       return el;
     });
 
-    let handle: ReturnType<typeof createNodeGraphScene> | null = null;
+    let handle: ReturnType<typeof import('../../scripts/three/nodeGraphScene')['createNodeGraphScene']> | null = null;
     onVisibilityChange(
       container,
-      () => {
+      async () => {
+        const { createNodeGraphScene } = await import('../../scripts/three/nodeGraphScene');
         handle = safeMountScene(() =>
           createNodeGraphScene(canvas, {
             steps,

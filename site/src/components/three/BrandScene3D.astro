@@ -18,7 +18,6 @@ const { steps } = Astro.props;
 </div>
 
 <script>
-  import { createBrandScene } from '../../scripts/three/brandScene';
   import { shouldRunHeavyMotion, onVisibilityChange, safeMountScene } from '../../scripts/motion';
 
   document.querySelectorAll<HTMLElement>('[data-brand-scene]').forEach((container) => {
@@ -41,10 +40,11 @@ const { steps } = Astro.props;
       return el;
     });
 
-    let handle: ReturnType<typeof createBrandScene> | null = null;
+    let handle: ReturnType<typeof import('../../scripts/three/brandScene')['createBrandScene']> | null = null;
     onVisibilityChange(
       container,
-      () => {
+      async () => {
+        const { createBrandScene } = await import('../../scripts/three/brandScene');
         handle = safeMountScene(() =>
           createBrandScene(canvas, {
             steps,
