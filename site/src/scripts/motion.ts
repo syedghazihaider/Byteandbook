@@ -6,14 +6,47 @@ export function prefersReducedMotion(): boolean {
   return window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 }
 
-/** Below this width, Level 1 3D scenes render a static fallback instead
- *  of a scaled-down desktop scene, per the mobile rule. */
+/** Below this width, scenes run a compact/low-quality motion tier
+ *  (see getQualityTier in scripts/three/utils.ts) rather than either the
+ *  full desktop scene or a static fallback — real mobile visitors get a
+ *  genuine, lighter Three.js experience, not a cut scene. */
 export function isCompactViewport(): boolean {
   return window.innerWidth < 768;
 }
 
+let webglSupportCache: boolean | null = null;
+
+/** Probes for a real WebGL context once and caches the result. This,
+ *  not viewport width, is what decides whether 3D runs at all — a small
+ *  screen still gets real Three.js (at the compact quality tier); only
+ *  no WebGL support gets the static fallback. */
+export function isWebglSupported(): boolean {
+  if (webglSupportCache !== null) return webglSupportCache;
+  try {
+    const canvas = document.createElement('canvas');
+    const gl = canvas.getContext('webgl2') || canvas.getContext('webgl') || canvas.getContext('experimental-webgl');
+    webglSupportCache = !!gl;
+  } catch {
+    webglSupportCache = false;
+  }
+  return webglSupportCache;
+}
+
 export function shouldRunHeavyMotion(): boolean {
-  return !prefersReducedMotion() && !isCompactViewport();
+  return !prefersReducedMotion() && isWebglSupported();
+}
+
+/** Runs `create()` and returns its handle, or null if scene construction
+ *  throws — a genuine rendering failure (context loss, driver crash,
+ *  out of memory) falls back to static rather than leaving a broken
+ *  canvas or an uncaught error on the page. */
+export function safeMountScene<T>(create: () => T): T | null {
+  try {
+    return create();
+  } catch (err) {
+    console.warn('[ByteAndBook] 3D scene failed to initialize — falling back to static.', err);
+    return null;
+  }
 }
 
 /** Level 3 scroll-reveal: fades/slides [data-reveal] elements in once

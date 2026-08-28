@@ -1,5 +1,5 @@
 import * as THREE from 'three';
-import { createBaseScene, readColorToken, addDragRotate, onTabHidden } from './utils';
+import { createBaseScene, readColorToken, addDragRotate, onTabHidden, getQualityTier } from './utils';
 
 export interface ScreenLabel {
   key: string;
@@ -45,6 +45,9 @@ export function createHardwareScene(canvas: HTMLCanvasElement, opts: HardwareOpt
   const group = new THREE.Group();
   scene.add(group);
 
+  const compact = getQualityTier() === 'compact';
+  const coolingSegments = compact ? 16 : 28;
+
   const light = new THREE.DirectionalLight(0xffffff, 1.1);
   light.position.set(4, 6, 6);
   scene.add(light);
@@ -63,7 +66,7 @@ export function createHardwareScene(canvas: HTMLCanvasElement, opts: HardwareOpt
   const parts: Part[] = [
     addPart('Motherboard', new THREE.BoxGeometry(4.2, 0.1, 3.2), ink, new THREE.Vector3(0, 0, 0), new THREE.Vector3(0, 0, 0)),
     addPart('CPU', new THREE.BoxGeometry(0.6, 0.14, 0.6), signal, new THREE.Vector3(-0.3, 0.12, 0), new THREE.Vector3(-0.3, 1.1, 0)),
-    addPart('Cooling', new THREE.CylinderGeometry(0.45, 0.45, 0.22, 28), ink, new THREE.Vector3(-0.3, 0.3, 0), new THREE.Vector3(-0.3, 2.0, 0)),
+    addPart('Cooling', new THREE.CylinderGeometry(0.45, 0.45, 0.22, coolingSegments), ink, new THREE.Vector3(-0.3, 0.3, 0), new THREE.Vector3(-0.3, 2.0, 0)),
     addPart('RAM', new THREE.BoxGeometry(0.14, 0.85, 1.5), signalDim, new THREE.Vector3(1.1, 0.48, 0.2), new THREE.Vector3(1.1, 1.5, 0.2)),
     addPart('GPU', new THREE.BoxGeometry(2.9, 0.24, 0.95), signal, new THREE.Vector3(0, -0.15, 1.55), new THREE.Vector3(0, -1.3, 1.55)),
     addPart('SSD', new THREE.BoxGeometry(0.85, 0.05, 0.55), ink, new THREE.Vector3(-1.55, 0.08, -1.1), new THREE.Vector3(-1.55, -2.0, -1.1)),

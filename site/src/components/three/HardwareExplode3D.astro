@@ -6,7 +6,7 @@
 
 <div class="mx-auto max-w-4xl" data-hardware-scene>
   <div class="relative h-[340px] w-full sm:h-[420px]">
-    <canvas class="h-full w-full cursor-grab active:cursor-grabbing" aria-hidden="true"></canvas>
+    <canvas class="h-full w-full touch-none cursor-grab active:cursor-grabbing" aria-hidden="true"></canvas>
     <div class="pointer-events-none absolute inset-0" data-labels></div>
   </div>
   <div class="mt-6 flex flex-col items-center gap-3">
@@ -24,7 +24,7 @@
 
 <script>
   import { createHardwareScene } from '../../scripts/three/hardwareScene';
-  import { shouldRunHeavyMotion, onVisibilityChange } from '../../scripts/motion';
+  import { shouldRunHeavyMotion, onVisibilityChange, safeMountScene } from '../../scripts/motion';
 
   const container = document.querySelector<HTMLElement>('[data-hardware-scene]');
   const canvas = container?.querySelector<HTMLCanvasElement>('canvas');
@@ -40,24 +40,30 @@
     onVisibilityChange(
       container,
       () => {
-        handle = createHardwareScene(canvas, {
-          onUpdate: (labels) => {
-            labels.forEach((label) => {
-              let el = labelEls.get(label.key);
-              if (!el) {
-                el = document.createElement('div');
-                el.className =
-                  'absolute -translate-x-1/2 translate-y-3 whitespace-nowrap rounded-full border border-ink-700 bg-ink-950/85 px-2.5 py-1 text-[11px] font-medium text-ink-200 transition-opacity duration-200';
-                labelsRoot.appendChild(el);
-                el.textContent = label.key;
-                labelEls.set(label.key, el);
-              }
-              el.style.left = `${label.x}px`;
-              el.style.top = `${label.y}px`;
-              el.style.opacity = label.visible ? String(label.opacity) : '0';
-            });
-          },
-        });
+        handle = safeMountScene(() =>
+          createHardwareScene(canvas, {
+            onUpdate: (labels) => {
+              labels.forEach((label) => {
+                let el = labelEls.get(label.key);
+                if (!el) {
+                  el = document.createElement('div');
+                  el.className =
+                    'absolute -translate-x-1/2 translate-y-3 whitespace-nowrap rounded-full border border-ink-700 bg-ink-950/85 px-2.5 py-1 text-[11px] font-medium text-ink-200 transition-opacity duration-200';
+                  labelsRoot.appendChild(el);
+                  el.textContent = label.key;
+                  labelEls.set(label.key, el);
+                }
+                el.style.left = `${label.x}px`;
+                el.style.top = `${label.y}px`;
+                el.style.opacity = label.visible ? String(label.opacity) : '0';
+              });
+            },
+          })
+        );
+        if (!handle) {
+          container.remove();
+          return;
+        }
         handle.start();
         handle.setExploded(exploded);
       },
@@ -75,9 +81,9 @@
       handle?.setExploded(exploded);
     });
   } else if (container) {
-    // No heavy motion (reduced-motion / mobile / no support) — collapse
-    // the whole scene rather than leaving an empty canvas box and a dead
-    // toggle button.
+    // No heavy motion (reduced-motion / no WebGL support) — collapse the
+    // whole scene rather than leaving an empty canvas box and a dead
+    // toggle button. Mobile no longer hits this branch on its own.
     container.remove();
   }
 </script>

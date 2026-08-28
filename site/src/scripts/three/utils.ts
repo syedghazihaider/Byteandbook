@@ -1,4 +1,5 @@
 import * as THREE from 'three';
+import { isCompactViewport } from '../motion';
 
 export interface BaseScene {
   renderer: THREE.WebGLRenderer;
@@ -23,7 +24,8 @@ export function createBaseScene(canvas: HTMLCanvasElement): BaseScene {
     alpha: true,
     powerPreference: 'low-power',
   });
-  renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+  const dprCap = isCompactViewport() ? 1.5 : 2;
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio, dprCap));
 
   const scene = new THREE.Scene();
   const camera = new THREE.PerspectiveCamera(45, 1, 0.1, 100);
@@ -64,13 +66,18 @@ export function readColorToken(varName: string): THREE.Color {
   return new THREE.Color(value || '#3866f0');
 }
 
-export type QualityTier = 'high' | 'medium' | 'low';
+export type QualityTier = 'high' | 'medium' | 'low' | 'compact';
 
-/** Scales particle/segment counts on capable desktops vs. modest ones.
- *  Independent of motion.ts's mobile/reduced-motion cutoff — that
- *  decides whether heavy motion runs at all; this decides how much of
- *  it runs once it's already been allowed to. */
+/** Scales particle/segment counts down for modest devices and, more
+ *  aggressively, for narrow/mobile viewports. Independent of
+ *  motion.ts's WebGL-support/reduced-motion gate — that decides whether
+ *  a scene runs at all; this decides how much of it runs once it's
+ *  already been allowed to. A compact viewport always gets the
+ *  'compact' tier regardless of core/memory specs — a phone's small
+ *  screen doesn't need desktop-density geometry even when its chip is
+ *  fast, and its GPU is usually the more relevant bottleneck anyway. */
 export function getQualityTier(): QualityTier {
+  if (isCompactViewport()) return 'compact';
   const cores = (navigator as Navigator & { hardwareConcurrency?: number }).hardwareConcurrency ?? 4;
   const memory = (navigator as Navigator & { deviceMemory?: number }).deviceMemory ?? 8;
   if (cores <= 2 || memory <= 2) return 'low';
@@ -79,7 +86,16 @@ export function getQualityTier(): QualityTier {
 }
 
 export function qualityScale(tier: QualityTier): number {
-  return tier === 'high' ? 1 : tier === 'medium' ? 0.65 : 0.4;
+  switch (tier) {
+    case 'high':
+      return 1;
+    case 'medium':
+      return 0.65;
+    case 'low':
+      return 0.4;
+    case 'compact':
+      return 0.3;
+  }
 }
 
 /** Pauses `onHide`/resumes `onShow` when the browser tab is backgrounded

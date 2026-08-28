@@ -1,8 +1,10 @@
 ---
 // Level 1 homepage hero visual. Absolutely positioned over the static
 // CSS grid/glow backdrop already in index.astro — that backdrop is the
-// reduced-motion / mobile / no-JS fallback; this canvas only mounts on
-// top of it when shouldRunHeavyMotion() allows it.
+// reduced-motion / no-WebGL / no-JS / render-failure fallback; this
+// canvas mounts on top of it whenever shouldRunHeavyMotion() allows it,
+// which now includes mobile viewports (at the compact quality tier —
+// see scripts/three/utils.ts).
 ---
 
 <div class="pointer-events-none absolute inset-0" data-hero-scene>
@@ -11,7 +13,7 @@
 
 <script>
   import { createHeroScene } from '../../scripts/three/heroScene';
-  import { shouldRunHeavyMotion, onVisibilityChange } from '../../scripts/motion';
+  import { shouldRunHeavyMotion, onVisibilityChange, safeMountScene } from '../../scripts/motion';
 
   const container = document.querySelector<HTMLElement>('[data-hero-scene]');
   const canvas = container?.querySelector<HTMLCanvasElement>('canvas');
@@ -23,7 +25,11 @@
     onVisibilityChange(
       container,
       async () => {
-        scene = createHeroScene(canvas);
+        scene = safeMountScene(() => createHeroScene(canvas));
+        if (!scene) {
+          container.remove();
+          return;
+        }
         scene.start();
 
         if (!scrollTrigger) {

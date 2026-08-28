@@ -17,7 +17,7 @@ const { count } = Astro.props;
 
 <script>
   import { createCapabilityScene } from '../../scripts/three/capabilityScene';
-  import { shouldRunHeavyMotion, onVisibilityChange } from '../../scripts/motion';
+  import { shouldRunHeavyMotion, onVisibilityChange, safeMountScene } from '../../scripts/motion';
 
   const container = document.querySelector<HTMLElement>('[data-capability-scene]');
   const canvas = container?.querySelector<HTMLCanvasElement>('canvas');
@@ -40,7 +40,8 @@ const { count } = Astro.props;
     onVisibilityChange(
       container,
       () => {
-        scene = createCapabilityScene(canvas, count);
+        scene = safeMountScene(() => createCapabilityScene(canvas, count));
+        if (!scene) return;
         scene.start();
         bindCardEvents();
       },

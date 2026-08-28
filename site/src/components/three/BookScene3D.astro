@@ -12,7 +12,7 @@
 
 <script>
   import { createBookScene } from '../../scripts/three/bookScene';
-  import { shouldRunHeavyMotion, onVisibilityChange } from '../../scripts/motion';
+  import { shouldRunHeavyMotion, onVisibilityChange, safeMountScene } from '../../scripts/motion';
 
   document.querySelectorAll<HTMLElement>('[data-book-scene]').forEach((container) => {
     const canvas = container.querySelector<HTMLCanvasElement>('canvas');
@@ -26,7 +26,11 @@
     onVisibilityChange(
       container,
       () => {
-        handle = createBookScene(canvas);
+        handle = safeMountScene(() => createBookScene(canvas));
+        if (!handle) {
+          container.remove();
+          return;
+        }
         handle.start();
       },
       () => {

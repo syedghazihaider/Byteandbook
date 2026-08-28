@@ -10,7 +10,7 @@
 
 <script>
   import { createAmbientFieldScene } from '../../scripts/three/ambientFieldScene';
-  import { shouldRunHeavyMotion, onVisibilityChange } from '../../scripts/motion';
+  import { shouldRunHeavyMotion, onVisibilityChange, safeMountScene } from '../../scripts/motion';
 
   const container = document.querySelector<HTMLElement>('[data-ambient-field]');
   const canvas = container?.querySelector<HTMLCanvasElement>('canvas');
@@ -20,8 +20,8 @@
     onVisibilityChange(
       container,
       () => {
-        scene = createAmbientFieldScene(canvas);
-        scene.start();
+        scene = safeMountScene(() => createAmbientFieldScene(canvas));
+        scene?.start();
       },
       () => {
         scene?.stop();

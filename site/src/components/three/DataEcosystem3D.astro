@@ -22,7 +22,7 @@ const { steps, accentVar } = Astro.props;
 
 <script>
   import { createDataEcosystemScene } from '../../scripts/three/dataEcosystemScene';
-  import { shouldRunHeavyMotion, onVisibilityChange } from '../../scripts/motion';
+  import { shouldRunHeavyMotion, onVisibilityChange, safeMountScene } from '../../scripts/motion';
 
   document.querySelectorAll<HTMLElement>('[data-data-ecosystem]').forEach((container) => {
     const canvas = container.querySelector<HTMLCanvasElement>('canvas');
@@ -49,19 +49,25 @@ const { steps, accentVar } = Astro.props;
     onVisibilityChange(
       container,
       () => {
-        handle = createDataEcosystemScene(canvas, {
-          steps,
-          accentVar,
-          onUpdate: (positions) => {
-            positions.forEach((pos, i) => {
-              const el = labelEls[i];
-              if (!el) return;
-              el.style.left = `${pos.x}px`;
-              el.style.top = `${pos.y}px`;
-              el.style.opacity = pos.visible ? '1' : '0';
-            });
-          },
-        });
+        handle = safeMountScene(() =>
+          createDataEcosystemScene(canvas, {
+            steps,
+            accentVar,
+            onUpdate: (positions) => {
+              positions.forEach((pos, i) => {
+                const el = labelEls[i];
+                if (!el) return;
+                el.style.left = `${pos.x}px`;
+                el.style.top = `${pos.y}px`;
+                el.style.opacity = pos.visible ? '1' : '0';
+              });
+            },
+          })
+        );
+        if (!handle) {
+          container.remove();
+          return;
+        }
         handle.start();
       },
       () => {

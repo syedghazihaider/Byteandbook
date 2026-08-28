@@ -12,14 +12,14 @@ const { steps } = Astro.props;
   data-brand-scene
   data-steps={JSON.stringify(steps)}
 >
-  <canvas class="h-full w-full cursor-grab active:cursor-grabbing" aria-hidden="true"></canvas>
+  <canvas class="h-full w-full touch-none cursor-grab active:cursor-grabbing" aria-hidden="true"></canvas>
   <div class="pointer-events-none absolute inset-0" data-labels></div>
   <p class="pointer-events-none absolute bottom-3 left-1/2 -translate-x-1/2 text-xs text-ink-500">Drag to rotate</p>
 </div>
 
 <script>
   import { createBrandScene } from '../../scripts/three/brandScene';
-  import { shouldRunHeavyMotion, onVisibilityChange } from '../../scripts/motion';
+  import { shouldRunHeavyMotion, onVisibilityChange, safeMountScene } from '../../scripts/motion';
 
   document.querySelectorAll<HTMLElement>('[data-brand-scene]').forEach((container) => {
     const canvas = container.querySelector<HTMLCanvasElement>('canvas');
@@ -45,18 +45,24 @@ const { steps } = Astro.props;
     onVisibilityChange(
       container,
       () => {
-        handle = createBrandScene(canvas, {
-          steps,
-          onUpdate: (positions) => {
-            positions.forEach((pos, i) => {
-              const el = labelEls[i];
-              if (!el) return;
-              el.style.left = `${pos.x}px`;
-              el.style.top = `${pos.y}px`;
-              el.style.opacity = pos.visible ? '1' : '0';
-            });
-          },
-        });
+        handle = safeMountScene(() =>
+          createBrandScene(canvas, {
+            steps,
+            onUpdate: (positions) => {
+              positions.forEach((pos, i) => {
+                const el = labelEls[i];
+                if (!el) return;
+                el.style.left = `${pos.x}px`;
+                el.style.top = `${pos.y}px`;
+                el.style.opacity = pos.visible ? '1' : '0';
+              });
+            },
+          })
+        );
+        if (!handle) {
+          container.remove();
+          return;
+        }
         handle.start();
       },
       () => {

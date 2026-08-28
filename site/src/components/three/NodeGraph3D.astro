@@ -24,7 +24,7 @@ const { steps, pulse = false, accentVar } = Astro.props;
 
 <script>
   import { createNodeGraphScene } from '../../scripts/three/nodeGraphScene';
-  import { shouldRunHeavyMotion, onVisibilityChange } from '../../scripts/motion';
+  import { shouldRunHeavyMotion, onVisibilityChange, safeMountScene } from '../../scripts/motion';
 
   document.querySelectorAll<HTMLElement>('[data-node-graph]').forEach((container) => {
     const canvas = container.querySelector<HTMLCanvasElement>('canvas');
@@ -34,7 +34,8 @@ const { steps, pulse = false, accentVar } = Astro.props;
       // No static illustration exists for this scene family — an empty
       // canvas box would just be dead space, and the FlowSteps diagram
       // below already carries the same steps as plain text. Collapse
-      // rather than leave a blank box for reduced-motion/mobile visitors.
+      // rather than leave a blank box for reduced-motion/no-WebGL
+      // visitors (mobile no longer hits this branch on its own).
       container.remove();
       return;
     }
@@ -56,20 +57,26 @@ const { steps, pulse = false, accentVar } = Astro.props;
     onVisibilityChange(
       container,
       () => {
-        handle = createNodeGraphScene(canvas, {
-          steps,
-          pulse,
-          accentVar,
-          onUpdate: (positions) => {
-            positions.forEach((pos, i) => {
-              const el = labelEls[i];
-              if (!el) return;
-              el.style.left = `${pos.x}px`;
-              el.style.top = `${pos.y}px`;
-              el.style.opacity = pos.visible ? '1' : '0';
-            });
-          },
-        });
+        handle = safeMountScene(() =>
+          createNodeGraphScene(canvas, {
+            steps,
+            pulse,
+            accentVar,
+            onUpdate: (positions) => {
+              positions.forEach((pos, i) => {
+                const el = labelEls[i];
+                if (!el) return;
+                el.style.left = `${pos.x}px`;
+                el.style.top = `${pos.y}px`;
+                el.style.opacity = pos.visible ? '1' : '0';
+              });
+            },
+          })
+        );
+        if (!handle) {
+          container.remove();
+          return;
+        }
         handle.start();
       },
       () => {
