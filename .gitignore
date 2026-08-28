@@ -7,7 +7,7 @@ bytesbra_wp928.sql
 site/node_modules/
 site/dist/
 site/.astro/
-site/preview.log
+site/preview*.log
 .env
 .env.*
 

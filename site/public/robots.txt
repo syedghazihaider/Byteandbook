@@ -1,0 +1,6 @@
+User-agent: *
+Allow: /
+Disallow: /style-guide/
+Disallow: /404.html
+
+Sitemap: https://byteandbook.com/sitemap-index.xml

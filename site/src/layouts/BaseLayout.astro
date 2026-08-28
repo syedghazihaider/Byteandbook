@@ -1,10 +1,60 @@
 ---
+// Phase 9 — SEO/GEO foundation. Every page passes its own `path` (the
+// canonical route, always trailing-slash-terminated to match Astro's
+// directory build output — see astro.config.mjs) so this layout can
+// derive one absolute, self-referencing canonical URL and matching
+// OG/Twitter metadata without each page re-deriving it. `noindex` opts
+// a page (style-guide, 404) out of indexing without excluding it from
+// rendering. `jsonLd` accepts zero or more page-specific schema.org
+// objects (Service, BreadcrumbList, FAQPage) rendered alongside the
+// sitewide Organization/WebSite graph below — real content only, see
+// each page for what backs each field.
 interface Props {
   title: string;
   description: string;
+  path: string;
+  noindex?: boolean;
+  jsonLd?: Record<string, unknown>[];
 }
 
-const { title, description } = Astro.props;
+const SITE_URL = 'https://byteandbook.com';
+const SITE_NAME = 'ByteAndBook';
+
+const { title, description, path, noindex = false, jsonLd = [] } = Astro.props;
+const canonicalUrl = new URL(path, SITE_URL).toString();
+
+// Sitewide identity graph — present on every page (not just the
+// homepage) per standard practice, so any page can be understood in
+// isolation. Only fields with real, verified values are included: no
+// logo asset exists yet, no verified social profiles, no physical
+// address/phone — all correctly omitted rather than invented.
+const organizationId = `${SITE_URL}/#organization`;
+const websiteId = `${SITE_URL}/#website`;
+const siteGraph = {
+  '@context': 'https://schema.org',
+  '@graph': [
+    {
+      '@type': 'Organization',
+      '@id': organizationId,
+      name: SITE_NAME,
+      url: SITE_URL,
+      description:
+        'ByteAndBook is a digital technology and growth agency spanning marketing, software engineering, cloud infrastructure, and brand design.',
+      contactPoint: {
+        '@type': 'ContactPoint',
+        email: 'info@byteandbook.com',
+        contactType: 'customer support',
+      },
+    },
+    {
+      '@type': 'WebSite',
+      '@id': websiteId,
+      url: SITE_URL,
+      name: SITE_NAME,
+      publisher: { '@id': organizationId },
+    },
+  ],
+};
 ---
 
 <!doctype html>
@@ -14,6 +64,19 @@ const { title, description } = Astro.props;
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>{title}</title>
     <meta name="description" content={description} />
+    <link rel="canonical" href={canonicalUrl} />
+    <meta name="robots" content={noindex ? 'noindex, nofollow' : 'index, follow'} />
+
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content={SITE_NAME} />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonicalUrl} />
+
+    <meta name="twitter:card" content="summary" />
+    <meta name="twitter:title" content={title} />
+    <meta name="twitter:description" content={description} />
+
     <!--
       Compiled by the Tailwind CLI (npm run css:build) into a plain
       static file, linked directly rather than imported into the Astro/
@@ -26,6 +89,10 @@ const { title, description } = Astro.props;
       href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Sora:wght@400;500;600;700;800&display=swap"
       rel="stylesheet"
     />
+    <script type="application/ld+json" set:html={JSON.stringify(siteGraph)} />
+    {jsonLd.map((schema) => (
+      <script type="application/ld+json" set:html={JSON.stringify(schema)} />
+    ))}
     <slot name="head" />
   </head>
   <body>

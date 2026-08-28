@@ -6,7 +6,12 @@ import Container from '../components/ui/Container.astro';
 import Button from '../components/ui/Button.astro';
 ---
 
-<BaseLayout title="Page not found — ByteAndBook" description="The page you're looking for doesn't exist.">
+<BaseLayout
+  title="Page not found — ByteAndBook"
+  description="The page you're looking for doesn't exist."
+  path="/404.html"
+  noindex
+>
   <Header />
 
   <main class="flex min-h-screen items-center pt-24">

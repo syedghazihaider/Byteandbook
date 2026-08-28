@@ -31,11 +31,63 @@ export async function getStaticPaths() {
 const { service } = Astro.props;
 const { Content } = await render(service);
 
+const SITE_URL = 'https://byteandbook.com';
+const path = `/services/${service.id}/`;
+const canonicalUrl = new URL(path, SITE_URL).toString();
+
 const allServices = await getCollection('services');
-const related = allServices
+const pillarRelated = allServices
   .filter((s) => s.id !== service.id && s.data.pillar === service.data.pillar)
-  .sort((a, b) => a.data.order - b.data.order)
+  .sort((a, b) => a.data.order - b.data.order);
+
+// Explicit cross-pillar pairings called out in CLAUDE.md's GEO/internal-
+// linking guidance (e.g. Web Development <-> DevOps) — these span
+// different pillars, so the same-pillar grouping above wouldn't
+// surface them on its own. Listed first so they always make the cut.
+const crossLinks: Record<string, string[]> = {
+  seo: ['geo'],
+  geo: ['seo'],
+  'digital-marketing': ['social-media-marketing'],
+  'social-media-marketing': ['digital-marketing'],
+  'web-development': ['devops', 'branding'],
+  devops: ['web-development'],
+  'software-development': ['cloud'],
+  cloud: ['software-development'],
+  branding: ['web-development'],
+};
+const crossRelated = (crossLinks[service.id] ?? [])
+  .map((id) => allServices.find((s) => s.id === id))
+  .filter((s): s is (typeof allServices)[number] => Boolean(s));
+
+const seenIds = new Set<string>();
+const related = [...crossRelated, ...pillarRelated]
+  .filter((s) => {
+    if (seenIds.has(s.id)) return false;
+    seenIds.add(s.id);
+    return true;
+  })
   .slice(0, 3);
+
+const breadcrumbJsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'BreadcrumbList',
+  itemListElement: [
+    { '@type': 'ListItem', position: 1, name: 'Home', item: `${SITE_URL}/` },
+    { '@type': 'ListItem', position: 2, name: 'Services', item: `${SITE_URL}/#services` },
+    { '@type': 'ListItem', position: 3, name: service.data.title, item: canonicalUrl },
+  ],
+};
+
+const serviceJsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'Service',
+  '@id': `${canonicalUrl}#service`,
+  name: service.data.title,
+  description: service.data.metaDescription,
+  url: canonicalUrl,
+  category: service.data.pillar,
+  provider: { '@id': `${SITE_URL}/#organization` },
+};
 
 // Every service page gets a Level 1 3D hero, grouped into the scene
 // families documented in 3D_ART_DIRECTION.md — the family the page
@@ -54,7 +106,12 @@ const isBranding = service.id === 'branding';
 const isEbook = service.id === 'ebook-publishing';
 ---
 
-<BaseLayout title={`${service.data.title} — ByteAndBook`} description={service.data.metaDescription}>
+<BaseLayout
+  title={`${service.data.title} — ByteAndBook`}
+  description={service.data.metaDescription}
+  path={path}
+  jsonLd={[serviceJsonLd, breadcrumbJsonLd]}
+>
   <Header />
 
   <main>
@@ -154,7 +211,7 @@ const isEbook = service.id === 'ebook-publishing';
       <section class="py-16">
         <Container>
           <h2 class="text-2xl font-bold text-ink-50">
-            Related {service.data.pillar} services
+            Related services
           </h2>
           <div class="mt-8 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
             {related.map((r) => (
@@ -184,7 +241,7 @@ const isEbook = service.id === 'ebook-publishing';
             scope it against the process above.
           </p>
           <div class="mt-7">
-            <Button href="/contact" variant="primary">Start a Project</Button>
+            <Button href="/contact/" variant="primary">Start a Project</Button>
           </div>
         </div>
       </Container>
