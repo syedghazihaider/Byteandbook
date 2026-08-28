@@ -64,6 +64,36 @@ export function readColorToken(varName: string): THREE.Color {
   return new THREE.Color(value || '#3866f0');
 }
 
+export type QualityTier = 'high' | 'medium' | 'low';
+
+/** Scales particle/segment counts on capable desktops vs. modest ones.
+ *  Independent of motion.ts's mobile/reduced-motion cutoff — that
+ *  decides whether heavy motion runs at all; this decides how much of
+ *  it runs once it's already been allowed to. */
+export function getQualityTier(): QualityTier {
+  const cores = (navigator as Navigator & { hardwareConcurrency?: number }).hardwareConcurrency ?? 4;
+  const memory = (navigator as Navigator & { deviceMemory?: number }).deviceMemory ?? 8;
+  if (cores <= 2 || memory <= 2) return 'low';
+  if (cores <= 4 || memory <= 4) return 'medium';
+  return 'high';
+}
+
+export function qualityScale(tier: QualityTier): number {
+  return tier === 'high' ? 1 : tier === 'medium' ? 0.65 : 0.4;
+}
+
+/** Pauses `onHide`/resumes `onShow` when the browser tab is backgrounded
+ *  — a second, cheaper layer of "don't burn GPU/battery off-screen" on
+ *  top of the viewport IntersectionObserver in onVisibilityChange. */
+export function onTabHidden(onHide: () => void, onShow: () => void): () => void {
+  const handler = () => {
+    if (document.hidden) onHide();
+    else onShow();
+  };
+  document.addEventListener('visibilitychange', handler);
+  return () => document.removeEventListener('visibilitychange', handler);
+}
+
 /** Minimal hand-rolled drag-to-rotate (no OrbitControls import — keeps
  *  bundle small and avoids depending on three's examples/jsm subpath).
  *  Calls onChange(deltaX, deltaY) in normalized-ish pixel deltas while

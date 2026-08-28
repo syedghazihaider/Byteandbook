@@ -18,11 +18,27 @@
 
   if (container && canvas && shouldRunHeavyMotion()) {
     let scene: ReturnType<typeof createHeroScene> | null = null;
+    let scrollTrigger: import('gsap/ScrollTrigger').ScrollTrigger | null = null;
+
     onVisibilityChange(
       container,
-      () => {
+      async () => {
         scene = createHeroScene(canvas);
         scene.start();
+
+        if (!scrollTrigger) {
+          const { gsap } = await import('gsap');
+          const { ScrollTrigger } = await import('gsap/ScrollTrigger');
+          gsap.registerPlugin(ScrollTrigger);
+          const heroSection = container.closest('section');
+          scrollTrigger = ScrollTrigger.create({
+            trigger: heroSection ?? container,
+            start: 'top top',
+            end: 'bottom top',
+            scrub: true,
+            onUpdate: (self) => scene?.setScrollProgress(self.progress),
+          });
+        }
       },
       () => {
         scene?.stop();

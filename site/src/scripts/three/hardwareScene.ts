@@ -1,5 +1,5 @@
 import * as THREE from 'three';
-import { createBaseScene, readColorToken, addDragRotate } from './utils';
+import { createBaseScene, readColorToken, addDragRotate, onTabHidden } from './utils';
 
 export interface ScreenLabel {
   key: string;
@@ -126,6 +126,19 @@ export function createHardwareScene(canvas: HTMLCanvasElement, opts: HardwareOpt
     autoRotate = false;
   });
 
+  const stopForTab = onTabHidden(
+    () => {
+      running = false;
+      cancelAnimationFrame(frameId);
+    },
+    () => {
+      if (!running) {
+        running = true;
+        animate();
+      }
+    }
+  );
+
   return {
     start() {
       if (running) return;
@@ -144,6 +157,7 @@ export function createHardwareScene(canvas: HTMLCanvasElement, opts: HardwareOpt
       running = false;
       cancelAnimationFrame(frameId);
       removeDrag();
+      stopForTab();
       disposables.forEach(({ geo, mat }) => {
         geo.dispose();
         mat.dispose();

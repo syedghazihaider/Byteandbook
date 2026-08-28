@@ -1,5 +1,5 @@
 import * as THREE from 'three';
-import { createBaseScene, readColorToken } from './utils';
+import { createBaseScene, readColorToken, getQualityTier, qualityScale, onTabHidden } from './utils';
 
 export interface ScreenPosition {
   x: number;
@@ -32,6 +32,7 @@ export function createNodeGraphScene(canvas: HTMLCanvasElement, opts: NodeGraphO
 
   const accent = readColorToken(opts.accentVar ?? '--bb-signal-400');
   const pulseColor = readColorToken('--bb-ember-400');
+  const tubeSegments = Math.round(64 * qualityScale(getQualityTier()));
   const n = Math.max(opts.steps.length, 2);
   const spacing = 2.0;
 
@@ -47,7 +48,7 @@ export function createNodeGraphScene(canvas: HTMLCanvasElement, opts: NodeGraphO
   scene.add(group);
 
   const curve = new THREE.CatmullRomCurve3(points);
-  const tubeGeo = new THREE.TubeGeometry(curve, Math.max(64, n * 12), 0.028, 8, false);
+  const tubeGeo = new THREE.TubeGeometry(curve, Math.max(tubeSegments, n * 12), 0.028, 8, false);
   const tubeMat = new THREE.MeshBasicMaterial({ color: accent, transparent: true, opacity: 0.35 });
   group.add(new THREE.Mesh(tubeGeo, tubeMat));
 
@@ -102,6 +103,19 @@ export function createNodeGraphScene(canvas: HTMLCanvasElement, opts: NodeGraphO
     opts.onUpdate?.(computeScreenPositions());
   }
 
+  const stopForTab = onTabHidden(
+    () => {
+      running = false;
+      cancelAnimationFrame(frameId);
+    },
+    () => {
+      if (!running) {
+        running = true;
+        animate();
+      }
+    }
+  );
+
   return {
     start() {
       if (running) return;
@@ -115,6 +129,7 @@ export function createNodeGraphScene(canvas: HTMLCanvasElement, opts: NodeGraphO
     dispose() {
       running = false;
       cancelAnimationFrame(frameId);
+      stopForTab();
       tubeGeo.dispose();
       tubeMat.dispose();
       nodeGeo.dispose();

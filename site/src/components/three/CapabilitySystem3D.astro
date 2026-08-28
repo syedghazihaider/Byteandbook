@@ -1,0 +1,54 @@
+---
+// Homepage services-section backdrop: a tilted ring of nodes, one per
+// service, that pulses to the ember accent when the corresponding card
+// in the grid above it is hovered/focused. Wired via [data-service-card]
+// data-index attributes the homepage places on each card link — the
+// links themselves stay plain, fully accessible <a> elements; this only
+// adds a synchronized visual behind them.
+interface Props {
+  count: number;
+}
+const { count } = Astro.props;
+---
+
+<div class="pointer-events-none absolute inset-0 -z-10" data-capability-scene data-count={count}>
+  <canvas class="h-full w-full" aria-hidden="true"></canvas>
+</div>
+
+<script>
+  import { createCapabilityScene } from '../../scripts/three/capabilityScene';
+  import { shouldRunHeavyMotion, onVisibilityChange } from '../../scripts/motion';
+
+  const container = document.querySelector<HTMLElement>('[data-capability-scene]');
+  const canvas = container?.querySelector<HTMLCanvasElement>('canvas');
+
+  if (container && canvas && shouldRunHeavyMotion()) {
+    const count = Number(container.dataset.count || '0');
+    let scene: ReturnType<typeof createCapabilityScene> | null = null;
+
+    const cards = document.querySelectorAll<HTMLElement>('[data-service-card]');
+    const bindCardEvents = () => {
+      cards.forEach((card) => {
+        const index = Number(card.dataset.serviceCard);
+        card.addEventListener('mouseenter', () => scene?.setActive(index));
+        card.addEventListener('focusin', () => scene?.setActive(index));
+        card.addEventListener('mouseleave', () => scene?.setActive(null));
+        card.addEventListener('focusout', () => scene?.setActive(null));
+      });
+    };
+
+    onVisibilityChange(
+      container,
+      () => {
+        scene = createCapabilityScene(canvas, count);
+        scene.start();
+        bindCardEvents();
+      },
+      () => {
+        scene?.stop();
+        scene?.dispose();
+        scene = null;
+      }
+    );
+  }
+</script>

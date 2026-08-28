@@ -1,0 +1,35 @@
+---
+// Level 1 showcase for eBook & Digital Publishing: an ambient, hinged
+// open-book scene with a continuous page-riffle motion. No labels — the
+// manuscript -> distribution steps are covered by the FlowSteps diagram
+// beneath it, matching the homepage hero's precedent for pure ambient
+// scenes.
+---
+
+<div class="relative mx-auto h-[300px] w-full max-w-4xl sm:h-[380px]" data-book-scene>
+  <canvas class="h-full w-full" aria-hidden="true"></canvas>
+</div>
+
+<script>
+  import { createBookScene } from '../../scripts/three/bookScene';
+  import { shouldRunHeavyMotion, onVisibilityChange } from '../../scripts/motion';
+
+  document.querySelectorAll<HTMLElement>('[data-book-scene]').forEach((container) => {
+    const canvas = container.querySelector<HTMLCanvasElement>('canvas');
+    if (!canvas || !shouldRunHeavyMotion()) return;
+
+    let handle: ReturnType<typeof createBookScene> | null = null;
+    onVisibilityChange(
+      container,
+      () => {
+        handle = createBookScene(canvas);
+        handle.start();
+      },
+      () => {
+        handle?.stop();
+        handle?.dispose();
+        handle = null;
+      }
+    );
+  });
+</script>

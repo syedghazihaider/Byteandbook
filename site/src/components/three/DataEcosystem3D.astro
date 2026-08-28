@@ -1,0 +1,70 @@
+---
+// Level 1 showcase for the Growth pillar (Marketing / SEO / GEO /
+// Social): renders the service's flow-step data as orbiting rings
+// around a central hub, distinct from the Infrastructure pillar's
+// linear NodeGraph3D pipeline.
+interface Props {
+  steps: string[];
+  accentVar?: string;
+}
+const { steps, accentVar } = Astro.props;
+---
+
+<div
+  class="relative mx-auto h-[320px] w-full max-w-4xl sm:h-[380px]"
+  data-data-ecosystem
+  data-steps={JSON.stringify(steps)}
+  data-accent-var={accentVar ?? ''}
+>
+  <canvas class="h-full w-full" aria-hidden="true"></canvas>
+  <div class="pointer-events-none absolute inset-0" data-labels></div>
+</div>
+
+<script>
+  import { createDataEcosystemScene } from '../../scripts/three/dataEcosystemScene';
+  import { shouldRunHeavyMotion, onVisibilityChange } from '../../scripts/motion';
+
+  document.querySelectorAll<HTMLElement>('[data-data-ecosystem]').forEach((container) => {
+    const canvas = container.querySelector<HTMLCanvasElement>('canvas');
+    const labelsRoot = container.querySelector<HTMLElement>('[data-labels]');
+    if (!canvas || !labelsRoot || !shouldRunHeavyMotion()) return;
+
+    const steps: string[] = JSON.parse(container.dataset.steps || '[]');
+    const accentVar = container.dataset.accentVar || undefined;
+
+    const labelEls = steps.map((label) => {
+      const el = document.createElement('div');
+      el.className =
+        'absolute -translate-x-1/2 -translate-y-1/2 whitespace-nowrap rounded-full border border-ink-700 bg-ink-950/85 px-2.5 py-1 text-[11px] font-medium text-ink-200 opacity-0 transition-opacity duration-200';
+      el.textContent = label;
+      labelsRoot.appendChild(el);
+      return el;
+    });
+
+    let handle: ReturnType<typeof createDataEcosystemScene> | null = null;
+    onVisibilityChange(
+      container,
+      () => {
+        handle = createDataEcosystemScene(canvas, {
+          steps,
+          accentVar,
+          onUpdate: (positions) => {
+            positions.forEach((pos, i) => {
+              const el = labelEls[i];
+              if (!el) return;
+              el.style.left = `${pos.x}px`;
+              el.style.top = `${pos.y}px`;
+              el.style.opacity = pos.visible ? '1' : '0';
+            });
+          },
+        });
+        handle.start();
+      },
+      () => {
+        handle?.stop();
+        handle?.dispose();
+        handle = null;
+      }
+    );
+  });
+</script>
