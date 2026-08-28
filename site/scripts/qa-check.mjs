@@ -74,8 +74,32 @@ for (const [route, relPath] of Object.entries(allPages)) {
 check('exactly 24 known routes defined in this check', Object.keys(allPages).length === 24);
 
 // ---- 2. Core static assets --------------------------------------------
-check('styles.css exists', existsSync(join(DIST, 'styles.css')));
-check('styles.css is non-empty', existsSync(join(DIST, 'styles.css')) && statSync(join(DIST, 'styles.css')).size > 1000);
+// V2.0.1: styles.css is now content-hashed (scripts/hash-css.mjs) to
+// eliminate a stale-cache mismatch between a previously-cached
+// stylesheet and newly-deployed HTML/JS — see the V2-8 report for the
+// incident that motivated this. `dist/` is rebuilt fresh each build, so
+// exactly one hashed stylesheet should exist; `public/` is the source
+// of that copy and is NOT auto-cleaned between builds, so it's checked
+// separately below to prove scripts/hash-css.mjs itself removes stale
+// hashed files rather than relying on dist's fresh-build guarantee.
+const HASHED_CSS_RE = /^styles\.[0-9a-f]{10}\.css$/;
+const distHashedCssFiles = existsSync(DIST) ? readdirSync(DIST).filter((f) => HASHED_CSS_RE.test(f)) : [];
+check('dist: exactly one content-hashed styles.<hash>.css asset', distHashedCssFiles.length === 1);
+const stylesCssFile = distHashedCssFiles[0];
+check('dist: hashed stylesheet filename matches the expected styles.<10-hex-char-sha256>.css format',
+  !!stylesCssFile && HASHED_CSS_RE.test(stylesCssFile));
+check('dist: no legacy unversioned styles.css shipped', !existsSync(join(DIST, 'styles.css')));
+check('styles.<hash>.css exists', !!stylesCssFile && existsSync(join(DIST, stylesCssFile)));
+check('styles.<hash>.css is non-empty',
+  !!stylesCssFile && existsSync(join(DIST, stylesCssFile)) && statSync(join(DIST, stylesCssFile)).size > 1000);
+// public/ (the source Astro copies verbatim into dist/) isn't cleaned
+// between local builds — confirms scripts/hash-css.mjs's own stale-file
+// cleanup (not just dist's fresh-build guarantee) actually works, so
+// repeated `npm run build` runs during development never accumulate
+// styles.<oldhash>.css alongside the current one.
+const PUBLIC_DIR = join(__dirname, '..', 'public');
+const publicHashedCssFiles = existsSync(PUBLIC_DIR) ? readdirSync(PUBLIC_DIR).filter((f) => HASHED_CSS_RE.test(f) || f === 'styles.css') : [];
+check('public/: exactly one styles.*.css present (no stale hashed builds accumulating locally)', publicHashedCssFiles.length === 1);
 check('robots.txt exists', existsSync(join(DIST, 'robots.txt')));
 check('sitemap-index.xml exists', existsSync(join(DIST, 'sitemap-index.xml')));
 const sitemapFiles = existsSync(DIST) ? readdirSync(DIST).filter((f) => /^sitemap-\d+\.xml$/.test(f)) : [];
@@ -294,6 +318,18 @@ for (const relPath of allDistHtmlFiles) {
   }
   // No public phone number: no tel: links anywhere on the live site.
   check(`${relPath}: no tel: link`, !/href="tel:/.test(html));
+}
+
+// ---- 4b. V2.0.1: every page links the current hashed stylesheet, and
+// the retired unversioned /styles.css URL is gone everywhere ----------
+for (const relPath of allDistHtmlFiles) {
+  if (!existsSync(join(DIST, relPath))) continue;
+  const html = readHtml(relPath);
+  check(`${relPath}: does not reference the retired href="/styles.css"`, !html.includes('href="/styles.css"'));
+  if (stylesCssFile) {
+    check(`${relPath}: references the current hashed stylesheet href="/${stylesCssFile}"`,
+      html.includes(`href="/${stylesCssFile}"`));
+  }
 }
 
 // ---- 5. V2-3: project-request backend — static checks ---------------------
@@ -521,7 +557,9 @@ check('legacy root index.html removed from working tree', !existsSync(join(repoR
 check('legacy root "byteandbook github.txt" removed from working tree', !existsSync(join(repoRoot, 'byteandbook github.txt')));
 
 // ---- 8. V2-6: US-market localization + visual-upgrade regression guards ---
-const stylesCss = readFileSync(join(DIST, 'styles.css'), 'utf-8');
+// V2.0.1: read from the content-hashed filename resolved in section 2
+// above, not a hardcoded 'styles.css' — see scripts/hash-css.mjs.
+const stylesCss = stylesCssFile ? readFileSync(join(DIST, stylesCssFile), 'utf-8') : '';
 
 // US-market localization audit
 const FORBIDDEN_REGION_CUES = ['+92', 'PKR', 'Rs.', 'Karachi', 'Pakistan'];
@@ -546,6 +584,11 @@ check('start-project-modal: "Include your country code" guidance still present',
 // Visual-upgrade regression guards: reduced-motion + lazy-loading
 // architecture must survive the art-direction pass unchanged.
 check('styles.css: prefers-reduced-motion media query still present', stylesCss.includes('prefers-reduced-motion'));
+// V2.0.1: the hashed-filename migration must not have dropped or
+// corrupted any actual CSS content — spot-check the Start Project
+// modal's panel class survived the pipeline change unchanged.
+check('styles.css: .sp-panel (Start Project modal panel) rule still present', stylesCss.includes('.sp-panel'));
+check('styles.css: .sp-dialog (Start Project modal dialog) rule still present', stylesCss.includes('.sp-dialog'));
 const baseLayoutScriptChunk = astroChunkFiles.find((f) => f.startsWith('BaseLayout.astro_astro_type_script'));
 check('BaseLayout script chunk exists (reduced-motion gate wiring)', !!baseLayoutScriptChunk);
 // The actual matchMedia('(prefers-reduced-motion: reduce)') check lives

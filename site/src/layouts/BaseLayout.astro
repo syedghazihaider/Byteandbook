@@ -11,6 +11,7 @@
 // each page for what backs each field.
 import StartProjectModal from '../components/project/StartProjectModal.astro';
 import { verifiedSocialUrls } from '../config/site';
+import { STYLES_HREF } from '../generated/styles-manifest';
 
 interface Props {
   title: string;
@@ -89,8 +90,12 @@ const siteGraph = {
       Compiled by the Tailwind CLI (npm run css:build) into a plain
       static file, linked directly rather than imported into the Astro/
       Vite module graph — see global.css and astro.config.mjs for why.
+      V2.0.1: the filename is content-hashed (scripts/hash-css.mjs,
+      src/generated/styles-manifest.ts) so a deployed CSS change always
+      ships under a new URL — no stale-cache mismatch between an old
+      cached stylesheet and newly deployed HTML/JS.
     -->
-    <link rel="stylesheet" href="/styles.css" />
+    <link rel="stylesheet" href={STYLES_HREF} />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <!-- Only the weights actually used anywhere in the codebase (400

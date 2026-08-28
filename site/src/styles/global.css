@@ -5,9 +5,9 @@
 /*
   This file is compiled by the standalone Tailwind CLI (see
   package.json's "css:build" script), NOT by an Astro/Vite plugin, and
-  the output is committed to public/styles.css and linked as a plain
-  <link rel="stylesheet"> in BaseLayout — never imported into the Astro/
-  Vite module graph. Every in-process integration path tried (the
+  linked as a plain <link rel="stylesheet"> in BaseLayout — never
+  imported into the Astro/Vite module graph. Every in-process integration
+  path tried (the
   @tailwindcss/vite plugin, @tailwindcss/postcss, and finally the
   official v3 @astrojs/tailwind integration) produced a completely
   empty compiled stylesheet specifically in `astro build` production
@@ -17,7 +17,11 @@
   particular Tailwind version or plugin. Routing around Vite's CSS
   pipeline entirely (plain static file, zero bundler processing)
   guarantees the compiled CSS reaches the browser regardless of that
-  bug. Re-run `npm run css:build` after editing this file.
+  bug. `npm run css:build` compiles this to a temp file; `npm run
+  css:hash` (both wired into `npm run dev`/`npm run build`) content-
+  hashes it into public/styles.<hash>.css and regenerates
+  src/generated/styles-manifest.ts, which BaseLayout imports for the
+  href — see scripts/hash-css.mjs. Never edit that manifest by hand.
 
   Design tokens below are the single source of truth for color/type/
   radius, read by tailwind.config.mjs (theme.extend) so utilities like
