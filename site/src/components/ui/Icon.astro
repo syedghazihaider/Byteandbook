@@ -17,7 +17,9 @@ interface Props {
     | 'palette'
     | 'book-open'
     | 'shield'
-    | 'check-circle';
+    | 'check-circle'
+    | 'message-circle'
+    | 'arrow-up';
   class?: string;
 }
 const { name, class: className = 'h-6 w-6' } = Astro.props;
@@ -74,4 +76,10 @@ const common = {
 )}
 {name === 'check-circle' && (
   <svg {...common} class={className}><circle cx="12" cy="12" r="9" /><polyline points="8 12.5 11 15.5 16 9" /></svg>
+)}
+{name === 'message-circle' && (
+  <svg {...common} class={className}><path d="M4 12c0-4.4 3.8-8 8.5-8s8.5 3.6 8.5 8-3.8 8-8.5 8c-1 0-2-.13-2.9-.4L5 21l1.2-3.6C4.8 15.8 4 14 4 12Z" /></svg>
+)}
+{name === 'arrow-up' && (
+  <svg {...common} class={className}><line x1="12" y1="19" x2="12" y2="5" /><polyline points="6 11 12 5 18 11" /></svg>
 )}

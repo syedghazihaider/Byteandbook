@@ -1,0 +1,129 @@
+---
+// V2.1 — sitewide AI Assistant launcher + panel, rendered once by
+// BaseLayout (same pattern as StartProjectModal). The panel's HTML
+// exists statically so it's instant to reveal, but the input stays
+// disabled and no network call can happen until the chatbot module is
+// mounted — the module itself is dynamically imported on first
+// interaction (see the bootstrap <script> below), keeping this feature's
+// footprint on every other page load to just this markup + CSS, no JS
+// beyond the tiny one-time import wiring. Mirrors the lazy-mount pattern
+// already used by the Level 1 3D scenes (see scripts/motion.ts's
+// onVisibilityChange + e.g. AmbientField3D.astro).
+import Icon from '../ui/Icon.astro';
+
+const suggestedQuestions = [
+  'Which service do I need?',
+  'How does your process work?',
+  'Tell me about web development',
+  'What is GEO?',
+  'How do I start a project?',
+];
+---
+
+<button
+  type="button"
+  id="chat-launcher"
+  class="chat-launcher"
+  aria-haspopup="dialog"
+  aria-expanded="false"
+  aria-controls="chat-panel"
+  aria-label="Ask ByteAndBook AI"
+  data-chat-launcher
+>
+  <Icon name="message-circle" class="h-5 w-5 shrink-0" />
+  <span class="chat-launcher-label">Ask ByteAndBook AI</span>
+</button>
+
+<section
+  id="chat-panel"
+  class="chat-panel"
+  role="dialog"
+  aria-modal="false"
+  aria-labelledby="chat-panel-title"
+  hidden
+  data-chat-panel
+>
+  <header class="chat-panel-header">
+    <div>
+      <p id="chat-panel-title" class="chat-panel-title">ByteAndBook AI Assistant</p>
+      <p class="chat-panel-subtitle">Services, process, and getting started</p>
+    </div>
+    <button type="button" class="chat-close" data-chat-close aria-label="Close chat">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" class="h-5 w-5" aria-hidden="true">
+        <line x1="6" y1="6" x2="18" y2="18" />
+        <line x1="18" y1="6" x2="6" y2="18" />
+      </svg>
+    </button>
+  </header>
+
+  <div class="chat-messages" role="log" aria-live="polite" aria-relevant="additions" data-chat-messages>
+    <div class="chat-message chat-message-assistant">
+      <p>Hi — I'm the ByteAndBook AI Assistant. Ask me about our services, process, project planning, or how to get started.</p>
+    </div>
+    <div class="chat-chips" data-chat-chips>
+      {suggestedQuestions.map((q) => (
+        <button type="button" class="chat-chip" data-chat-chip={q}>{q}</button>
+      ))}
+    </div>
+  </div>
+
+  <p class="chat-status" role="status" aria-live="polite" data-chat-status></p>
+
+  <form class="chat-form" data-chat-form>
+    <label for="chat-input" class="sr-only">Ask a question</label>
+    <textarea
+      id="chat-input"
+      name="message"
+      class="chat-input"
+      rows="1"
+      maxlength="600"
+      placeholder="Loading assistant…"
+      data-chat-input
+      disabled
+    ></textarea>
+    <button type="submit" class="chat-send" data-chat-send aria-label="Send message" disabled>
+      <Icon name="arrow-up" class="h-4 w-4" />
+    </button>
+  </form>
+
+  <p class="chat-disclaimer">
+    AI-generated answers may occasionally be inaccurate. Confirm important project or commercial
+    details with ByteAndBook.
+  </p>
+</section>
+
+<script>
+  // Bootstrap only: attaches once, dynamically imports the real chatbot
+  // module (open/close, fetch, rendering, focus/escape handling) on the
+  // click that opens the panel, then hands off entirely — the module's
+  // own mount() attaches the permanent toggle listener. A failed import
+  // (e.g. offline) degrades to a minimal static fallback rather than a
+  // dead button.
+  const launcher = document.getElementById('chat-launcher');
+  const panel = document.getElementById('chat-panel');
+
+  launcher?.addEventListener(
+    'click',
+    async () => {
+      try {
+        const { mountChatbot } = await import('../../scripts/chatbot');
+        mountChatbot();
+      } catch (err) {
+        console.warn('[ByteAndBook] chat assistant failed to load.', err);
+        if (panel) {
+          panel.hidden = false;
+          panel.innerHTML =
+            '<div class="chat-panel-header"><p class="chat-panel-title">ByteAndBook AI Assistant</p></div>' +
+            '<div class="chat-fallback">' +
+            '<p>The assistant couldn\'t load right now. You can still start a project or email us directly.</p>' +
+            '<div class="chat-fallback-actions">' +
+            '<button type="button" class="chat-fallback-btn" data-start-project-trigger>Start a Project</button>' +
+            '<a class="chat-fallback-btn chat-fallback-btn-outline" href="mailto:info@byteandbook.com">Email info@byteandbook.com</a>' +
+            '</div></div>';
+          launcher.setAttribute('aria-expanded', 'true');
+        }
+      }
+    },
+    { once: true }
+  );
+</script>

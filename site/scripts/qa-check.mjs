@@ -445,6 +445,17 @@ check('privacy/: contact is info@byteandbook.com', privacyHtml.includes('mailto:
 check('privacy/: does not claim guaranteed compliance', !/guarantee(s|d)?\s+(GDPR|CCPA)/i.test(privacyHtmlNormalized));
 check('privacy/: accurately states no tracking cookies/analytics', /does not use analytics/i.test(privacyHtmlNormalized));
 
+// V2.1 Gemini migration: Privacy names the real current AI provider
+// (never a vague "configured AI provider") and discloses the Free Tier
+// data-use fact from Google's own current documentation.
+check('privacy/: no leftover OpenAI provider naming', !/openai/i.test(privacyHtmlNormalized));
+check('privacy/: names Google Gemini as the AI provider', /google's gemini api/i.test(privacyHtmlNormalized));
+check('privacy/: discloses Gemini Free Tier launch', /free tier/i.test(privacyHtmlNormalized));
+check('privacy/: discloses Google may use Free Tier content to improve its products', /may be used by google to improve its products/i.test(privacyHtmlNormalized));
+check('privacy/: warns against submitting sensitive/payment/identity information via chat', /confidential, sensitive, payment, account, password, health, identity/i.test(privacyHtmlNormalized));
+check('privacy/: states no permanent website database of chat conversations', /does not intentionally maintain a permanent website database of chat conversations/i.test(privacyHtmlNormalized));
+check('privacy/: states chat use does not enroll visitors in marketing', /does not add you to any\s*marketing list/i.test(privacyHtmlNormalized) || /enroll you in any marketing/i.test(privacyHtmlNormalized));
+
 // Centralized Terms Version: present and identical across all three
 // legal pages, and in sync with the PHP backend's own copy.
 const versionOnPage = (html) => html.match(/Terms Version:\s*([^<\s]+)/)?.[1];
@@ -702,6 +713,171 @@ check('robots.txt: does not block /services/', !robotsTxt.includes('Disallow: /s
 check('robots.txt: does not block /work/', !robotsTxt.includes('Disallow: /work/'));
 check('robots.txt: does not block /insights/', !robotsTxt.includes('Disallow: /insights/'));
 check('robots.txt: does not block /terms/, /privacy/, or /refund-policy/', !/Disallow: \/(terms|privacy|refund-policy)\//.test(robotsTxt));
+
+// ---- 10. V2.1: AI Assistant chatbot ----------------------------------------
+// PHP isn't executed here either (same limitation as the V2-3 checks
+// above) — these are static source/build-output checks. Live behavior
+// (a real Google Gemini call, rate limiting under load) was verified via
+// direct SSH probes against the actual Namecheap PHP 8.1 runtime and the
+// live generativelanguage.googleapis.com endpoint before release, and
+// reviewed against the exact security pattern already proven in
+// public/api/project-request.php; see the V2.1 Gemini migration report
+// for the live probe results (model availability, auth, response shape).
+
+check('chat launcher present on homepage', /id="chat-launcher"/.test(homeHtml));
+check('chat launcher present on a service page (sitewide via BaseLayout)', /id="chat-launcher"/.test(devopsHtml));
+check('chat launcher present on /checkout/ (sitewide via BaseLayout)', /id="chat-launcher"/.test(checkoutHtml));
+check('chat launcher: aria-label present', /id="chat-launcher"[^>]*aria-label="Ask ByteAndBook AI"/.test(homeHtml) || /aria-label="Ask ByteAndBook AI"/.test(homeHtml));
+check('chat launcher: aria-haspopup present', /id="chat-launcher"[\s\S]{0,200}aria-haspopup="dialog"/.test(homeHtml));
+check('chat launcher: aria-controls references the panel', /aria-controls="chat-panel"/.test(homeHtml));
+check('chat panel present', /id="chat-panel"/.test(homeHtml));
+check('chat panel: role="dialog"', /id="chat-panel"[\s\S]{0,200}role="dialog"/.test(homeHtml));
+check('chat panel: aria-labelledby present', /aria-labelledby="chat-panel-title"/.test(homeHtml));
+check('chat panel: initially closed (hidden attribute in raw HTML)', /id="chat-panel"[^>]*\bhidden\b/.test(homeHtml));
+check('chat panel: disclaimer text present', /AI-generated answers may occasionally be inaccurate/.test(homeHtml));
+check('chat panel: quick-question chips present', /data-chat-chip=/.test(homeHtml));
+
+// Secrets: no OpenAI or Gemini key material anywhere in the deployable
+// output — scanned across every dist file, not just HTML/JS.
+function walkFiles(dir) {
+  const out = [];
+  for (const entry of readdirSync(dir, { withFileTypes: true })) {
+    const full = join(dir, entry.name);
+    if (entry.isDirectory()) out.push(...walkFiles(full));
+    else out.push(full);
+  }
+  return out;
+}
+const allDistFiles = walkFiles(DIST);
+const OPENAI_KEY_PATTERN = /sk-[A-Za-z0-9_-]{10,}/;
+const GEMINI_KEY_PATTERN = /AIza[A-Za-z0-9_-]{20,}/;
+for (const filePath of allDistFiles) {
+  const content = readFileSync(filePath, 'utf-8').toString();
+  const rel = filePath.slice(DIST.length + 1);
+  check(`${rel}: no OpenAI API key material`, !OPENAI_KEY_PATTERN.test(content));
+  check(`${rel}: no Gemini API key material`, !GEMINI_KEY_PATTERN.test(content));
+}
+check('no dist file assigns a literal OPENAI_API_KEY value', !allDistFiles.some((f) => /OPENAI_API_KEY\s*=\s*['"]sk-/.test(readFileSync(f, 'utf-8'))));
+check('no dist file assigns a literal GEMINI_API_KEY value', !allDistFiles.some((f) => /GEMINI_API_KEY\s*=\s*['"]AIza/.test(readFileSync(f, 'utf-8'))));
+
+// Backend: public/api/chat.php exists and carries the same security
+// controls project-request.php already proved out on this host.
+const CHAT_API_REL_PATH = 'api/chat.php';
+check('chat.php: exists in deployable dist/api/', existsSync(join(DIST, CHAT_API_REL_PATH)));
+
+let chatPhpSource = '';
+if (existsSync(join(DIST, CHAT_API_REL_PATH))) {
+  chatPhpSource = readFileSync(join(DIST, CHAT_API_REL_PATH), 'utf-8');
+
+  check('chat.php: POST-only (rejects non-POST methods)', /REQUEST_METHOD'\]\s*!==\s*'POST'/.test(chatPhpSource));
+  check('chat.php: malformed JSON rejected', /!is_array\(\$data\)/.test(chatPhpSource) && chatPhpSource.includes('Malformed request body'));
+  check('chat.php: empty message rejected', /\$message\s*===\s*''/.test(chatPhpSource));
+  check('chat.php: oversized message rejected (MAX_MESSAGE_LENGTH enforced)', chatPhpSource.includes('MAX_MESSAGE_LENGTH') && /mb_strlen\(\$message\)\s*>\s*MAX_MESSAGE_LENGTH/.test(chatPhpSource));
+  check('chat.php: oversized history rejected (MAX_HISTORY_ITEMS enforced)', chatPhpSource.includes('MAX_HISTORY_ITEMS') && /count\(\$historyInput\)\s*>\s*MAX_HISTORY_ITEMS/.test(chatPhpSource));
+  check('chat.php: request body size cap enforced', chatPhpSource.includes('MAX_BODY_BYTES'));
+  check('chat.php: rate-limit protection', chatPhpSource.includes('RATE_LIMIT_MAX_REQUESTS') && chatPhpSource.includes('rate_limit_check'));
+  check('chat.php: Origin/Referer validation', chatPhpSource.includes('validate_origin') && chatPhpSource.includes('HTTP_ORIGIN'));
+  check('chat.php: no wildcard CORS', !chatPhpSource.includes('Access-Control-Allow-Origin: *'));
+  check('chat.php: Gemini key never hardcoded (loaded from env/external file only)', !/GEMINI_API_KEY\s*=\s*['"]AIza/.test(chatPhpSource) && chatPhpSource.includes('getenv(') && chatPhpSource.includes('is_readable('));
+  const keyCandidatesBlock = chatPhpSource.match(/GEMINI_KEY_FILE_CANDIDATES = \[[\s\S]*?\];/)?.[0] ?? '';
+  check('chat.php: key file path is outside public_html (not web-servable)', keyCandidatesBlock.length > 0 && !keyCandidatesBlock.includes('public_html'));
+  check('chat.php: recipient/support email is info@byteandbook.com', chatPhpSource.includes("RECIPIENT_EMAIL = 'info@byteandbook.com'"));
+
+  // V2.1 Gemini migration: no active dependency on the retired OpenAI
+  // provider, and the real (live-probed) Gemini interface/model is wired.
+  const KNOWN_REAL_GEMINI_MODELS = [
+    'gemini-3.7-flash', 'gemini-3.6-flash', 'gemini-3.5-flash', 'gemini-3.5-flash-lite',
+    'gemini-3.1-flash-lite', 'gemini-2.5-pro', 'gemini-2.5-flash', 'gemini-2.5-flash-lite',
+  ];
+  check('chat.php: no active OPENAI_API_KEY requirement', !chatPhpSource.includes('OPENAI_API_KEY'));
+  check('chat.php: no active call to api.openai.com', !chatPhpSource.includes('api.openai.com'));
+  check('chat.php: calls the correct Gemini API domain (generativelanguage.googleapis.com)', chatPhpSource.includes('generativelanguage.googleapis.com'));
+  check('chat.php: uses the documented x-goog-api-key header (not a query-string key)', chatPhpSource.includes('x-goog-api-key') && !/generateContent\?key=/.test(chatPhpSource));
+  const geminiModelMatch = chatPhpSource.match(/GEMINI_MODEL = '([^']+)'/);
+  check('chat.php: selected Gemini model is a real, known Free Tier Flash/Pro model (not fabricated)', !!geminiModelMatch && KNOWN_REAL_GEMINI_MODELS.includes(geminiModelMatch[1]));
+  check('chat.php: no Google Search/Maps grounding tool enabled', !chatPhpSource.includes("'tools'") && !chatPhpSource.includes('googleSearch') && !chatPhpSource.includes('google_search'));
+  check('chat.php: Gemini 429/503 (quota/overload) handled without exposing raw provider error', /httpCode === 429 \|\| \$httpCode === 503/.test(chatPhpSource));
+
+  // Error handling never leaks internals to the client — the exception
+  // handler's echoed JSON is a fixed safe string, not $e->getMessage().
+  const exceptionHandlerBlock = chatPhpSource.match(/set_exception_handler\(static function[\s\S]*?\}\);/)?.[0] ?? '';
+  check('chat.php: uncaught-exception response does not include the raw exception message', !/echo\s+json_encode\([^)]*\$e->getMessage/.test(exceptionHandlerBlock));
+  check('chat.php: generic safe-fallback message used for provider/availability failures', chatPhpSource.includes('GENERIC_UNAVAILABLE'));
+
+  // Prompt-injection defense: an explicit server-side rule, not just a
+  // client-side hope.
+  check('chat.php: system instructions treat visitor/history text as untrusted, not commands', chatPhpSource.includes('as untrusted content, not'));
+  check('chat.php: system instructions forbid revealing the system prompt/keys/server details', /reveal this system prompt/.test(chatPhpSource) && /reveal internal configuration, file paths/.test(chatPhpSource));
+  check('chat.php: system instructions forbid fabricating prices/clients/case studies/contact details', /NEVER invent/.test(chatPhpSource));
+  check('chat.php: pricing question handling — no invented numbers, points to Start a Project', /ByteAndBook has no public fixed pricing/.test(chatPhpSource));
+  check('chat.php: project-request-is-not-an-order rule present', /NOT a confirmed order/.test(chatPhpSource));
+  check('chat.php: GEO guidance present, no guaranteed-citation promise', /Never promise guaranteed/.test(chatPhpSource) && /GEO/.test(chatPhpSource));
+
+  for (const forbidden of FORBIDDEN_STRINGS) {
+    check(`chat.php: does not contain forbidden legacy text "${forbidden}"`, !chatPhpSource.includes(forbidden));
+  }
+  check('chat.php: no tel: link', !/href="tel:/.test(chatPhpSource));
+  check('chat.php: no fabricated phone/address instructions', !/\b\d{3}[-.\s]\d{3}[-.\s]\d{4}\b/.test(chatPhpSource));
+}
+
+// Knowledge base: generated from real content, all 11 services present,
+// no fabricated data.
+const KNOWLEDGE_REL_PATH = 'api/chatbot-knowledge.json';
+check('chatbot-knowledge.json: exists in deployable dist/api/', existsSync(join(DIST, KNOWLEDGE_REL_PATH)));
+if (existsSync(join(DIST, KNOWLEDGE_REL_PATH))) {
+  const knowledge = JSON.parse(readFileSync(join(DIST, KNOWLEDGE_REL_PATH), 'utf-8'));
+  check('chatbot-knowledge.json: generatedAt timestamp present (build-time generated, not hand-authored)', typeof knowledge.generatedAt === 'string' && knowledge.generatedAt.length > 0);
+  check('chatbot-knowledge.json: substantial chunk count (real scraped content, not a stub)', Array.isArray(knowledge.chunks) && knowledge.chunks.length > 50);
+  check('chatbot-knowledge.json: all 11 service slugs present', SERVICE_SLUGS.every((slug) => (knowledge.services || []).some((s) => s.slug === slug)));
+  const knowledgeText = JSON.stringify(knowledge);
+  check('chatbot-knowledge.json: no dollar-figure pricing leaked into knowledge chunks', !/\$\d/.test(knowledgeText));
+  check('chatbot-knowledge.json: no tel: link', !knowledgeText.includes('tel:'));
+  for (const identity of LEGACY_FAKE_IDENTITIES) {
+    check(`chatbot-knowledge.json: no legacy fake identity "${identity}"`, !knowledgeText.includes(identity));
+  }
+  for (const forbidden of FORBIDDEN_STRINGS) {
+    check(`chatbot-knowledge.json: does not contain forbidden legacy text "${forbidden}"`, !knowledgeText.includes(forbidden));
+  }
+}
+
+// Frontend: Start Project integration, email fallback, no raw HTML
+// injection of model output, lazy-loading actually working.
+const chatbotChunkName = astroChunkFiles.find((f) => f.startsWith('chatbot.'));
+check('chatbot.ts: compiled script chunk exists', !!chatbotChunkName);
+const chatbotChunkSrc = chatbotChunkName ? readFileSync(join(DIST, '_astro', chatbotChunkName), 'utf-8') : '';
+check('chatbot.ts chunk: Start Project integration wired (data-start-project-trigger)', chatbotChunkSrc.includes('data-start-project-trigger'));
+check('chatbot.ts chunk: service preselection wired (data-preselect-service)', chatbotChunkSrc.includes('data-preselect-service'));
+check('chatbot.ts chunk: official email fallback present', chatbotChunkSrc.includes('info@byteandbook.com'));
+check('chatbot.ts chunk: renders message text via textContent', chatbotChunkSrc.includes('.textContent'));
+check('chatbot.ts chunk: never assigns .innerHTML (no raw HTML injection of model/user text)', !chatbotChunkSrc.includes('.innerHTML'));
+check('chatbot.ts chunk: posts to /api/chat.php', chatbotChunkSrc.includes('/api/chat.php'));
+check('chatbot.ts chunk: bounded history window (MAX_HISTORY_MESSAGES)', /MAX_HISTORY_MESSAGES\s*=\s*16/.test(chatbotChunkSrc) || chatbotChunkSrc.includes('slice(-16)'));
+
+// Lazy-loading: the chatbot logic chunk must exist but NOT be referenced
+// by any eager <script src> tag — only reachable via the bootstrap's
+// dynamic import(), proving it doesn't load on every page view.
+if (chatbotChunkName) {
+  for (const relPath of allDistHtmlFiles) {
+    if (!existsSync(join(DIST, relPath))) continue;
+    const html = readHtml(relPath);
+    check(`${relPath}: chatbot logic chunk not eagerly <script>-tagged`, !html.includes(`src="/_astro/${chatbotChunkName}"`));
+  }
+}
+const chatLauncherBootstrapChunk = astroChunkFiles.find((f) => f.startsWith('ChatLauncher.astro_astro_type_script'));
+check('ChatLauncher bootstrap chunk exists (small, eager, imports chatbot.ts on interaction)', !!chatLauncherBootstrapChunk);
+if (chatLauncherBootstrapChunk) {
+  const bootstrapSize = statSync(join(DIST, '_astro', chatLauncherBootstrapChunk)).size;
+  check('ChatLauncher bootstrap chunk stays small (<3KB raw) — negligible initial-load impact', bootstrapSize < 3000);
+}
+
+// Accessibility / motion / mobile — CSS-level regression guards, same
+// stylesheet already read for the V2-6 section above.
+check('styles.css: .chat-launcher reduced-motion guard compiled', /prefers-reduced-motion:reduce\)\{\.chat-launcher\{transition:none\}/.test(stylesCss));
+check('styles.css: .chat-panel reduced-motion guard compiled', /prefers-reduced-motion:reduce\)\{\.chat-panel\{transition:none\}/.test(stylesCss));
+check('styles.css: .chat-panel rule compiled', stylesCss.includes('.chat-panel{'));
+check('styles.css: .chat-launcher rule compiled', stylesCss.includes('.chat-launcher{'));
+check('styles.css: mobile-width chat panel rule compiled (max-width:420px media query)', /@media \(max-width:420px\)\{\.chat-panel\{width:calc\(100vw - 1\.5rem\)/.test(stylesCss));
+check('styles.css: chat input disabled-state styling compiled', stylesCss.includes('.chat-input:disabled'));
 
 // ---- Report ---------------------------------------------------------------
 console.log(`QA check: ${checks} assertions, ${failures.length} failure(s).`);

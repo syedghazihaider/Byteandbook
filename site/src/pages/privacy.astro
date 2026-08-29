@@ -27,6 +27,7 @@ const sections = [
   { id: 'service-providers', label: 'Service providers' },
   { id: 'data-retention', label: 'Data retention' },
   { id: 'cookies-tracking', label: 'Cookies and tracking' },
+  { id: 'ai-assistant', label: 'AI Assistant (chatbot)' },
   { id: 'your-rights', label: 'Your rights' },
   { id: 'childrens-privacy', label: "Children's privacy" },
   { id: 'changes-to-this-policy', label: 'Changes to this policy' },
@@ -153,7 +154,9 @@ const breadcrumbJsonLd = {
             <p class="mt-3">
               Our website is hosted on Namecheap shared hosting, which processes project-request
               submissions to deliver them by email and provides the mailbox that receives them. Fonts
-              are served by Google Fonts (see section 9). We do not currently use any analytics,
+              are served by Google Fonts (see section 9). If you use the optional AI Assistant, your
+              message is processed by our configured AI provider, currently Google's Gemini API,
+              solely to generate a response (see section 10). We do not currently use any analytics,
               advertising, or marketing-automation service provider.
             </p>
           </section>
@@ -188,8 +191,45 @@ const breadcrumbJsonLd = {
             </p>
           </section>
 
+          <section id="ai-assistant">
+            <h2 class="text-2xl font-bold text-ink-50">10. AI Assistant (chatbot)</h2>
+            <p class="mt-3">
+              This website includes an optional AI Assistant ("Ask ByteAndBook AI") for general
+              questions about our services, process, and getting started. It is closed by default —
+              nothing is sent anywhere until you open it and send a message.
+            </p>
+            <p class="mt-3">
+              When you send a message, the message text and a short window of your recent chat
+              history on this device (no more than the last few exchanges) are sent to our backend,
+              which forwards them — together with relevant excerpts of our own published website
+              content used to ground the answer — to Google's Gemini API to generate a response. We
+              are launching this feature on Gemini's Free Tier. According to Google's current Gemini
+              API Free Tier terms, content submitted through the Free Tier may be used by Google to
+              improve its products. We do not control Google's own data-handling or retention
+              practices; see Google's Gemini API terms and documentation for details on how they
+              process Free Tier API requests.
+            </p>
+            <p class="mt-3">
+              Because of this, please do not submit confidential, sensitive, payment, account,
+              password, health, identity, or other private project information through the chat — it
+              is intended for general questions about our services, process, and getting started, not
+              for sharing information you wouldn't want a third-party AI provider to see. Anything
+              that needs to be tied to your identity or involves private details should go through the
+              Start a Project form or a direct email instead.
+            </p>
+            <p class="mt-3">
+              Your conversation is kept only in your browser's session storage on your own device — it
+              is not written to a website database and is cleared automatically when you close the
+              tab. ByteAndBook does not intentionally maintain a permanent website database of chat
+              conversations under the current architecture; our server does not intentionally log full
+              chat message content, though routine technical logs may briefly include a truncated
+              snippet of a failed request for debugging. Using the chat does not add you to any
+              marketing list or enroll you in any marketing program.
+            </p>
+          </section>
+
           <section id="your-rights">
-            <h2 class="text-2xl font-bold text-ink-50">10. Your rights</h2>
+            <h2 class="text-2xl font-bold text-ink-50">11. Your rights</h2>
             <p class="mt-3">
               You can ask us what information we hold about you, request that we correct it, or ask us
               to delete a project-request email from our mailbox, by contacting
@@ -200,7 +240,7 @@ const breadcrumbJsonLd = {
           </section>
 
           <section id="childrens-privacy">
-            <h2 class="text-2xl font-bold text-ink-50">11. Children's privacy</h2>
+            <h2 class="text-2xl font-bold text-ink-50">12. Children's privacy</h2>
             <p class="mt-3">
               This website is intended for business inquiries and is not directed at children. We do
               not knowingly collect information from children.
@@ -208,7 +248,7 @@ const breadcrumbJsonLd = {
           </section>
 
           <section id="changes-to-this-policy">
-            <h2 class="text-2xl font-bold text-ink-50">12. Changes to this policy</h2>
+            <h2 class="text-2xl font-bold text-ink-50">13. Changes to this policy</h2>
             <p class="mt-3">
               If our data practices change, we will update this page and the Terms Version shown at
               the top. Continued use of the project-request form after an update constitutes
@@ -217,7 +257,7 @@ const breadcrumbJsonLd = {
           </section>
 
           <section id="contact">
-            <h2 class="text-2xl font-bold text-ink-50">13. Contact</h2>
+            <h2 class="text-2xl font-bold text-ink-50">14. Contact</h2>
             <p class="mt-3">
               For any privacy question or request, contact
               <a href="mailto:info@byteandbook.com" class="text-signal-400 hover:text-signal-300">info@byteandbook.com</a>.

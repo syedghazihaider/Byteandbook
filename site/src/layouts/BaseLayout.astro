@@ -10,6 +10,7 @@
 // sitewide Organization/WebSite graph below — real content only, see
 // each page for what backs each field.
 import StartProjectModal from '../components/project/StartProjectModal.astro';
+import ChatLauncher from '../components/chat/ChatLauncher.astro';
 import { verifiedSocialUrls } from '../config/site';
 import { STYLES_HREF } from '../generated/styles-manifest';
 
@@ -117,6 +118,7 @@ const siteGraph = {
     <a href="#main-content" class="skip-link">Skip to main content</a>
     <slot />
     <StartProjectModal />
+    <ChatLauncher />
     <script>
       // Level 3: global scroll-reveal wiring. Adds .js-ready (which
       // arms the [data-reveal] hidden-until-scrolled CSS) only when

@@ -6,8 +6,9 @@
   "scripts": {
     "css:build": "tailwindcss -i ./src/styles/global.css -o ./.tmp/tailwind-output.css --minify",
     "css:hash": "node scripts/hash-css.mjs",
+    "chat:knowledge": "node scripts/build-chat-knowledge.mjs",
     "dev": "npm run css:build && npm run css:hash && astro dev",
-    "build": "npm run css:build && npm run css:hash && astro build",
+    "build": "npm run css:build && npm run css:hash && astro build && npm run chat:knowledge",
     "preview": "astro preview",
     "test": "node scripts/qa-check.mjs"
   },
