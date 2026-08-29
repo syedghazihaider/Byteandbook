@@ -39,7 +39,7 @@ declare(strict_types=1);
 
 error_reporting(E_ALL);
 ini_set('display_errors', '0');
-@set_time_limit(28); // stay under typical shared-hosting execution limits
+@set_time_limit(35); // stay under typical shared-hosting execution limits
 
 set_exception_handler(static function (Throwable $e): void {
     error_log('[ByteAndBook] chat uncaught: ' . $e->getMessage());
@@ -94,7 +94,7 @@ const GEMINI_MODEL = 'gemini-2.5-flash';
 const GEMINI_API_BASE = 'https://generativelanguage.googleapis.com/v1beta/models/';
 const GEMINI_THINKING_BUDGET = 0; // routine support Q&A doesn't need extended reasoning — favors latency
 const GEMINI_MAX_OUTPUT_TOKENS = 700;
-const GEMINI_TIMEOUT_SECONDS = 22;
+const GEMINI_TIMEOUT_SECONDS = 28; // real live probes observed up to ~21s under normal Free Tier load
 
 const ALLOWED_ORIGINS = [
     'https://byteandbook.com',
