@@ -3,6 +3,15 @@
 byteandbook-backup-2026-08-26.zip
 bytesbra_wp928.sql
 
+# Phase 1 deploy artifacts — pre-deploy backup ZIP and the deploy
+# package ZIP, generated during Phase 1 deployment. Deploy artifacts,
+# not source — never versioned.
+byteandbook-backup-pre-phase1-*.zip
+byteandbook-deploy-phase1-*.zip
+
+# graphify (dependency-graph tool) output — generated report, not source.
+graphify-out/
+
 # Astro/Node build tooling (Phase 4+)
 site/node_modules/
 site/dist/

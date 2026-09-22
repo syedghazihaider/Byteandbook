@@ -1,6 +1,21 @@
 import * as THREE from 'three';
 import { createBaseScene, readColorToken, getQualityTier, qualityScale, onTabHidden } from './utils';
 
+export interface CategoryMarker {
+  label: string;
+  href: string;
+  /** CSS custom-property name (see lib/pillarColors.ts's accentVar map) —
+   *  read live so each marker matches its category's real pillar color. */
+  accentVar: string;
+}
+
+export interface CategoryLabelPosition {
+  x: number;
+  y: number;
+  visible: boolean;
+  hovered: boolean;
+}
+
 export interface SceneHandle {
   start: () => void;
   stop: () => void;
@@ -14,11 +29,22 @@ export interface SceneHandle {
 
 /** Homepage hero: an abstract "systems network" — a constellation of
  *  nodes and connecting lines standing in for the interconnected
- *  disciplines (growth / technology / infrastructure / creative) the
- *  homepage describes. Slow autorotation plus subtle pointer parallax,
- *  a near/far depth split for real dimensionality, and a scroll-scrubbed
- *  camera dolly. No text/logos baked in, kept abstract on purpose. */
-export function createHeroScene(canvas: HTMLCanvasElement): SceneHandle {
+ *  disciplines the homepage describes, PLUS three larger, pillar-colored
+ *  "category" nodes woven into the same cloud (one per service category,
+ *  see `categories`). Autorotation, per-marker pointer attraction (not
+ *  just whole-group parallax), raycasted hover/click on the category
+ *  nodes (click navigates to that category's page — a real mouse-only
+ *  enhancement layered over the actual accessible links in the section
+ *  below, never a replacement for them), a near/far depth split, and a
+ *  scroll-scrubbed camera dolly that hands off to the capability ring
+ *  in the section below. `onLabelUpdate` receives each category node's
+ *  projected screen position every frame so the caller can position real
+ *  DOM label pills over the canvas (same technique as NodeGraph3D). */
+export function createHeroScene(
+  canvas: HTMLCanvasElement,
+  categories: CategoryMarker[],
+  onLabelUpdate?: (positions: CategoryLabelPosition[]) => void
+): SceneHandle {
   const { renderer, scene, camera, dispose: disposeBase } = createBaseScene(canvas);
   const baseZ = 9;
   camera.position.z = baseZ;
@@ -103,13 +129,95 @@ export function createHeroScene(canvas: HTMLCanvasElement): SceneHandle {
   const lines = new THREE.LineSegments(lineGeo, lineMat);
   group.add(lines);
 
+  // Three larger, pillar-colored "category" nodes woven into the same
+  // constellation — fixed, legible positions (not randomly scattered
+  // like the ambient cloud) so each can carry a stable label/href and
+  // read as a distinct, clickable hub rather than ambient decoration.
+  const markerBasePositions = [
+    new THREE.Vector3(-3.0, 0.25, 1.4),
+    new THREE.Vector3(0.0, -0.35, 2.0),
+    new THREE.Vector3(3.0, 0.25, 1.4),
+  ];
+  const markerGeo = new THREE.SphereGeometry(0.15, 20, 20);
+  const markers: THREE.Mesh[] = [];
+  const markerMats: THREE.MeshBasicMaterial[] = [];
+  const markerDisplacement = categories.map(() => new THREE.Vector3());
+  const markerScale = categories.map(() => 1);
+  categories.slice(0, 3).forEach((cat, i) => {
+    const mat = new THREE.MeshBasicMaterial({ color: readColorToken(cat.accentVar), transparent: true });
+    markerMats.push(mat);
+    const mesh = new THREE.Mesh(markerGeo, mat);
+    mesh.position.copy(markerBasePositions[i]);
+    group.add(mesh);
+    markers.push(mesh);
+  });
+
   let targetRotX = 0;
   let targetRotY = 0;
+  let pointerNdcX = 0;
+  let pointerNdcY = 0;
   const onPointerMove = (e: PointerEvent) => {
-    targetRotY = ((e.clientX / window.innerWidth) * 2 - 1) * 0.25;
-    targetRotX = ((e.clientY / window.innerHeight) * 2 - 1) * 0.15;
+    pointerNdcX = (e.clientX / window.innerWidth) * 2 - 1;
+    pointerNdcY = (e.clientY / window.innerHeight) * 2 - 1;
+    targetRotY = pointerNdcX * 0.25;
+    targetRotX = pointerNdcY * 0.15;
   };
   window.addEventListener('pointermove', onPointerMove);
+
+  // Raycasted hover/click on the category markers, scoped to the canvas
+  // itself (the canvas sits behind the hero's real text/CTA, which stay
+  // on top via explicit z-index, so this never steals clicks meant for
+  // them — it only ever fires in the empty space around the cloud).
+  const raycaster = new THREE.Raycaster();
+  const pointerForRay = new THREE.Vector2();
+  let hoveredIndex: number | null = null;
+  canvas.style.pointerEvents = 'auto';
+  canvas.style.cursor = 'default';
+
+  function updatePointerForRay(e: PointerEvent) {
+    const rect = canvas.getBoundingClientRect();
+    pointerForRay.x = ((e.clientX - rect.left) / rect.width) * 2 - 1;
+    pointerForRay.y = -(((e.clientY - rect.top) / rect.height) * 2 - 1);
+  }
+
+  function raycastMarkers(): number | null {
+    raycaster.setFromCamera(pointerForRay, camera);
+    const hits = raycaster.intersectObjects(markers, false);
+    return hits.length > 0 ? markers.indexOf(hits[0].object as THREE.Mesh) : null;
+  }
+
+  const onCanvasPointerMove = (e: PointerEvent) => {
+    updatePointerForRay(e);
+    const idx = raycastMarkers();
+    if (idx !== hoveredIndex) {
+      hoveredIndex = idx;
+      canvas.style.cursor = idx !== null ? 'pointer' : 'default';
+    }
+  };
+  const onCanvasClick = (e: PointerEvent) => {
+    updatePointerForRay(e);
+    const idx = raycastMarkers();
+    const cat = idx !== null ? categories[idx] : null;
+    if (cat) window.location.href = cat.href;
+  };
+  canvas.addEventListener('pointermove', onCanvasPointerMove);
+  canvas.addEventListener('click', onCanvasClick);
+
+  const labelPositions: CategoryLabelPosition[] = categories.slice(0, 3).map(() => ({ x: 0, y: 0, visible: false, hovered: false }));
+  const ndcToScreen = new THREE.Vector3();
+  function updateLabelPositions(container: HTMLElement) {
+    if (!onLabelUpdate) return;
+    const { clientWidth: w, clientHeight: h } = container;
+    markers.forEach((mesh, i) => {
+      ndcToScreen.setFromMatrixPosition(mesh.matrixWorld).project(camera);
+      const behindCamera = ndcToScreen.z > 1;
+      labelPositions[i].x = (ndcToScreen.x * 0.5 + 0.5) * w;
+      labelPositions[i].y = (-ndcToScreen.y * 0.5 + 0.5) * h;
+      labelPositions[i].visible = !behindCamera && scrollT < 0.85;
+      labelPositions[i].hovered = hoveredIndex === i;
+    });
+    onLabelUpdate(labelPositions);
+  }
 
   let scrollT = 0;
 
@@ -133,7 +241,26 @@ export function createHeroScene(canvas: HTMLCanvasElement): SceneHandle {
     far.mat.opacity = 0.35 * fade;
     group.position.y = -scrollT * 1.2;
 
+    // Per-marker pointer attraction: a shared ambient pull toward the
+    // cursor (in the group's local, pre-render space, so it reads
+    // correctly under the group's own rotation), plus a stronger pull
+    // and scale-up on whichever marker is actually hovered — real
+    // interaction, not just the whole cloud tilting.
+    markers.forEach((mesh, i) => {
+      const isHovered = hoveredIndex === i;
+      const strength = isHovered ? 0.9 : 0.35;
+      const target = new THREE.Vector3(pointerNdcX * strength, -pointerNdcY * strength * 0.7, isHovered ? 0.4 : 0);
+      markerDisplacement[i].lerp(target, isHovered ? 0.12 : 0.04);
+      mesh.position.copy(markerBasePositions[i]).add(markerDisplacement[i]);
+
+      const targetScale = isHovered ? 1.6 : 1;
+      markerScale[i] += (targetScale - markerScale[i]) * 0.15;
+      mesh.scale.setScalar(markerScale[i]);
+      markerMats[i].opacity = fade;
+    });
+
     renderer.render(scene, camera);
+    updateLabelPositions(canvas.parentElement ?? canvas);
   }
 
   const stopForTab = onTabHidden(
@@ -166,6 +293,10 @@ export function createHeroScene(canvas: HTMLCanvasElement): SceneHandle {
       running = false;
       cancelAnimationFrame(frameId);
       window.removeEventListener('pointermove', onPointerMove);
+      canvas.removeEventListener('pointermove', onCanvasPointerMove);
+      canvas.removeEventListener('click', onCanvasClick);
+      canvas.style.cursor = '';
+      canvas.style.pointerEvents = '';
       stopForTab();
       near.geo.dispose();
       near.mat.dispose();
@@ -175,6 +306,8 @@ export function createHeroScene(canvas: HTMLCanvasElement): SceneHandle {
       emberMat.dispose();
       lineGeo.dispose();
       lineMat.dispose();
+      markerGeo.dispose();
+      markerMats.forEach((m) => m.dispose());
       disposeBase();
     },
   };

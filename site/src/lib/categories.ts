@@ -4,7 +4,7 @@
 // internal styling split — unchanged. This file is the single source of
 // truth for category copy and routing so nav, the services index, the
 // category pages, and service-page breadcrumbs never drift from each other.
-import { pillarBadgeClass, pillarIconBgClass, pillarDotClass } from './pillarColors';
+import { pillarBadgeClass, pillarIconBgClass, pillarDotClass, pillarAccentVar } from './pillarColors';
 
 export type CategorySlug = 'growth-ai-discovery' | 'web-brand-publishing' | 'infrastructure-automation';
 
@@ -25,6 +25,10 @@ export interface CategoryMeta {
   badgeClass: string;
   iconBgClass: string;
   dotClass: string;
+  /** CSS custom-property name for this category's pillar accent (see
+   *  pillarColors.ts's pillarAccentVar map) — Phase 2's hero scene reads
+   *  this to color each category's 3D marker with its real pillar color. */
+  accentVar: string;
 }
 
 export const CATEGORIES: CategoryMeta[] = [
@@ -52,6 +56,7 @@ export const CATEGORIES: CategoryMeta[] = [
     badgeClass: pillarBadgeClass.Growth,
     iconBgClass: pillarIconBgClass.Growth,
     dotClass: pillarDotClass.Growth,
+    accentVar: pillarAccentVar.Growth,
   },
   {
     slug: 'web-brand-publishing',
@@ -77,6 +82,7 @@ export const CATEGORIES: CategoryMeta[] = [
     badgeClass: pillarBadgeClass.Technology,
     iconBgClass: pillarIconBgClass.Technology,
     dotClass: pillarDotClass.Technology,
+    accentVar: pillarAccentVar.Technology,
   },
   {
     slug: 'infrastructure-automation',
@@ -102,6 +108,7 @@ export const CATEGORIES: CategoryMeta[] = [
     badgeClass: pillarBadgeClass.Infrastructure,
     iconBgClass: pillarIconBgClass.Infrastructure,
     dotClass: pillarDotClass.Infrastructure,
+    accentVar: pillarAccentVar.Infrastructure,
   },
 ];
 

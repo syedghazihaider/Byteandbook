@@ -36,6 +36,18 @@ export function shouldRunHeavyMotion(): boolean {
   return !prefersReducedMotion() && isWebglSupported();
 }
 
+/** Stricter than shouldRunHeavyMotion(): Phase 2's homepage hero runs its
+ *  real-time interactive scene (mouse attraction, raycasted click-to-
+ *  navigate) only on desktop-class viewports. Compact/mobile viewports
+ *  fall back to the hero's existing static gradient/grid backdrop
+ *  instead of any WebGL at all — genuinely lighter, not just a lower-
+ *  quality tier. Every other Level 1 scene is untouched and keeps
+ *  running WebGL at the compact quality tier on mobile as before; this
+ *  gate is intentionally scoped to the hero only. */
+export function shouldRunHeroInteractive3D(): boolean {
+  return shouldRunHeavyMotion() && !isCompactViewport();
+}
+
 /** Runs `create()` and returns its handle, or null if scene construction
  *  throws — a genuine rendering failure (context loss, driver crash,
  *  out of memory) falls back to static rather than leaving a broken

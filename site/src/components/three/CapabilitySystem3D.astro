@@ -24,6 +24,7 @@ const { count } = Astro.props;
   if (container && canvas && shouldRunHeavyMotion()) {
     const count = Number(container.dataset.count || '0');
     let scene: ReturnType<typeof import('../../scripts/three/capabilityScene')['createCapabilityScene']> | null = null;
+    let scrollTrigger: import('gsap/ScrollTrigger').ScrollTrigger | null = null;
 
     const cards = document.querySelectorAll<HTMLElement>('[data-service-card]');
     const bindCardEvents = () => {
@@ -44,6 +45,25 @@ const { count } = Astro.props;
         if (!scene) return;
         scene.start();
         bindCardEvents();
+
+        // Phase 2: ring scales/fades in across the exact same physical
+        // scroll span as the hero's own fade-out trigger (this section's
+        // top edge crossing from viewport-bottom to viewport-top, which
+        // coincides with the hero's bottom-to-top span since the two
+        // sections are adjacent) — see heroScene's setScrollProgress for
+        // the other half of this synchronized handoff.
+        if (!scrollTrigger) {
+          const { gsap } = await import('gsap');
+          const { ScrollTrigger } = await import('gsap/ScrollTrigger');
+          gsap.registerPlugin(ScrollTrigger);
+          scrollTrigger = ScrollTrigger.create({
+            trigger: container.closest('section') ?? container,
+            start: 'top bottom',
+            end: 'top top',
+            scrub: true,
+            onUpdate: (self) => scene?.setEntranceProgress(self.progress),
+          });
+        }
       },
       () => {
         scene?.stop();

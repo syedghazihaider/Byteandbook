@@ -10,6 +10,14 @@ export interface SceneHandle {
    *  service card grid's hover/focus so the backdrop reads as one
    *  interactive system rather than a static ring. */
   setActive: (index: number | null) => void;
+  /** Phase 2: t in [0,1], scrubbed by a ScrollTrigger spanning the exact
+   *  same physical scroll range as the hero's own fade-out trigger (the
+   *  categories section's top edge crossing from viewport-bottom to
+   *  viewport-top — identical to the hero section's bottom-to-top span,
+   *  since the sections are adjacent). Ramps the ring in as the hero
+   *  cloud fades out, so the handoff reads as one continuous scene
+   *  rather than two independently-triggered ones. */
+  setEntranceProgress: (t: number) => void;
 }
 
 /** Homepage services section backdrop: a tilted ring of nodes, one per
@@ -46,7 +54,7 @@ export function createCapabilityScene(canvas: HTMLCanvasElement, count: number):
   const baseScales: number[] = [];
 
   for (let i = 0; i < n; i++) {
-    const mat = new THREE.MeshBasicMaterial({ color: signal });
+    const mat = new THREE.MeshBasicMaterial({ color: signal, transparent: true });
     nodeMats.push(mat);
     const mesh = new THREE.Mesh(nodeGeo, mat);
     const angle = (i / n) * Math.PI * 2;
@@ -58,6 +66,9 @@ export function createCapabilityScene(canvas: HTMLCanvasElement, count: number):
 
   let activeIndex: number | null = null;
   const targetScales = new Array(n).fill(1);
+  let entranceT = 0;
+  let entranceSmoothed = 0;
+  const ringBaseOpacity = 0.14;
 
   let frameId = 0;
   let running = false;
@@ -69,12 +80,20 @@ export function createCapabilityScene(canvas: HTMLCanvasElement, count: number):
     const t = clock.getElapsedTime();
     group.rotation.y = t * 0.05;
 
+    // Phase 2 entrance: the ring scales/fades in as entranceT ramps
+    // 0->1, timed to the hero's own fade-out (see setEntranceProgress)
+    // so the two scenes read as one continuous handoff.
+    entranceSmoothed += (entranceT - entranceSmoothed) * 0.08;
+    group.scale.setScalar(0.8 + 0.2 * entranceSmoothed);
+    ringMat.opacity = ringBaseOpacity * entranceSmoothed;
+
     nodes.forEach((mesh, i) => {
       const target = activeIndex === i ? 1.9 : 1;
       targetScales[i] += (target - targetScales[i]) * 0.15;
       mesh.scale.setScalar(targetScales[i]);
       const mat = nodeMats[i];
       mat.color.copy(activeIndex === i ? ember : signal);
+      mat.opacity = entranceSmoothed;
     });
 
     renderer.render(scene, camera);
@@ -105,6 +124,9 @@ export function createCapabilityScene(canvas: HTMLCanvasElement, count: number):
     },
     setActive(index: number | null) {
       activeIndex = index;
+    },
+    setEntranceProgress(t: number) {
+      entranceT = Math.min(1, Math.max(0, t));
     },
     dispose() {
       running = false;
