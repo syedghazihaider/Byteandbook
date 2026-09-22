@@ -12,7 +12,7 @@ const { steps, pulse = false, accentVar } = Astro.props;
 ---
 
 <div
-  class="relative mx-auto h-[300px] w-full max-w-4xl sm:h-[360px]"
+  class="relative mx-auto h-[300px] w-full max-w-4xl overflow-hidden sm:h-[360px]"
   data-node-graph
   data-steps={JSON.stringify(steps)}
   data-pulse={pulse ? '1' : '0'}
@@ -45,9 +45,15 @@ const { steps, pulse = false, accentVar } = Astro.props;
 
     const labelEls = steps.map((label) => {
       const el = document.createElement('div');
+      // Long labels (e.g. "Database / Storage") can center on a node near
+      // the container edge and push past the viewport on narrow screens.
+      // Truncate with an ellipsis below the sm breakpoint and expose the
+      // full text via title, so 768px/1440px keep the original one-line
+      // pill untouched.
       el.className =
-        'absolute -translate-x-1/2 translate-y-3 whitespace-nowrap rounded-full border border-ink-700 bg-ink-950/85 px-2.5 py-1 text-[11px] font-medium text-ink-200 opacity-0 transition-opacity duration-200';
+        'absolute -translate-x-1/2 translate-y-3 max-w-[104px] overflow-hidden text-ellipsis whitespace-nowrap rounded-full border border-ink-700 bg-ink-950/85 px-2.5 py-1 text-[11px] font-medium text-ink-200 opacity-0 transition-opacity duration-200 sm:max-w-none sm:overflow-visible';
       el.textContent = label;
+      el.title = label;
       labelsRoot.appendChild(el);
       return el;
     });
