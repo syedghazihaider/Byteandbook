@@ -23,3 +23,5 @@ site/src/generated/
 # OS/editor cruft
 .DS_Store
 Thumbs.db
+site/lighthouse-reports/*.json
+.playwright-mcp/
