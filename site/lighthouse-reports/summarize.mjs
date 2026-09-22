@@ -1,0 +1,16 @@
+import { readFileSync } from 'node:fs';
+const file = process.argv[2];
+const r = JSON.parse(readFileSync(file, 'utf-8'));
+const cats = r.categories;
+const a = r.audits;
+console.log(file);
+console.log('  Performance:', Math.round((cats.performance?.score ?? 0) * 100));
+if (cats.accessibility) console.log('  Accessibility:', Math.round(cats.accessibility.score * 100));
+if (cats['best-practices']) console.log('  Best Practices:', Math.round(cats['best-practices'].score * 100));
+if (cats.seo) console.log('  SEO:', Math.round(cats.seo.score * 100));
+console.log('  LCP:', a['largest-contentful-paint']?.displayValue);
+console.log('  TBT:', a['total-blocking-time']?.displayValue);
+console.log('  CLS:', a['cumulative-layout-shift']?.displayValue);
+console.log('  Speed Index:', a['speed-index']?.displayValue);
+console.log('  FCP:', a['first-contentful-paint']?.displayValue);
+console.log('  JS transfer size (KB):', a['total-byte-weight'] ? Math.round(a['total-byte-weight'].numericValue / 1024) : 'n/a');
