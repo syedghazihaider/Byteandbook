@@ -36,7 +36,7 @@ const breadcrumbJsonLd = {
 ---
 
 <BaseLayout
-  title="Services — ByteAndBook"
+  title="Services | ByteAndBook"
   description="ByteAndBook builds three things for clients: online growth and AI discovery, websites and brands, and reliable infrastructure. Pick a starting point below."
   path={path}
   jsonLd={[breadcrumbJsonLd]}
@@ -61,8 +61,8 @@ const breadcrumbJsonLd = {
           </h1>
           <p class="mt-5 text-lg text-ink-300">
             Everything we do falls into three groups. Pick the one that
-            matches what you need, or scroll through all three below —
-            every service has its own page with the full breakdown.
+            matches what you need, or scroll through all three below.
+            Every service has its own page with the full breakdown.
           </p>
         </div>
       </Container>
@@ -73,11 +73,21 @@ const breadcrumbJsonLd = {
       <Container>
         <h2 id="selector-heading" class="sr-only">Choose a starting point</h2>
         <div class="flex flex-col gap-3 sm:flex-row" role="group" aria-label="Filter services by category" data-selector>
-          {CATEGORIES.map((category, i) => (
+          <button
+            type="button"
+            class="flex-1 rounded-bb-lg border border-ink-700 bg-ink-900/60 px-6 py-5 text-left transition-colors hover:border-ink-600 focus-visible:outline-2 focus-visible:outline-offset-2"
+            aria-pressed="true"
+            data-selector-btn="all"
+            aria-controls={CATEGORIES.map((category) => `panel-${category.slug}`).join(' ')}
+          >
+            <span class="block text-base font-semibold text-ink-50">Show All</span>
+            <span class="mt-1 block text-sm text-ink-300">Every category, on one page</span>
+          </button>
+          {CATEGORIES.map((category) => (
             <button
               type="button"
               class="flex-1 rounded-bb-lg border border-ink-700 bg-ink-900/60 px-6 py-5 text-left transition-colors hover:border-ink-600 focus-visible:outline-2 focus-visible:outline-offset-2"
-              aria-pressed={i === 0 ? 'true' : 'false'}
+              aria-pressed="false"
               data-selector-btn={category.slug}
               aria-controls={`panel-${category.slug}`}
             >
@@ -86,7 +96,7 @@ const breadcrumbJsonLd = {
             </button>
           ))}
         </div>
-        <p class="mt-3 text-sm text-ink-300" data-selector-status role="status"></p>
+        <p class="mt-3 text-sm text-ink-300" data-selector-status role="status">Showing all services.</p>
       </Container>
     </section>
 
@@ -160,11 +170,12 @@ const breadcrumbJsonLd = {
   const applyFilter = (slug: string) => {
     buttons.forEach((btn) => btn.setAttribute('aria-pressed', String(btn.dataset.selectorBtn === slug)));
     panels.forEach((panel) => {
-      panel.hidden = panel.dataset.selectorPanel !== slug;
+      panel.hidden = slug !== 'all' && panel.dataset.selectorPanel !== slug;
     });
-    const active = buttons.find((btn) => btn.dataset.selectorBtn === slug);
-    if (status && active) {
-      status.textContent = `Showing ${active.querySelector('span')?.textContent ?? 'selected'} services.`;
+    if (status) {
+      status.textContent = slug === 'all'
+        ? 'Showing all services.'
+        : `Showing ${buttons.find((btn) => btn.dataset.selectorBtn === slug)?.querySelector('span')?.textContent ?? 'selected'} services.`;
     }
   };
 

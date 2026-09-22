@@ -59,7 +59,7 @@ const { caseStudy } = Astro.props;
       <footer class="mt-2 text-xs not-italic text-ink-300">
         {caseStudy.testimonial.person}
         {caseStudy.testimonial.role && `, ${caseStudy.testimonial.role}`}
-        {caseStudy.testimonial.company && ` — ${caseStudy.testimonial.company}`}
+        {caseStudy.testimonial.company && ` · ${caseStudy.testimonial.company}`}
         {caseStudy.testimonial.sourceUrl && (
           <> · <a href={caseStudy.testimonial.sourceUrl} target="_blank" rel="noopener" class="text-signal-400 hover:text-signal-300">Source</a></>
         )}

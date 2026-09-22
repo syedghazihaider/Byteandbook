@@ -39,7 +39,7 @@ const profileLinks = [
         <li class="text-xs text-ink-300">
           {cert.credentialUrl ? (
             <a href={cert.credentialUrl} target="_blank" rel="noopener" class="text-signal-400 hover:text-signal-300">{cert.name}</a>
-          ) : cert.name} — {cert.issuer}
+          ) : cert.name} · {cert.issuer}
         </li>
       ))}
     </ul>

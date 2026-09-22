@@ -233,7 +233,7 @@ export function mountChatbot(): void {
         saveHistory(history);
       } else if (response.status === 429) {
         statusEl!.textContent = '';
-        appendBubble('assistant', "You're sending messages a little fast — please wait a moment and try again.");
+        appendBubble('assistant', "You're sending messages a little fast. Please wait a moment and try again.");
       } else {
         showFailure();
       }

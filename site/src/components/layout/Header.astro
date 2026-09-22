@@ -39,22 +39,24 @@ const navLinks = [
         </button>
         <div
           id="services-menu-panel"
-          role="menu"
-          aria-label="Service categories"
           class="absolute left-1/2 top-full hidden w-80 -translate-x-1/2 pt-3"
           data-services-menu-panel
         >
-          <div class="rounded-bb-lg border border-ink-700 bg-ink-900 p-2 shadow-[0_10px_40px_-12px_rgba(0,0,0,0.55)]">
+          <ul class="rounded-bb-lg border border-ink-700 bg-ink-900 p-2 shadow-[0_10px_40px_-12px_rgba(0,0,0,0.55)]">
             {CATEGORIES.map((category) => (
-              <a href={category.path} role="menuitem" class="block rounded-bb-sm px-4 py-3 hover:bg-ink-800">
-                <span class="block text-sm font-semibold text-ink-50">{category.navLabel}</span>
-                <span class="mt-0.5 block text-xs text-ink-300">{category.selectorHint}</span>
-              </a>
+              <li>
+                <a href={category.path} class="block rounded-bb-sm px-4 py-3 hover:bg-ink-800">
+                  <span class="block text-sm font-semibold text-ink-50">{category.navLabel}</span>
+                  <span class="mt-0.5 block text-xs text-ink-300">{category.selectorHint}</span>
+                </a>
+              </li>
             ))}
-            <a href="/services/" role="menuitem" class="mt-1 block rounded-bb-sm border-t border-ink-800 px-4 py-3 pt-4 text-sm font-medium text-signal-400 hover:bg-ink-800">
-              View All Services →
-            </a>
-          </div>
+            <li>
+              <a href="/services/" class="mt-1 block rounded-bb-sm border-t border-ink-800 px-4 py-3 pt-4 text-sm font-medium text-signal-400 hover:bg-ink-800">
+                View All Services →
+              </a>
+            </li>
+          </ul>
         </div>
       </div>
       {navLinks.map((link) => (

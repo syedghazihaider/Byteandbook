@@ -3,7 +3,7 @@ title: Software Development
 pillar: Technology
 category: web-brand-publishing
 summary: Custom applications built across the full stack, tested and monitored in production.
-metaDescription: Custom software development across frontend, API, backend, and database layers — tested, deployed, and monitored as a complete system.
+metaDescription: Custom software development across frontend, API, backend, and database layers, tested, deployed, and monitored as a complete system.
 icon: code
 animationLevel: '2'
 order: 6

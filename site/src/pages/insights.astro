@@ -30,22 +30,22 @@ const articles = (await getCollection('insights'))
 const knowledgeAreas: { pillar: Pillar; description: string; slugs: string[] }[] = [
   {
     pillar: 'Technology',
-    description: 'Web and software engineering — architecture, build/deploy pipelines, and production reliability.',
+    description: 'Web and software engineering: architecture, build/deploy pipelines, and production reliability.',
     slugs: ['web-development', 'software-development'],
   },
   {
     pillar: 'Infrastructure',
-    description: 'DevOps, cloud architecture, and hardware — specified and operated around the real workload.',
+    description: 'DevOps, cloud architecture, and hardware, specified and operated around the real workload.',
     slugs: ['devops', 'cloud', 'computer-hardware'],
   },
   {
     pillar: 'Growth',
-    description: 'Marketing, SEO, social, and generative-engine optimization — how businesses actually get found.',
+    description: 'Marketing, SEO, social, and generative-engine optimization: how businesses actually get found.',
     slugs: ['digital-marketing', 'seo', 'geo', 'social-media-marketing'],
   },
   {
     pillar: 'Creative',
-    description: 'Brand systems and digital publishing — identity and content built to last, not templated.',
+    description: 'Brand systems and digital publishing: identity and content built to last, not templated.',
     slugs: ['branding', 'ebook-publishing'],
   },
 ];
@@ -54,7 +54,7 @@ const evidenceStandards = [
   {
     icon: 'check-circle' as const,
     title: 'Grounded in real work',
-    description: 'Articles come from what we actually build and operate — not generic, reworded industry content.',
+    description: 'Articles come from what we actually build and operate, not generic, reworded industry content.',
   },
   {
     icon: 'shield' as const,
@@ -79,8 +79,8 @@ const breadcrumbJsonLd = {
 ---
 
 <BaseLayout
-  title="Insights — ByteAndBook"
-  description="How ByteAndBook thinks about technology, growth, and AI search discovery — knowledge areas, evidence standards, and what we publish and why."
+  title="Insights | ByteAndBook"
+  description="How ByteAndBook thinks about technology, growth, and AI search discovery: knowledge areas, evidence standards, and what we publish and why."
   path={path}
   jsonLd={[breadcrumbJsonLd]}
 >
@@ -100,7 +100,7 @@ const breadcrumbJsonLd = {
         </span>
         <h1 class="mt-5 text-page-title font-bold text-ink-50">Insights &amp; Knowledge</h1>
         <p class="mt-5 text-lg text-ink-300">
-          Practical explainers on the disciplines we work in — grounded in what we actually build, not
+          Practical explainers on the disciplines we work in, grounded in what we actually build, not
           reworded industry content.
         </p>
       </Container>
@@ -110,8 +110,8 @@ const breadcrumbJsonLd = {
       <Container class="max-w-3xl">
         <SectionHeading eyebrow="What We Publish" heading="Explainers Backed by Real Work" />
         <p class="mt-4 text-ink-300">
-          Insights will cover the same ground our services do — growth and AI discovery, web, brand,
-          and publishing work, and infrastructure — plus a dedicated focus on AI search and Generative
+          Insights will cover the same ground our services do: growth and AI discovery, web, brand,
+          and publishing work, and infrastructure, plus a dedicated focus on AI search and Generative
           Engine Optimization (GEO), since how businesses get discovered is changing. Every article is
           written to explain how something actually works, the same standard the rest of the site
           holds itself to.
@@ -155,13 +155,13 @@ const breadcrumbJsonLd = {
           <p class="mt-3 text-ink-300">
             Traditional SEO optimizes a page to rank in a list of links a crawler indexes. GEO
             (Generative Engine Optimization) optimizes the same underlying information so an AI
-            system — ChatGPT, Gemini, Copilot, Google's AI features — can accurately understand,
+            system, whether that's ChatGPT, Gemini, Copilot, or Google's AI features, can accurately understand,
             cite, and recommend a business when answering a question directly. They're related, not
             identical: a site can rank well and still be poorly understood by an LLM if its
             information isn't structured and entity-clear.
           </p>
           <p class="mt-3 text-ink-300">
-            We don't claim guaranteed AI citations or rankings — no one can promise how a given model
+            We don't claim guaranteed AI citations or rankings. No one can promise how a given model
             responds. What GEO work can do is remove the structural reasons a business gets
             misunderstood or skipped.
           </p>
@@ -213,7 +213,7 @@ const breadcrumbJsonLd = {
             </div>
             <p class="mt-5 text-ink-300">
               The first articles are in progress. Until they're published, the knowledge areas and
-              service pages above cover the same ground — how each discipline actually works.
+              service pages above cover the same ground: how each discipline actually works.
             </p>
           </div>
         )}
@@ -225,7 +225,7 @@ const breadcrumbJsonLd = {
         <div class="rounded-bb-lg border border-ink-700 bg-ink-900/60 px-8 py-16 text-center" data-reveal>
           <h2 class="text-section-title font-bold text-ink-50">Have a Project in Mind?</h2>
           <p class="mx-auto mt-4 max-w-xl text-ink-300">
-            Tell us what you're building — we'll scope it against the same process described on
+            Tell us what you're building. We'll scope it against the same process described on
             every service page.
           </p>
           <div class="mt-8">

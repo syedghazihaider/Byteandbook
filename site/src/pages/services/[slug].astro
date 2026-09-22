@@ -99,10 +99,29 @@ const isDataEcosystem = dataEcosystem.has(service.id);
 const isHardware = service.id === 'computer-hardware';
 const isBranding = service.id === 'branding';
 const isEbook = service.id === 'ebook-publishing';
+
+// Natural, per-service CTA phrasing — avoids the "Discuss a {title} Project"
+// template's grammar break on vowel-leading titles (SEO, eBook) and lets
+// GEO use its short name instead of the full "GEO (Generative Engine
+// Optimization)" content-collection title.
+const ctaHeadings: Record<string, string> = {
+  'digital-marketing': 'Plan Your Digital Marketing',
+  seo: 'Talk to Us About Your SEO',
+  geo: 'Talk to Us About GEO',
+  'social-media-marketing': 'Plan Your Social Media Strategy',
+  'web-development': 'Start Your Web Development Project',
+  'software-development': 'Start Your Software Development Project',
+  branding: 'Talk to Us About Your Branding',
+  'ebook-publishing': 'Plan Your eBook',
+  devops: 'Talk to Us About DevOps',
+  cloud: 'Plan Your Cloud Setup',
+  'computer-hardware': 'Talk to Us About Your Hardware Build',
+};
+const ctaHeading = ctaHeadings[service.id] ?? `Discuss Your ${service.data.title} Project`;
 ---
 
 <BaseLayout
-  title={`${service.data.title} — ByteAndBook`}
+  title={`${service.data.title} | ByteAndBook`}
   description={service.data.metaDescription}
   path={path}
   jsonLd={[serviceJsonLd, breadcrumbJsonLd]}
@@ -231,10 +250,10 @@ const isEbook = service.id === 'ebook-publishing';
       <Container>
         <div class="rounded-bb-lg border border-ink-700 bg-ink-900/60 px-8 py-14 text-center" data-reveal>
           <h2 class="text-2xl font-bold text-ink-50 md:text-3xl">
-            Discuss a {service.data.title} Project
+            {ctaHeading}
           </h2>
           <p class="mx-auto mt-3 max-w-xl text-ink-300">
-            Tell us where you're starting from and what you need — we'll
+            Tell us where you're starting from and what you need. We'll
             scope it against the process above.
           </p>
           <div class="mt-7">
