@@ -55,6 +55,21 @@ export default {
         display: 'var(--bb-font-display)',
         body: 'var(--bb-font-body)',
       },
+      // Phase 1-IA: semantic roles over the fluid clamp() scale already
+      // defined in global.css's :root (previously computed but never
+      // wired to a utility class). Maps a small, meaningful set of names
+      // — not every raw size — to how they're actually used: `display`
+      // (hero H1), `page-title` (H1 on every other page), `section-title`
+      // (H2 inside SectionHeading), `body` (paragraph text), `caption`
+      // (small/eyebrow text). Existing fixed-size text-* utilities keep
+      // working unchanged; these are additive.
+      fontSize: {
+        display: ['var(--bb-text-5xl)', { lineHeight: '1.05' }],
+        'page-title': ['var(--bb-text-4xl)', { lineHeight: '1.1' }],
+        'section-title': ['var(--bb-text-3xl)', { lineHeight: '1.15' }],
+        body: ['var(--bb-text-base)', { lineHeight: '1.6' }],
+        caption: ['var(--bb-text-xs)', { lineHeight: '1.4' }],
+      },
       borderRadius: {
         'bb-sm': 'var(--bb-radius-sm)',
         'bb-md': 'var(--bb-radius-md)',

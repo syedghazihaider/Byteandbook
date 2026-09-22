@@ -34,7 +34,7 @@ const evidenceStandards = [
   },
   {
     icon: 'check-circle' as const,
-    title: 'Verifiable, not just stated',
+    title: 'Verified With a Real Source',
     description: 'Where a metric or result is shown, it links to something a visitor can actually check — a live URL, a public source, or client-provided evidence.',
   },
   {
@@ -74,7 +74,7 @@ const breadcrumbJsonLd = {
         <span class="inline-block rounded-full border border-ink-700 bg-ink-900/60 px-4 py-1.5 text-xs font-semibold uppercase tracking-[0.18em] text-signal-400">
           Work
         </span>
-        <h1 class="mt-5 text-4xl font-bold text-ink-50 md:text-5xl">How we work, and how we prove it</h1>
+        <h1 class="mt-5 text-page-title font-bold text-ink-50">How We Work<br />And Prove It</h1>
         <p class="mt-5 text-lg text-ink-300">
           This page explains our methodology and the evidence standard every case study has to meet
           before it's published — not a placeholder, and not a page of invented results.
@@ -84,7 +84,7 @@ const breadcrumbJsonLd = {
 
     <section class="border-t border-ink-800 py-16">
       <Container class="max-w-3xl">
-        <SectionHeading eyebrow="Methodology" heading="The same process, every project" />
+        <SectionHeading eyebrow="Methodology" heading="The Same Process Every Time" />
         <p class="mt-4 text-ink-300">
           Every engagement runs through the same nine-stage process — Discovery, Requirements, Scope,
           Quote, Confirmation, Execution, Review, Delivery, Support — regardless of which discipline
@@ -99,7 +99,7 @@ const breadcrumbJsonLd = {
 
     <section class="border-t border-ink-800 py-16">
       <Container>
-        <SectionHeading eyebrow="Capability areas" heading="What we build, across four pillars" align="center" class="mx-auto max-w-2xl" />
+        <SectionHeading eyebrow="Capability Areas" heading="What We Build" align="center" class="mx-auto max-w-2xl" />
         <div class="mt-10 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {services.map((service) => (
             <a href={`/services/${service.id}/`} class="block rounded-bb-md border border-ink-700 bg-ink-900/60 px-5 py-4 text-sm text-ink-200 transition-colors hover:border-signal-400 hover:text-signal-300">
@@ -112,13 +112,13 @@ const breadcrumbJsonLd = {
 
     <section class="border-t border-ink-800 py-16">
       <Container class="max-w-3xl">
-        <SectionHeading eyebrow="Evidence standards" heading="What it takes for work to appear here" />
+        <SectionHeading eyebrow="Evidence Standards" heading="What It Takes for Work to Appear Here" />
         <div class="mt-10 grid gap-8 sm:grid-cols-2">
           {evidenceStandards.map((item) => (
             <TrustBadge icon={item.icon} title={item.title} description={item.description} />
           ))}
         </div>
-        <p class="mt-8 text-sm text-ink-400">
+        <p class="mt-8 text-sm text-ink-300">
           The same standard applies to <a href="/insights/" class="text-signal-400 hover:text-signal-300">Insights articles</a>.
         </p>
       </Container>
@@ -126,7 +126,7 @@ const breadcrumbJsonLd = {
 
     <section class="border-t border-ink-800 py-16">
       <Container>
-        <SectionHeading eyebrow="Case studies" heading="Verified project work" align="center" class="mx-auto max-w-2xl" />
+        <SectionHeading eyebrow="Case Studies" heading="Verified Project Work" align="center" class="mx-auto max-w-2xl" />
 
         {caseStudies.length > 0 ? (
           <div class="mt-10 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
@@ -152,7 +152,7 @@ const breadcrumbJsonLd = {
     <section class="border-t border-ink-800 py-20">
       <Container>
         <div class="rounded-bb-lg border border-ink-700 bg-ink-900/60 px-8 py-16 text-center" data-reveal>
-          <h2 class="text-3xl font-bold text-ink-50 md:text-4xl">Want to be the first case study?</h2>
+          <h2 class="text-section-title font-bold text-ink-50">Want to Be the First Case Study?</h2>
           <p class="mx-auto mt-4 max-w-xl text-ink-300">
             Tell us what you're building — we'll scope it against the same process described above.
           </p>

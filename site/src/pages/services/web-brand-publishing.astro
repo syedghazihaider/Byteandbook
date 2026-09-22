@@ -54,7 +54,7 @@ const breadcrumbJsonLd = {
           <span class={`inline-block rounded-full border border-ink-700 bg-ink-900/60 px-4 py-1.5 text-xs font-semibold uppercase tracking-[0.18em] ${category.badgeClass}`}>
             {category.eyebrow}
           </span>
-          <h1 class="mt-5 text-4xl font-bold text-ink-50 md:text-5xl">{category.heading}</h1>
+          <h1 class="mt-5 text-page-title font-bold text-ink-50">{category.heading}</h1>
           <p class="mt-5 text-lg text-ink-300">{category.promise}</p>
           <div class="mt-8">
             <StartProjectTrigger variant="primary">Start a Project</StartProjectTrigger>
@@ -70,7 +70,7 @@ const breadcrumbJsonLd = {
         <div class="mt-8 grid gap-8 sm:grid-cols-3">
           {category.whoFor.map((point, i) => (
             <div class="border-t border-ink-700 pt-4" data-reveal>
-              <span class="font-display text-xl font-bold text-ink-700">{String(i + 1).padStart(2, '0')}</span>
+              <span class="font-display text-xl font-bold text-ink-600">{String(i + 1).padStart(2, '0')}</span>
               <p class="mt-2 text-sm text-ink-200">{point}</p>
             </div>
           ))}
@@ -131,7 +131,7 @@ const breadcrumbJsonLd = {
     <section class="py-20">
       <Container>
         <div class="rounded-bb-lg border border-ink-700 bg-ink-900/60 px-8 py-16 text-center" data-reveal>
-          <h2 class="text-3xl font-bold text-ink-50 md:text-4xl">Ready to Build Something?</h2>
+          <h2 class="text-section-title font-bold text-ink-50">Ready to Build Something?</h2>
           <p class="mx-auto mt-4 max-w-xl text-ink-300">
             Tell us what you&rsquo;re building — a site, an app, a brand, or an ebook — and we&rsquo;ll scope it from there.
           </p>

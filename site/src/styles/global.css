@@ -101,7 +101,7 @@
   --bb-border-strong: var(--bb-ink-600);
   --bb-text: var(--bb-ink-50);
   --bb-text-muted: var(--bb-ink-300);
-  --bb-text-faint: var(--bb-ink-400);
+  --bb-text-faint: var(--bb-ink-300);
   --bb-accent: var(--bb-signal-500);
   --bb-accent-strong: var(--bb-signal-400);
   --bb-accent-warm: var(--bb-ember-500);
@@ -349,8 +349,8 @@
   }
   .sp-close {
     display: flex;
-    height: 2.25rem;
-    width: 2.25rem;
+    height: 2.75rem;
+    width: 2.75rem;
     flex-shrink: 0;
     align-items: center;
     justify-content: center;
@@ -613,8 +613,8 @@
   }
   .chat-close {
     display: flex;
-    height: 2rem;
-    width: 2rem;
+    height: 2.75rem;
+    width: 2.75rem;
     flex-shrink: 0;
     align-items: center;
     justify-content: center;
@@ -752,8 +752,8 @@
   }
   .chat-send {
     display: flex;
-    height: 2.5rem;
-    width: 2.5rem;
+    height: 2.75rem;
+    width: 2.75rem;
     flex-shrink: 0;
     align-items: center;
     justify-content: center;

@@ -54,7 +54,7 @@ const breadcrumbJsonLd = {
           <span class={`inline-block rounded-full border border-ink-700 bg-ink-900/60 px-4 py-1.5 text-xs font-semibold uppercase tracking-[0.18em] ${category.badgeClass}`}>
             {category.eyebrow}
           </span>
-          <h1 class="mt-5 text-4xl font-bold text-ink-50 md:text-5xl">{category.heading}</h1>
+          <h1 class="mt-5 text-page-title font-bold text-ink-50">{category.heading}</h1>
           <p class="mt-5 text-lg text-ink-300">{category.promise}</p>
           <div class="mt-8">
             <StartProjectTrigger variant="primary">Start a Project</StartProjectTrigger>
@@ -85,7 +85,7 @@ const breadcrumbJsonLd = {
         <div class="mt-10 divide-y divide-ink-800 border-y border-ink-800">
           {services.map((service, i) => (
             <a href={`/services/${service.id}/`} class="group flex flex-col gap-2 py-6 sm:flex-row sm:items-center sm:gap-8" data-reveal>
-              <span class="font-display text-2xl font-bold text-ink-700 sm:w-12">{String(i + 1).padStart(2, '0')}</span>
+              <span class="font-display text-2xl font-bold text-ink-600 sm:w-12">{String(i + 1).padStart(2, '0')}</span>
               <div class="flex-1">
                 <h3 class="text-lg font-semibold text-ink-50 group-hover:text-ink-100">{service.data.title}</h3>
                 <p class="mt-1 text-sm text-ink-300">{service.data.summary}</p>
@@ -106,7 +106,7 @@ const breadcrumbJsonLd = {
         <div class="mt-10 grid gap-8 sm:grid-cols-2 lg:grid-cols-4">
           {category.howWeWork.map((step, i) => (
             <div class="border-t border-ink-700 pt-5" data-reveal>
-              <span class="font-display text-2xl font-bold text-ink-700">{String(i + 1).padStart(2, '0')}</span>
+              <span class="font-display text-2xl font-bold text-ink-600">{String(i + 1).padStart(2, '0')}</span>
               <h3 class="mt-3 text-base font-semibold text-ink-50">{step.title}</h3>
               <p class="mt-2 text-sm text-ink-300">{step.description}</p>
             </div>
@@ -118,7 +118,7 @@ const breadcrumbJsonLd = {
     <section class="py-20">
       <Container>
         <div class="rounded-bb-lg border border-ink-700 bg-ink-900/60 px-8 py-16 text-center" data-reveal>
-          <h2 class="text-3xl font-bold text-ink-50 md:text-4xl">Ready to Get Found?</h2>
+          <h2 class="text-section-title font-bold text-ink-50">Ready to Get Found?</h2>
           <p class="mx-auto mt-4 max-w-xl text-ink-300">
             Tell us where your traffic and visibility stand today, and which of these services fits — we&rsquo;ll scope it from there.
           </p>

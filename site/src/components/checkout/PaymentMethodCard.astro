@@ -21,7 +21,7 @@ const { name, description, available = false } = Astro.props;
   <span
     class:list={[
       'shrink-0 rounded-full px-3 py-1 text-xs font-semibold uppercase tracking-[0.08em]',
-      available ? 'bg-signal-500/10 text-signal-400' : 'border border-ink-600 text-ink-400',
+      available ? 'bg-signal-500/10 text-signal-400' : 'border border-ink-600 text-ink-300',
     ]}
   >
     {available ? 'Available' : 'Not yet available'}

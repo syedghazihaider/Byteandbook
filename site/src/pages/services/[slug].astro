@@ -126,7 +126,7 @@ const isEbook = service.id === 'ebook-publishing';
           <a href={category.path} class={`inline-block rounded-full border border-ink-700 bg-ink-900/60 px-4 py-1.5 text-xs font-semibold uppercase tracking-[0.18em] hover:border-ink-600 ${pillarBadgeClass[service.data.pillar]}`}>
             {category.navLabel}
           </a>
-          <h1 class="mt-5 text-4xl font-bold text-ink-50 md:text-5xl">{service.data.title}</h1>
+          <h1 class="mt-5 text-page-title font-bold text-ink-50">{service.data.title}</h1>
           <p class="mt-5 text-lg text-ink-300">{service.data.summary}</p>
         </div>
       </Container>

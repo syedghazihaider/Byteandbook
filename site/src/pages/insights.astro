@@ -58,7 +58,7 @@ const evidenceStandards = [
   },
   {
     icon: 'shield' as const,
-    title: 'Sources cited, not invented',
+    title: 'Every Source Is Real',
     description: 'Where an article references a fact, standard, or third-party data point, it links to a real source.',
   },
   {
@@ -98,7 +98,7 @@ const breadcrumbJsonLd = {
         <span class="inline-block rounded-full border border-ink-700 bg-ink-900/60 px-4 py-1.5 text-xs font-semibold uppercase tracking-[0.18em] text-signal-400">
           Insights
         </span>
-        <h1 class="mt-5 text-4xl font-bold text-ink-50 md:text-5xl">Insights &amp; knowledge</h1>
+        <h1 class="mt-5 text-page-title font-bold text-ink-50">Insights &amp; Knowledge</h1>
         <p class="mt-5 text-lg text-ink-300">
           Practical explainers on the disciplines we work in — grounded in what we actually build, not
           reworded industry content.
@@ -108,20 +108,20 @@ const breadcrumbJsonLd = {
 
     <section class="border-t border-ink-800 py-16">
       <Container class="max-w-3xl">
-        <SectionHeading eyebrow="What we publish" heading="Real explainers, not filler" />
+        <SectionHeading eyebrow="What We Publish" heading="Explainers Backed by Real Work" />
         <p class="mt-4 text-ink-300">
-          Insights will cover the same four disciplines the rest of the site is organized around —
-          technology, infrastructure, growth, and creative — plus a dedicated focus on AI search and
-          Generative Engine Optimization (GEO), since how businesses get discovered is changing. Every
-          article is written to explain how something actually works, the same standard the rest of
-          the site holds itself to.
+          Insights will cover the same ground our services do — growth and AI discovery, web, brand,
+          and publishing work, and infrastructure — plus a dedicated focus on AI search and Generative
+          Engine Optimization (GEO), since how businesses get discovered is changing. Every article is
+          written to explain how something actually works, the same standard the rest of the site
+          holds itself to.
         </p>
       </Container>
     </section>
 
     <section class="border-t border-ink-800 py-16">
       <Container>
-        <SectionHeading eyebrow="Knowledge areas" heading="Organized the same way we work" align="center" class="mx-auto max-w-2xl" />
+        <SectionHeading eyebrow="Knowledge Areas" heading="Organized the Same Way We Work" align="center" class="mx-auto max-w-2xl" />
         <div class="mt-10 grid gap-6 sm:grid-cols-2">
           {knowledgeAreas.map((area) => (
             <div class="rounded-bb-lg border border-ink-700 bg-ink-900/60 p-6" data-reveal>
@@ -151,7 +151,7 @@ const breadcrumbJsonLd = {
           <div class="flex h-12 w-12 items-center justify-center rounded-bb-sm bg-signal-500/10 text-signal-400">
             <Icon name="sparkles" class="h-6 w-6" />
           </div>
-          <h2 class="mt-4 text-2xl font-bold text-ink-50">AI search &amp; GEO</h2>
+          <h2 class="mt-4 text-2xl font-bold text-ink-50">AI Search &amp; GEO</h2>
           <p class="mt-3 text-ink-300">
             Traditional SEO optimizes a page to rank in a list of links a crawler indexes. GEO
             (Generative Engine Optimization) optimizes the same underlying information so an AI
@@ -174,7 +174,7 @@ const breadcrumbJsonLd = {
 
     <section class="border-t border-ink-800 py-16">
       <Container class="max-w-3xl">
-        <SectionHeading eyebrow="Evidence standards" heading="The same standard as our Work page" />
+        <SectionHeading eyebrow="Evidence Standards" heading="The Same Standard as Our Work Page" />
         <div class="mt-10 grid gap-8 sm:grid-cols-2">
           {evidenceStandards.map((item) => (
             <div data-reveal>
@@ -190,7 +190,7 @@ const breadcrumbJsonLd = {
             </div>
           ))}
         </div>
-        <p class="mt-8 text-sm text-ink-400">
+        <p class="mt-8 text-sm text-ink-300">
           See also how we apply the same standard to <a href="/work/" class="text-signal-400 hover:text-signal-300">project work and case studies</a>.
         </p>
       </Container>
@@ -198,7 +198,7 @@ const breadcrumbJsonLd = {
 
     <section class="border-t border-ink-800 py-16">
       <Container>
-        <SectionHeading eyebrow="Articles" heading="Latest insights" align="center" class="mx-auto max-w-2xl" />
+        <SectionHeading eyebrow="Articles" heading="Latest Insights" align="center" class="mx-auto max-w-2xl" />
 
         {articles.length > 0 ? (
           <div class="mt-10 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
@@ -223,7 +223,7 @@ const breadcrumbJsonLd = {
     <section class="border-t border-ink-800 py-20">
       <Container>
         <div class="rounded-bb-lg border border-ink-700 bg-ink-900/60 px-8 py-16 text-center" data-reveal>
-          <h2 class="text-3xl font-bold text-ink-50 md:text-4xl">Have a project in mind?</h2>
+          <h2 class="text-section-title font-bold text-ink-50">Have a Project in Mind?</h2>
           <p class="mx-auto mt-4 max-w-xl text-ink-300">
             Tell us what you're building — we'll scope it against the same process described on
             every service page.
