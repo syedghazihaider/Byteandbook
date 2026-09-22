@@ -1,6 +1,7 @@
 ---
-title: GEO — Generative Engine Optimization
+title: GEO (Generative Engine Optimization)
 pillar: Growth
+category: growth-ai-discovery
 summary: Structuring content and data so AI systems understand and cite your business accurately.
 metaDescription: Generative Engine Optimization — structuring business information and content so AI search and LLM systems understand, cite, and recommend you.
 icon: sparkles

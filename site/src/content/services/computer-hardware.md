@@ -1,6 +1,7 @@
 ---
 title: Computer Hardware
 pillar: Infrastructure
+category: infrastructure-automation
 summary: Workstation and server hardware specified and built around real workloads.
 metaDescription: Computer hardware consulting and builds — workstation and server configurations specified around real workloads, not generic parts lists.
 icon: cpu

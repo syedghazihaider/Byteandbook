@@ -1,6 +1,7 @@
 ---
 title: Social Media Marketing
 pillar: Growth
+category: growth-ai-discovery
 summary: Content and distribution systems that turn engagement into tracked leads.
 metaDescription: Social media content and distribution strategy built to convert engagement and audience growth into tracked leads, not just impressions.
 icon: share-2

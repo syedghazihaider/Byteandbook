@@ -1,6 +1,7 @@
 ---
 title: Digital Marketing
 pillar: Growth
+category: growth-ai-discovery
 summary: Full-funnel campaigns connecting audience research to measurable conversion and growth.
 metaDescription: ByteAndBook plans and runs full-funnel digital marketing campaigns — from audience research to conversion tracking and growth analytics.
 icon: trending-up

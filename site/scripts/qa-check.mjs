@@ -54,6 +54,11 @@ const indexablePages = {
   // evidence standards) independent of article count — indexable like
   // /work/ was in V2-5 (see V2-7 report).
   '/insights/': 'insights/index.html',
+  // Phase 1-IA: the 3 public service categories that replaced the old
+  // 4-pillar / 11-card flat structure — see src/lib/categories.ts.
+  '/services/growth-ai-discovery/': 'services/growth-ai-discovery/index.html',
+  '/services/web-brand-publishing/': 'services/web-brand-publishing/index.html',
+  '/services/infrastructure-automation/': 'services/infrastructure-automation/index.html',
   ...Object.fromEntries(SERVICE_SLUGS.map((s) => [`/services/${s}/`, `services/${s}/index.html`])),
 };
 // Pages that stay noindex: internal reference (style-guide), and
@@ -71,7 +76,7 @@ const allPages = { ...indexablePages, ...nonIndexablePages };
 for (const [route, relPath] of Object.entries(allPages)) {
   check(`route exists: ${route} -> dist/${relPath}`, existsSync(join(DIST, relPath)));
 }
-check('exactly 24 known routes defined in this check', Object.keys(allPages).length === 24);
+check('exactly 27 known routes defined in this check', Object.keys(allPages).length === 27);
 
 // ---- 2. Core static assets --------------------------------------------
 // V2.0.1: styles.css is now content-hashed (scripts/hash-css.mjs) to
@@ -180,11 +185,16 @@ for (const [route, relPath] of Object.entries(allPages)) {
   }
   check(`${route}: Organization schema present`, types.has('Organization'));
   check(`${route}: WebSite schema present`, types.has('WebSite'));
-  if (route.startsWith('/services/') && route !== '/services/') {
+  // Phase 1-IA: the 3 category routes (services/growth-ai-discovery/
+  // etc.) group multiple Service entities rather than describing one,
+  // so they carry BreadcrumbList only, not a single Service schema —
+  // the individual /services/<slug>/ pages underneath them still do.
+  const CATEGORY_ROUTES = ['/services/growth-ai-discovery/', '/services/web-brand-publishing/', '/services/infrastructure-automation/'];
+  if (route.startsWith('/services/') && route !== '/services/' && !CATEGORY_ROUTES.includes(route)) {
     check(`${route}: Service schema present`, types.has('Service'));
     check(`${route}: BreadcrumbList schema present`, types.has('BreadcrumbList'));
   }
-  if (['/services/', '/process/', '/terms/', '/privacy/', '/refund-policy/', '/work/', '/insights/'].includes(route)) {
+  if ([...CATEGORY_ROUTES, '/services/', '/process/', '/terms/', '/privacy/', '/refund-policy/', '/work/', '/insights/'].includes(route)) {
     check(`${route}: BreadcrumbList schema present`, types.has('BreadcrumbList'));
   }
   if (route === '/checkout/') {
@@ -233,7 +243,7 @@ const sitemapUrlCount = sitemapFiles.reduce(
   (n, f) => n + (readFileSync(join(DIST, f), 'utf-8').match(/<loc>/g) || []).length,
   0
 );
-check('sitemap contains exactly 21 indexable URLs', sitemapUrlCount === 21);
+check('sitemap contains exactly 24 indexable URLs', sitemapUrlCount === 24);
 
 // duplicate title/description check across all pages
 const titleValues = [...titles.values()];
@@ -438,7 +448,7 @@ check('refund-policy/: covers third-party costs', /third-party/i.test(refundNorm
 check('refund-policy/: does not imply duplicate payments are kept', /does not keep a payment made in error/i.test(refundNorm));
 
 // Privacy Policy: reflects the actual Start Project form fields.
-for (const term of ['full name', 'mobile', 'WhatsApp', 'project description', 'reference ID', 'rate limiting']) {
+for (const term of ['full name', 'phone number', 'WhatsApp', 'project description', 'reference ID', 'rate limiting']) {
   check(`privacy/: mentions "${term}"`, new RegExp(term, 'i').test(privacyHtmlNormalized));
 }
 check('privacy/: contact is info@byteandbook.com', privacyHtml.includes('mailto:info@byteandbook.com'));
@@ -587,10 +597,10 @@ for (const relPath of allDistHtmlFiles) {
     check(`${relPath}: no fake US legal-identity claim "${claim}"`, !html.includes(claim));
   }
 }
-check('start-project-modal: phone placeholder uses a US-format example (+1)', homeHtml.includes('placeholder="+1 202 555 0123"'));
+check('start-project-modal: phone placeholder uses US format ((555) 123-4567)', homeHtml.includes('placeholder="(555) 123-4567"'));
 check('start-project-modal: no +92 placeholder remains', !homeHtml.includes('+92'));
-check('start-project-modal: mobile field stays international (type="tel", no US-only pattern)', mobileTag.includes('type="tel"') && !mobileTag.includes('pattern='));
-check('start-project-modal: "Include your country code" guidance still present', /include your country code/i.test(norm(homeHtml)));
+check('start-project-modal: mobile field is type="tel"', mobileTag.includes('type="tel"'));
+check('start-project-modal: US phone number guidance present', /us phone number/i.test(norm(homeHtml)));
 
 // Visual-upgrade regression guards: reduced-motion + lazy-loading
 // architecture must survive the art-direction pass unchanged.
@@ -694,7 +704,7 @@ check('services/geo/: explicitly disclaims guaranteed citations/ranking', /don't
 // Homepage: new US-market FAQ present, FAQ content not duplicated
 // verbatim elsewhere (spot-check against the GEO/Insights pages, the
 // two other pages most likely to carry similar Q&A-style content).
-check('/: new "available outside the US" FAQ present', /available to businesses outside the us/i.test(norm(homeHtml)));
+check('/: US-based agency FAQ present', /us-based, remote-first agency/i.test(norm(homeHtml)));
 
 // Final placeholder-text sweep: every real content page (i.e. every
 // indexable page, plus /checkout/ which legitimately still says

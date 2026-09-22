@@ -9,6 +9,11 @@ const services = defineCollection({
   schema: z.object({
     title: z.string(),
     pillar: z.enum(['Growth', 'Technology', 'Infrastructure', 'Creative']),
+    // Phase 1-IA: the public-facing grouping (3 categories) shown in nav,
+    // /services/, the homepage, and each service page's breadcrumb.
+    // `pillar` stays as the internal 4-way split driving badge/icon color
+    // (lib/pillarColors.ts) — unchanged so existing styling isn't touched.
+    category: z.enum(['growth-ai-discovery', 'web-brand-publishing', 'infrastructure-automation']),
     summary: z.string().max(160),
     metaDescription: z.string().max(160),
     icon: z.string(),

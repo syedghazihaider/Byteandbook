@@ -1,0 +1,147 @@
+---
+// Phase 1-IA: category page 2 of 3. Composition: alternating split rows
+// for the service list (instead of a grid), a 3-column "who it's for"
+// strip, and a vertical numbered process — deliberately different from
+// growth-ai-discovery.astro and infrastructure-automation.astro.
+import { getCollection } from 'astro:content';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Header from '../../components/layout/Header.astro';
+import Footer from '../../components/layout/Footer.astro';
+import Container from '../../components/ui/Container.astro';
+import Icon from '../../components/ui/Icon.astro';
+import StartProjectTrigger from '../../components/project/StartProjectTrigger.astro';
+import { getCategory } from '../../lib/categories';
+
+const category = getCategory('web-brand-publishing')!;
+const allServices = await getCollection('services');
+const services = category.serviceIds
+  .map((id) => allServices.find((s) => s.id === id))
+  .filter((s): s is (typeof allServices)[number] => Boolean(s));
+
+const SITE_URL = 'https://byteandbook.com';
+
+const breadcrumbJsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'BreadcrumbList',
+  itemListElement: [
+    { '@type': 'ListItem', position: 1, name: 'Home', item: `${SITE_URL}/` },
+    { '@type': 'ListItem', position: 2, name: 'Services', item: `${SITE_URL}/services/` },
+    { '@type': 'ListItem', position: 3, name: category.heading, item: `${SITE_URL}${category.path}` },
+  ],
+};
+---
+
+<BaseLayout
+  title={`${category.heading} — ByteAndBook`}
+  description="Web development, software development, branding, and ebook publishing — websites, applications, brand identities, and ebooks built by one team."
+  path={category.path}
+  jsonLd={[breadcrumbJsonLd]}
+>
+  <Header />
+
+  <main id="main-content" tabindex="-1">
+    <section class="pt-32 pb-16">
+      <Container>
+        <nav class="mb-8 flex items-center gap-2 text-sm text-ink-300" aria-label="Breadcrumb">
+          <a href="/" class="hover:text-ink-200">Home</a>
+          <span>/</span>
+          <a href="/services/" class="hover:text-ink-200">Services</a>
+          <span>/</span>
+          <span class="text-ink-200">{category.heading}</span>
+        </nav>
+
+        <div class="max-w-3xl">
+          <span class={`inline-block rounded-full border border-ink-700 bg-ink-900/60 px-4 py-1.5 text-xs font-semibold uppercase tracking-[0.18em] ${category.badgeClass}`}>
+            {category.eyebrow}
+          </span>
+          <h1 class="mt-5 text-4xl font-bold text-ink-50 md:text-5xl">{category.heading}</h1>
+          <p class="mt-5 text-lg text-ink-300">{category.promise}</p>
+          <div class="mt-8">
+            <StartProjectTrigger variant="primary">Start a Project</StartProjectTrigger>
+          </div>
+        </div>
+      </Container>
+    </section>
+
+    <!-- Who it's for: 3-column strip, not a checklist or card grid -->
+    <section class="border-t border-ink-800 py-16">
+      <Container>
+        <h2 class="text-sm font-semibold uppercase tracking-[0.18em] text-ink-300">Who This Is For</h2>
+        <div class="mt-8 grid gap-8 sm:grid-cols-3">
+          {category.whoFor.map((point, i) => (
+            <div class="border-t border-ink-700 pt-4" data-reveal>
+              <span class="font-display text-xl font-bold text-ink-700">{String(i + 1).padStart(2, '0')}</span>
+              <p class="mt-2 text-sm text-ink-200">{point}</p>
+            </div>
+          ))}
+        </div>
+      </Container>
+    </section>
+
+    <!-- What's included: alternating split rows, not a card grid -->
+    <section class="border-t border-ink-800 py-16">
+      <Container>
+        <h2 class="text-2xl font-bold text-ink-50 md:text-3xl">What&rsquo;s Included</h2>
+        <div class="mt-10 space-y-10">
+          {services.map((service, i) => (
+            <a
+              href={`/services/${service.id}/`}
+              class:list={[
+                'group flex flex-col gap-5 rounded-bb-lg border border-ink-800 p-6 transition-colors hover:border-ink-600 sm:flex-row sm:items-center',
+                i % 2 === 1 && 'sm:flex-row-reverse',
+              ]}
+              data-reveal
+            >
+              <div class={`flex h-16 w-16 shrink-0 items-center justify-center rounded-bb-md ${category.iconBgClass}`}>
+                <Icon name={service.data.icon as any} class="h-8 w-8" />
+              </div>
+              <div class="flex-1">
+                <h3 class="text-lg font-semibold text-ink-50 group-hover:text-ink-100">{service.data.title}</h3>
+                <p class="mt-1 text-sm text-ink-300">{service.data.summary}</p>
+                <span class={`mt-3 inline-flex items-center gap-1 text-sm font-medium ${category.badgeClass}`}>
+                  Learn more →
+                </span>
+              </div>
+            </a>
+          ))}
+        </div>
+      </Container>
+    </section>
+
+    <!-- How the work runs: vertical numbered list -->
+    <section class="border-t border-ink-800 py-16">
+      <Container class="max-w-3xl">
+        <h2 class="text-2xl font-bold text-ink-50 md:text-3xl">How the Work Runs</h2>
+        <ol class="mt-10 space-y-8">
+          {category.howWeWork.map((step, i) => (
+            <li class="flex gap-5" data-reveal>
+              <span class={`flex h-9 w-9 shrink-0 items-center justify-center rounded-full text-sm font-bold ${category.iconBgClass}`}>
+                {i + 1}
+              </span>
+              <div>
+                <h3 class="text-base font-semibold text-ink-50">{step.title}</h3>
+                <p class="mt-1 text-sm text-ink-300">{step.description}</p>
+              </div>
+            </li>
+          ))}
+        </ol>
+      </Container>
+    </section>
+
+    <section class="py-20">
+      <Container>
+        <div class="rounded-bb-lg border border-ink-700 bg-ink-900/60 px-8 py-16 text-center" data-reveal>
+          <h2 class="text-3xl font-bold text-ink-50 md:text-4xl">Ready to Build Something?</h2>
+          <p class="mx-auto mt-4 max-w-xl text-ink-300">
+            Tell us what you&rsquo;re building — a site, an app, a brand, or an ebook — and we&rsquo;ll scope it from there.
+          </p>
+          <div class="mt-8">
+            <StartProjectTrigger variant="primary">Start a Project</StartProjectTrigger>
+          </div>
+        </div>
+      </Container>
+    </section>
+  </main>
+
+  <Footer />
+</BaseLayout>

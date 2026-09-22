@@ -80,19 +80,20 @@ const contactOptions = ['Email', 'WhatsApp', 'Phone Call'];
       </div>
 
       <div class="sp-field">
-        <label for="sp-mobile" class="sp-label">Mobile / WhatsApp Number <span aria-hidden="true">*</span></label>
+        <label for="sp-mobile" class="sp-label">Phone Number <span aria-hidden="true">*</span></label>
         <input
           id="sp-mobile"
           name="mobile"
           type="tel"
           required
           maxlength="24"
-          placeholder="+1 202 555 0123"
+          placeholder="(555) 123-4567"
           autocomplete="tel"
+          inputmode="tel"
           class="sp-input"
           aria-describedby="sp-mobile-hint sp-mobile-error"
         />
-        <p id="sp-mobile-hint" class="sp-hint">Include your country code.</p>
+        <p id="sp-mobile-hint" class="sp-hint">US phone number, e.g. (555) 123-4567.</p>
         <p id="sp-mobile-error" class="sp-field-error" data-sp-error="mobile"></p>
       </div>
 
@@ -347,7 +348,17 @@ const contactOptions = ['Email', 'WhatsApp', 'Phone Call'];
       if (!data.fullName.trim()) errors.fullName = 'Please enter your full name.';
       if (!data.email.trim()) errors.email = 'Please enter your email address.';
       else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(data.email)) errors.email = 'Please enter a valid email address.';
-      if (!data.mobile.trim()) errors.mobile = 'Please enter a mobile or WhatsApp number, including your country code.';
+
+      // US phone number: accept common display formats and an optional
+      // leading +1/1, validated by digit count (10, or 11 starting with
+      // 1) after stripping formatting characters — matches the same
+      // check the server runs in project-request.php.
+      const mobileDigitsRaw = data.mobile.replace(/\D/g, '');
+      const mobileDigits = mobileDigitsRaw.length === 11 && mobileDigitsRaw.startsWith('1')
+        ? mobileDigitsRaw.slice(1)
+        : mobileDigitsRaw;
+      if (!data.mobile.trim()) errors.mobile = 'Please enter your phone number.';
+      else if (mobileDigits.length !== 10) errors.mobile = 'Please enter a valid US phone number, e.g. (555) 123-4567.';
 
       if (data.services.length === 0) errors.services = 'Please select at least one service.';
       if (data.services.includes('other') && !data.otherService.trim()) {

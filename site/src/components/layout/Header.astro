@@ -1,13 +1,16 @@
 ---
 import Container from '../ui/Container.astro';
 import StartProjectTrigger from '../project/StartProjectTrigger.astro';
+import { CATEGORIES } from '../../lib/categories';
 
 // V2-1: true multi-page primary navigation. Every entry is a standalone
 // route — no homepage-anchor destinations (/#services, /#approach) for
 // primary nav, per the V2-1 correction. Homepage anchors remain valid
 // only for in-page scrolling on the homepage itself.
+// Phase 1-IA: "Services" became an accessible disclosure menu listing
+// the 3 public categories (see lib/categories.ts) instead of a plain
+// link — the other three entries stay plain links.
 const navLinks = [
-  { label: 'Services', href: '/services/' },
   { label: 'Process', href: '/process/' },
   { label: 'About', href: '/about/' },
   { label: 'Contact', href: '/contact/' },
@@ -21,6 +24,39 @@ const navLinks = [
     </a>
 
     <nav aria-label="Primary" class="hidden items-center gap-8 text-sm font-medium text-ink-300 md:flex">
+      <div class="relative" data-services-menu>
+        <button
+          type="button"
+          id="services-menu-toggle"
+          class="flex items-center gap-1.5 transition-colors hover:text-ink-50"
+          aria-expanded="false"
+          aria-controls="services-menu-panel"
+        >
+          Services
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" class="h-4 w-4 transition-transform" aria-hidden="true" data-services-menu-chevron>
+            <polyline points="6 9 12 15 18 9" />
+          </svg>
+        </button>
+        <div
+          id="services-menu-panel"
+          role="menu"
+          aria-label="Service categories"
+          class="absolute left-1/2 top-full hidden w-80 -translate-x-1/2 pt-3"
+          data-services-menu-panel
+        >
+          <div class="rounded-bb-lg border border-ink-700 bg-ink-900 p-2 shadow-[0_10px_40px_-12px_rgba(0,0,0,0.55)]">
+            {CATEGORIES.map((category) => (
+              <a href={category.path} role="menuitem" class="block rounded-bb-sm px-4 py-3 hover:bg-ink-800">
+                <span class="block text-sm font-semibold text-ink-50">{category.navLabel}</span>
+                <span class="mt-0.5 block text-xs text-ink-300">{category.selectorHint}</span>
+              </a>
+            ))}
+            <a href="/services/" role="menuitem" class="mt-1 block rounded-bb-sm border-t border-ink-800 px-4 py-3 pt-4 text-sm font-medium text-signal-400 hover:bg-ink-800">
+              View All Services →
+            </a>
+          </div>
+        </div>
+      </div>
       {navLinks.map((link) => (
         <a href={link.href} class="transition-colors hover:text-ink-50">{link.label}</a>
       ))}
@@ -32,7 +68,7 @@ const navLinks = [
 
     <button
       id="menu-toggle"
-      class="flex h-10 w-10 items-center justify-center rounded-bb-sm text-ink-200 md:hidden"
+      class="flex h-11 w-11 items-center justify-center rounded-bb-sm text-ink-200 md:hidden"
       aria-label="Toggle menu"
       aria-expanded="false"
       aria-controls="mobile-nav"
@@ -45,12 +81,18 @@ const navLinks = [
     </button>
   </Container>
 
-  <nav id="mobile-nav" aria-label="Primary" class="hidden border-t border-ink-800 bg-ink-950 md:hidden">
-    <Container class="flex flex-col gap-4 py-6 text-ink-200">
-      {navLinks.map((link) => (
-        <a href={link.href} class="text-base">{link.label}</a>
+  <nav id="mobile-nav" aria-label="Mobile" class="hidden border-t border-ink-800 bg-ink-950 md:hidden">
+    <Container class="flex flex-col gap-1 py-6 text-ink-200">
+      <p class="px-1 pb-1 text-xs font-semibold uppercase tracking-[0.14em] text-ink-400">Services</p>
+      {CATEGORIES.map((category) => (
+        <a href={category.path} class="block rounded-bb-sm px-1 py-2.5 text-base">{category.navLabel}</a>
       ))}
-      <StartProjectTrigger variant="primary" class="w-full">Start a Project</StartProjectTrigger>
+      <a href="/services/" class="block rounded-bb-sm px-1 py-2.5 text-sm font-medium text-signal-400">View All Services →</a>
+      <div class="my-3 border-t border-ink-800" />
+      {navLinks.map((link) => (
+        <a href={link.href} class="block px-1 py-2.5 text-base">{link.label}</a>
+      ))}
+      <StartProjectTrigger variant="primary" class="mt-3 w-full">Start a Project</StartProjectTrigger>
     </Container>
   </nav>
 </header>
@@ -77,6 +119,54 @@ const navLinks = [
       toggle?.focus();
     }
   });
+
+  // Desktop "Services" disclosure menu: standard button + menu pattern
+  // (aria-expanded on the button, hidden attribute toggling the panel).
+  // Opens on click or hover/focus-within, closes on Escape, outside
+  // click, or losing focus — same interaction model as the mobile menu
+  // above, just scoped to this one control.
+  const servicesMenu = document.querySelector<HTMLElement>('[data-services-menu]');
+  const servicesToggle = document.getElementById('services-menu-toggle');
+  const servicesPanel = document.querySelector<HTMLElement>('[data-services-menu-panel]');
+  const servicesChevron = document.querySelector<SVGElement>('[data-services-menu-chevron]');
+
+  if (servicesMenu && servicesToggle && servicesPanel) {
+    const openServicesMenu = () => {
+      servicesPanel.classList.remove('hidden');
+      servicesToggle.setAttribute('aria-expanded', 'true');
+      servicesChevron?.classList.add('rotate-180');
+    };
+    const closeServicesMenu = () => {
+      servicesPanel.classList.add('hidden');
+      servicesToggle.setAttribute('aria-expanded', 'false');
+      servicesChevron?.classList.remove('rotate-180');
+    };
+    const isServicesOpen = () => servicesToggle.getAttribute('aria-expanded') === 'true';
+
+    servicesToggle.addEventListener('click', () => {
+      if (isServicesOpen()) closeServicesMenu();
+      else openServicesMenu();
+    });
+
+    servicesMenu.addEventListener('mouseenter', openServicesMenu);
+    servicesMenu.addEventListener('mouseleave', closeServicesMenu);
+
+    servicesMenu.addEventListener('focusout', (event) => {
+      const next = (event as FocusEvent).relatedTarget as Node | null;
+      if (!next || !servicesMenu.contains(next)) closeServicesMenu();
+    });
+
+    document.addEventListener('click', (event) => {
+      if (isServicesOpen() && !servicesMenu.contains(event.target as Node)) closeServicesMenu();
+    });
+
+    document.addEventListener('keydown', (event) => {
+      if (event.key === 'Escape' && isServicesOpen()) {
+        closeServicesMenu();
+        servicesToggle.focus();
+      }
+    });
+  }
 
   // Collapse the mobile menu before the Start Project modal opens over
   // it, so it isn't left open (invisible behind the modal backdrop) once

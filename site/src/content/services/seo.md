@@ -1,6 +1,7 @@
 ---
 title: SEO
 pillar: Growth
+category: growth-ai-discovery
 summary: Technical and content SEO that moves sites from crawlable to consistently ranked.
 metaDescription: Technical SEO audits, on-page optimization, and content strategy that move sites from crawlable to consistently ranked, driving organic leads.
 icon: search

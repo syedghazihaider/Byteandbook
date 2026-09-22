@@ -1,6 +1,7 @@
 ---
 title: eBook & Digital Publishing
 pillar: Creative
+category: web-brand-publishing
 summary: Manuscript to distributed eBook, with editing and layout handled as one pipeline.
 metaDescription: eBook and digital publishing services covering editing, layout, cover design, and distribution as one connected production pipeline.
 icon: book-open

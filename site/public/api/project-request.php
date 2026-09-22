@@ -334,8 +334,22 @@ if ($email === '' || !filter_var($email, FILTER_VALIDATE_EMAIL) || strlen($email
     $errors['email'] = 'Please provide a valid email address.';
 }
 
-if ($mobile === '' || !preg_match('/^[+0-9()\-\s]{7,24}$/', $mobile)) {
-    $errors['mobile'] = 'Please provide a valid mobile or WhatsApp number, including your country code.';
+// Phase 1-IA: US-only phone validation. Accepts any of the common
+// display formats ((555) 123-4567, 555-123-4567, 555.123.4567, a bare
+// 10-digit run) and an optional leading +1/1 country code — validated
+// by digit count after stripping formatting characters, rather than by
+// a rigid format regex, so any valid US number typed in a common style
+// is accepted.
+if ($mobile === '' || !preg_match('/^[+0-9()\-.\s]{7,24}$/', $mobile)) {
+    $errors['mobile'] = 'Please provide a valid US phone number, e.g. (555) 123-4567.';
+} else {
+    $mobileDigits = preg_replace('/\D/', '', $mobile);
+    if (strlen($mobileDigits) === 11 && $mobileDigits[0] === '1') {
+        $mobileDigits = substr($mobileDigits, 1);
+    }
+    if (strlen($mobileDigits) !== 10) {
+        $errors['mobile'] = 'Please provide a valid US phone number, e.g. (555) 123-4567.';
+    }
 }
 
 if ($company !== '' && mb_strlen($company) > 160) {
@@ -407,7 +421,7 @@ $bodyLines = [
     '',
     "Full Name: {$fullName}",
     "Email: {$email}",
-    "Mobile / WhatsApp: {$mobile}",
+    "Phone: {$mobile}",
 ];
 if ($company !== '') {
     $bodyLines[] = "Company / Brand: {$company}";

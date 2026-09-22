@@ -1,6 +1,7 @@
 ---
 title: DevOps
 pillar: Infrastructure
+category: infrastructure-automation
 summary: CI/CD pipelines and container orchestration that get code to production safely.
 metaDescription: DevOps engineering — CI/CD pipelines, containerization, and Kubernetes orchestration that move code from commit to monitored production safely.
 icon: git-branch

@@ -1,6 +1,7 @@
 ---
 title: Branding & Logo Design
 pillar: Creative
+category: web-brand-publishing
 summary: Identity systems built from geometry and typography up, not template packs.
 metaDescription: Brand identity and logo design built systematically from geometry, typography, and color into a documented, reusable brand system.
 icon: palette

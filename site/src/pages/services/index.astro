@@ -1,30 +1,29 @@
 ---
-// V2-1: standalone Services overview page — replaces the homepage
-// "#services" anchor as the primary navigation destination. Homepage
-// keeps its own services preview section; this page is the real,
-// linkable, indexable destination every "Services" nav item points to.
+// Phase 1-IA: /services/ rebuilt as a 3-category decision page with a
+// guided selector, replacing the old 4-pillar / 11-card grid. The
+// selector is progressive enhancement: all three category panels render
+// in the HTML by default (crawlable, works with no JS) — the script
+// below just adds single-panel filtering for sighted mouse/keyboard
+// users who want to narrow the page to one category.
 import { getCollection } from 'astro:content';
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import Header from '../../components/layout/Header.astro';
 import Footer from '../../components/layout/Footer.astro';
 import Container from '../../components/ui/Container.astro';
-import SectionHeading from '../../components/ui/SectionHeading.astro';
-import Card from '../../components/ui/Card.astro';
-import Button from '../../components/ui/Button.astro';
 import Icon from '../../components/ui/Icon.astro';
 import StartProjectTrigger from '../../components/project/StartProjectTrigger.astro';
-import { pillarBadgeClass, pillarIconBgClass, type Pillar } from '../../lib/pillarColors';
+import { CATEGORIES } from '../../lib/categories';
 
-const services = (await getCollection('services')).sort((a, b) => a.data.order - b.data.order);
+const allServices = await getCollection('services');
+const groups = CATEGORIES.map((category) => ({
+  category,
+  services: category.serviceIds
+    .map((id) => allServices.find((s) => s.id === id))
+    .filter((s): s is (typeof allServices)[number] => Boolean(s)),
+}));
 
 const SITE_URL = 'https://byteandbook.com';
 const path = '/services/';
-
-const pillars: Pillar[] = ['Growth', 'Technology', 'Infrastructure', 'Creative'];
-const grouped = pillars.map((pillar) => ({
-  pillar,
-  services: services.filter((s) => s.data.pillar === pillar),
-}));
 
 const breadcrumbJsonLd = {
   '@context': 'https://schema.org',
@@ -38,14 +37,14 @@ const breadcrumbJsonLd = {
 
 <BaseLayout
   title="Services — ByteAndBook"
-  description="ByteAndBook's services span Growth, Technology, Infrastructure, and Creative — digital marketing, SEO, GEO, web and software development, DevOps, cloud, hardware, branding, and eBook publishing."
+  description="ByteAndBook builds three things for clients: online growth and AI discovery, websites and brands, and reliable infrastructure. Pick a starting point below."
   path={path}
   jsonLd={[breadcrumbJsonLd]}
 >
   <Header />
 
   <main id="main-content" tabindex="-1">
-    <section class="pt-32 pb-16">
+    <section class="pt-32 pb-12">
       <Container>
         <nav class="mb-8 flex items-center gap-2 text-sm text-ink-300" aria-label="Breadcrumb">
           <a href="/" class="hover:text-ink-200">Home</a>
@@ -58,36 +57,69 @@ const breadcrumbJsonLd = {
             Services
           </span>
           <h1 class="mt-5 text-4xl font-bold text-ink-50 md:text-5xl">
-            Four disciplines, eleven services, one connected system.
+            What We Can Build for You
           </h1>
           <p class="mt-5 text-lg text-ink-300">
-            Every service below has its own dedicated page explaining how it
-            actually works — capabilities, process, and where it connects to
-            the rest of what we build.
+            Everything we do falls into three groups. Pick the one that
+            matches what you need, or scroll through all three below —
+            every service has its own page with the full breakdown.
           </p>
         </div>
       </Container>
     </section>
 
-    {grouped.map((group) => group.services.length > 0 && (
-      <section class="border-t border-ink-800 py-16">
+    <!-- Guided selector -->
+    <section class="py-6" aria-labelledby="selector-heading">
+      <Container>
+        <h2 id="selector-heading" class="sr-only">Choose a starting point</h2>
+        <div class="flex flex-col gap-3 sm:flex-row" role="group" aria-label="Filter services by category" data-selector>
+          {CATEGORIES.map((category, i) => (
+            <button
+              type="button"
+              class="flex-1 rounded-bb-lg border border-ink-700 bg-ink-900/60 px-6 py-5 text-left transition-colors hover:border-ink-600 focus-visible:outline-2 focus-visible:outline-offset-2"
+              aria-pressed={i === 0 ? 'true' : 'false'}
+              data-selector-btn={category.slug}
+              aria-controls={`panel-${category.slug}`}
+            >
+              <span class="block text-base font-semibold text-ink-50">{category.selectorLabel}</span>
+              <span class="mt-1 block text-sm text-ink-300">{category.selectorHint}</span>
+            </button>
+          ))}
+        </div>
+        <p class="mt-3 text-sm text-ink-300" data-selector-status role="status"></p>
+      </Container>
+    </section>
+
+    {groups.map(({ category, services }) => (
+      <section
+        id={`panel-${category.slug}`}
+        class="border-t border-ink-800 py-16"
+        data-selector-panel={category.slug}
+      >
         <Container>
-          <SectionHeading eyebrow={group.pillar} heading={`${group.pillar} services`} eyebrowClass={pillarBadgeClass[group.pillar]} />
-          <div class="mt-10 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-            {group.services.map((service, i) => (
-              <a href={`/services/${service.id}/`} class="block" data-reveal data-service-card={i}>
-                <Card class="h-full">
-                  <div class="mb-4 flex items-center justify-between">
-                    <div class={`flex h-12 w-12 items-center justify-center rounded-bb-sm ${pillarIconBgClass[group.pillar]}`}>
-                      <Icon name={service.data.icon as any} class="h-6 w-6" />
-                    </div>
+          <div class="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
+            <div class="max-w-2xl">
+              <span class={`text-xs font-semibold uppercase tracking-[0.18em] ${category.badgeClass}`}>
+                {category.eyebrow}
+              </span>
+              <h2 class="mt-2 text-2xl font-bold text-ink-50 md:text-3xl">{category.heading}</h2>
+              <p class="mt-3 text-ink-300">{category.promise}</p>
+            </div>
+            <a href={category.path} class={`inline-flex shrink-0 items-center gap-1 text-sm font-semibold ${category.badgeClass}`}>
+              View {category.navLabel} →
+            </a>
+          </div>
+
+          <div class="mt-10 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+            {services.map((service) => (
+              <a href={`/services/${service.id}/`} class="block" data-reveal>
+                <div class="group h-full rounded-bb-lg border border-ink-700 bg-ink-900/60 p-6 backdrop-blur transition-colors hover:border-ink-600">
+                  <div class={`mb-4 flex h-12 w-12 items-center justify-center rounded-bb-sm ${category.iconBgClass}`}>
+                    <Icon name={service.data.icon as any} class="h-6 w-6" />
                   </div>
-                  <h3 class="text-lg font-semibold text-ink-50">{service.data.title}</h3>
+                  <h3 class="text-base font-semibold text-ink-50">{service.data.title}</h3>
                   <p class="mt-2 text-sm text-ink-300">{service.data.summary}</p>
-                  <span class={`mt-4 inline-flex items-center gap-1 text-sm font-medium ${pillarBadgeClass[group.pillar]}`}>
-                    Learn more →
-                  </span>
-                </Card>
+                </div>
               </a>
             ))}
           </div>
@@ -98,10 +130,9 @@ const breadcrumbJsonLd = {
     <section class="border-t border-ink-800 py-20">
       <Container>
         <div class="rounded-bb-lg border border-ink-700 bg-ink-900/60 px-8 py-16 text-center" data-reveal>
-          <h2 class="text-3xl font-bold text-ink-50 md:text-4xl">Not sure which service fits?</h2>
+          <h2 class="text-3xl font-bold text-ink-50 md:text-4xl">Not Sure Which One Fits?</h2>
           <p class="mx-auto mt-4 max-w-xl text-ink-300">
-            Tell us what you're building and which of these disciplines it
-            touches — we'll scope it from there.
+            Tell us what you&rsquo;re building and we&rsquo;ll match it to the right service, or a combination of them.
           </p>
           <div class="mt-8">
             <StartProjectTrigger variant="primary">Start a Project</StartProjectTrigger>
@@ -113,3 +144,36 @@ const breadcrumbJsonLd = {
 
   <Footer />
 </BaseLayout>
+
+<script>
+  // Progressive enhancement only: without this script every category
+  // panel stays visible (see comment at top of file). With it, the
+  // selector buttons act as a single-select filter — aria-pressed
+  // reflects the active button, and non-matching panels are hidden via
+  // the `hidden` attribute rather than display:none, so this never
+  // fights the reveal-on-scroll CSS.
+  const group = document.querySelector<HTMLElement>('[data-selector]');
+  const buttons = Array.from(document.querySelectorAll<HTMLButtonElement>('[data-selector-btn]'));
+  const panels = Array.from(document.querySelectorAll<HTMLElement>('[data-selector-panel]'));
+  const status = document.querySelector<HTMLElement>('[data-selector-status]');
+
+  const applyFilter = (slug: string) => {
+    buttons.forEach((btn) => btn.setAttribute('aria-pressed', String(btn.dataset.selectorBtn === slug)));
+    panels.forEach((panel) => {
+      panel.hidden = panel.dataset.selectorPanel !== slug;
+    });
+    const active = buttons.find((btn) => btn.dataset.selectorBtn === slug);
+    if (status && active) {
+      status.textContent = `Showing ${active.querySelector('span')?.textContent ?? 'selected'} services.`;
+    }
+  };
+
+  if (group && buttons.length > 0) {
+    buttons.forEach((btn) => {
+      btn.addEventListener('click', () => {
+        const slug = btn.dataset.selectorBtn;
+        if (slug) applyFilter(slug);
+      });
+    });
+  }
+</script>

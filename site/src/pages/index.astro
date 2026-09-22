@@ -1,48 +1,21 @@
 ---
-import { getCollection } from 'astro:content';
 import BaseLayout from '../layouts/BaseLayout.astro';
 import Header from '../components/layout/Header.astro';
 import Footer from '../components/layout/Footer.astro';
 import Container from '../components/ui/Container.astro';
 import SectionHeading from '../components/ui/SectionHeading.astro';
-import Card from '../components/ui/Card.astro';
 import Button from '../components/ui/Button.astro';
 import Icon from '../components/ui/Icon.astro';
 import StartProjectTrigger from '../components/project/StartProjectTrigger.astro';
 import HeroScene from '../components/three/HeroScene.astro';
 import CapabilitySystem3D from '../components/three/CapabilitySystem3D.astro';
-import { pillarIconBgClass, pillarBadgeClass, type Pillar } from '../lib/pillarColors';
-
-const services = (await getCollection('services')).sort((a, b) => a.data.order - b.data.order);
-
-const pillars: { name: Pillar; icon: 'trending-up' | 'code' | 'cloud' | 'palette'; description: string }[] = [
-  {
-    name: 'Growth',
-    icon: 'trending-up',
-    description: 'Marketing, SEO, GEO, and social systems built to convert attention into measurable leads.',
-  },
-  {
-    name: 'Technology',
-    icon: 'code',
-    description: 'Web and software engineering, built for real devices and real production traffic.',
-  },
-  {
-    name: 'Infrastructure',
-    icon: 'cloud',
-    description: 'DevOps, cloud architecture, and hardware specified around the workload, not a template.',
-  },
-  {
-    name: 'Creative',
-    icon: 'palette',
-    description: 'Brand systems and digital publishing built from geometry and typography up.',
-  },
-];
+import { CATEGORIES } from '../lib/categories';
 
 const process = [
-  { step: '01', title: 'Discover', description: 'Define the problem, the audience, and what success actually measures.' },
-  { step: '02', title: 'Design', description: 'Translate the strategy into a system — visual, technical, or both.' },
-  { step: '03', title: 'Build', description: 'Engineer and ship, with the same discipline whether it’s a logo or a Kubernetes cluster.' },
-  { step: '04', title: 'Grow', description: 'Monitor, measure, and iterate against the goals set in discovery.' },
+  { step: '01', title: 'Discover', description: 'Define the problem, the audience, and what success actually looks like.' },
+  { step: '02', title: 'Design', description: 'Plan the approach — visual, technical, or both — before we build anything.' },
+  { step: '03', title: 'Build', description: 'Build and ship it, whether the deliverable is a logo or a Kubernetes cluster.' },
+  { step: '04', title: 'Grow', description: 'Monitor, measure, and adjust against the goals set in discovery.' },
 ];
 
 // Genuine, general FAQs — no fabricated claims about clients, pricing
@@ -51,27 +24,27 @@ const faqs = [
   {
     question: 'How is a project scoped and priced?',
     answer:
-      "Every engagement is scoped individually. The disciplines we cover — from a logo to a Kubernetes cluster — vary too much in scope for flat package pricing, so we start from what you're building and price against that.",
+      "Every engagement is scoped individually. What we build ranges from a logo to a Kubernetes cluster, so there's no flat package price — we start from what you're building and price against that.",
   },
   {
-    question: 'Do you only take on full four-pillar engagements?',
+    question: 'Do you only take on projects that span all three categories?',
     answer:
-      'No — a project can be a single discipline (just SEO, just a logo, just a cloud migration) or span multiple pillars. The process is the same either way.',
+      'A project can be a single service (just SEO, just a logo, just a cloud migration) or span multiple categories. The process is the same either way.',
   },
   {
     question: 'What happens after I submit a project inquiry?',
     answer:
-      "We review what you've shared and follow up to scope the work through the Discover → Design → Build → Grow process outlined above.",
+      "We review what you've shared and follow up to scope the work through the Discover, Design, Build, and Grow steps outlined above.",
   },
   {
     question: 'Is ByteAndBook a good fit for an early-stage or small project?',
     answer:
-      'Yes. Single-discipline and smaller-scope engagements are welcome, not just full-system builds.',
+      'Yes. Single-service and smaller-scope engagements are welcome alongside larger, multi-service builds.',
   },
   {
-    question: 'Is ByteAndBook available to businesses outside the US?',
+    question: 'Is ByteAndBook a US-based agency?',
     answer:
-      "Yes. ByteAndBook is a remote-first agency and the project-request process accepts international contact details, including phone numbers with any country code — you don't need to be US-based to work with us.",
+      'Yes. ByteAndBook is a US-based, remote-first agency, and the project-request form uses US phone number formatting.',
   },
 ];
 ---
@@ -117,13 +90,12 @@ const faqs = [
           Digital Technology &amp; Growth Agency
         </span>
         <h1 class="text-gradient-hero mx-auto mt-6 max-w-4xl text-5xl font-bold leading-[1.05] md:text-6xl">
-          Growth, engineered like infrastructure.
+          Websites, Brands, Ebooks and Cloud Systems<br />Built by One Team
         </h1>
         <p class="mx-auto mt-6 max-w-2xl text-lg text-ink-300">
-          ByteAndBook designs and builds the marketing, software, and
-          infrastructure systems that take a business from idea to
-          measurable growth — as one connected discipline, not
-          disconnected vendors.
+          ByteAndBook is a US-based agency that plans, designs, and builds
+          the marketing, software, and infrastructure a business needs —
+          under one roof, with one point of contact.
         </p>
         <div class="mt-10 flex flex-wrap items-center justify-center gap-4">
           <StartProjectTrigger variant="primary">Start a Project</StartProjectTrigger>
@@ -132,61 +104,33 @@ const faqs = [
       </Container>
     </section>
 
-    <!-- Pillars -->
-    <section class="py-20">
-      <Container>
-        <SectionHeading eyebrow="How we're organized" heading="Four disciplines, one system" align="center" class="mx-auto max-w-2xl" />
-        <div class="mt-12 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
-          {pillars.map((pillar) => (
-            <div data-reveal>
-              <Card>
-                <div class={`mb-4 flex h-12 w-12 items-center justify-center rounded-bb-sm ${pillarIconBgClass[pillar.name]}`}>
-                  <Icon name={pillar.icon} class="h-6 w-6" />
-                </div>
-                <h3 class="text-lg font-semibold text-ink-50">{pillar.name}</h3>
-                <p class="mt-2 text-sm text-ink-300">{pillar.description}</p>
-              </Card>
-            </div>
-          ))}
-        </div>
-      </Container>
-    </section>
-
-    <!-- Services -->
+    <!-- Categories -->
     <section id="services" class="relative scroll-mt-24 py-20">
-      <CapabilitySystem3D count={services.length} />
+      <CapabilitySystem3D count={CATEGORIES.length} />
       <Container>
-        <SectionHeading eyebrow="Services" heading="Explained visually, not with stock photos" align="center" class="mx-auto max-w-2xl">
+        <SectionHeading eyebrow="How We're Organized" heading="Three Ways We Can Help" align="center" class="mx-auto max-w-2xl">
           <p class="mt-2 text-ink-300">
-            Every service below gets its own dedicated, SEO-built page
-            with an interactive breakdown of how it actually works.
+            Every service has its own dedicated page with a breakdown of
+            how it actually works — start from whichever category matches
+            what you need.
           </p>
         </SectionHeading>
 
-        <div class="mt-12 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-          {services.map((service, i) => (
-            <a href={`/services/${service.id}/`} class="block" data-reveal data-service-card={i}>
-              <Card class="h-full">
-                <div class="mb-4 flex items-center justify-between">
-                  <div class={`flex h-12 w-12 items-center justify-center rounded-bb-sm ${pillarIconBgClass[service.data.pillar]}`}>
-                    <Icon name={service.data.icon as any} class="h-6 w-6" />
-                  </div>
-                  <span class="text-xs font-semibold uppercase tracking-[0.14em] text-ink-300">
-                    {service.data.pillar}
-                  </span>
+        <div class="mt-12 grid gap-6 sm:grid-cols-3">
+          {CATEGORIES.map((category, i) => (
+            <a href={category.path} class="block" data-reveal data-service-card={i}>
+              <div class="group h-full rounded-bb-lg border border-ink-700 bg-ink-900/60 p-6 backdrop-blur transition-colors duration-300 hover:border-ink-600">
+                <div class={`mb-4 flex h-12 w-12 items-center justify-center rounded-bb-sm ${category.iconBgClass}`}>
+                  <Icon name={category.serviceIds[0] === 'digital-marketing' ? 'trending-up' : category.serviceIds[0] === 'web-development' ? 'layout' : 'cloud'} class="h-6 w-6" />
                 </div>
-                <h3 class="text-lg font-semibold text-ink-50">{service.data.title}</h3>
-                <p class="mt-2 text-sm text-ink-300">{service.data.summary}</p>
-                <span class={`mt-4 inline-flex items-center gap-1 text-sm font-medium transition-transform group-hover:translate-x-1 ${pillarBadgeClass[service.data.pillar]}`}>
-                  Learn more →
+                <h3 class="text-lg font-semibold text-ink-50">{category.navLabel}</h3>
+                <p class="mt-2 text-sm text-ink-300">{category.promise}</p>
+                <span class={`mt-4 inline-flex items-center gap-1 text-sm font-medium ${category.badgeClass}`}>
+                  {category.selectorLabel} →
                 </span>
-              </Card>
+              </div>
             </a>
           ))}
-        </div>
-
-        <div class="mt-10 text-center">
-          <Button href="/services/" variant="outline">View all services</Button>
         </div>
       </Container>
     </section>
@@ -194,7 +138,7 @@ const faqs = [
     <!-- Approach -->
     <section id="approach" class="scroll-mt-24 py-20">
       <Container>
-        <SectionHeading eyebrow="Approach" heading="A consistent process, applied to every discipline" align="center" class="mx-auto max-w-2xl" />
+        <SectionHeading eyebrow="Process" heading="How We Work" align="center" class="mx-auto max-w-2xl" />
         <div class="mt-12 grid gap-8 sm:grid-cols-2 lg:grid-cols-4">
           {process.map((item) => (
             <div class="border-t border-ink-700 pt-5" data-reveal>
@@ -214,7 +158,7 @@ const faqs = [
     <!-- FAQ -->
     <section class="py-20">
       <Container class="max-w-3xl">
-        <SectionHeading eyebrow="FAQ" heading="Common questions" align="center" class="mx-auto max-w-2xl" />
+        <SectionHeading eyebrow="FAQ" heading="Common Questions" align="center" class="mx-auto max-w-2xl" />
         <div class="mt-10 divide-y divide-ink-800 border-y border-ink-800">
           {faqs.map((faq) => (
             <details class="group py-5">
@@ -241,7 +185,7 @@ const faqs = [
     <section class="py-20">
       <Container>
         <div class="rounded-bb-lg border border-ink-700 bg-ink-900/60 px-8 py-16 text-center" data-reveal>
-          <h2 class="text-3xl font-bold text-ink-50 md:text-4xl">Ready to start a project?</h2>
+          <h2 class="text-3xl font-bold text-ink-50 md:text-4xl">Ready to Start a Project?</h2>
           <p class="mx-auto mt-4 max-w-xl text-ink-300">
             Tell us what you're building and which of these disciplines it
             touches — we'll scope it from there.
