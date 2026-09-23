@@ -1,0 +1,200 @@
+---
+// Phase 3: real, anonymized case studies. Client identities are withheld
+// at the client's own request/for their privacy — these are genuine,
+// client-approved-for-use engagements, not placeholder or fabricated
+// content. Per CLAUDE.md's content-integrity rule: no invented client
+// names, no star ratings, no testimonial quotes that weren't given, and
+// no Review/AggregateRating schema (none of that exists here). Where a
+// source detail wasn't fully confirmed (exact dates, what precisely the
+// SEO client's figure measures), the copy is written around it honestly
+// rather than guessing specifics — see docs/phase-3-report.md.
+//
+// Deliberately a single, well-structured page with four sections rather
+// than a full content-collection + dynamic-route subsystem (only four
+// items exist, and /privacy/, /terms/, and /process/ already establish
+// this site's convention for long-form, multi-section content pages).
+// Each section still gets its own Article JSON-LD entry (via distinct
+// #anchor @id values) so it's addressable/citable independently, per the
+// "JSON-LD per case study" requirement.
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Header from '../components/layout/Header.astro';
+import Footer from '../components/layout/Footer.astro';
+import Container from '../components/ui/Container.astro';
+import Icon from '../components/ui/Icon.astro';
+import StartProjectTrigger from '../components/project/StartProjectTrigger.astro';
+
+const SITE_URL = 'https://byteandbook.com';
+const path = '/case-studies/';
+const canonicalUrl = `${SITE_URL}${path}`;
+
+interface CaseStudy {
+  id: string;
+  icon: 'book-open' | 'git-branch' | 'search' | 'cpu';
+  eyebrow: string;
+  title: string;
+  context: string;
+  work: string;
+  outcome: string;
+  relatedServices: { label: string; href: string }[];
+}
+
+const caseStudies: CaseStudy[] = [
+  {
+    id: 'ebook-design-and-publishing',
+    icon: 'book-open',
+    eyebrow: 'eBook Design & Publishing',
+    title: 'Production at scale for independent authors and publishers',
+    context:
+      'Authors and small publishers regularly need an ebook taken from manuscript to a fully published, storefront-ready product, without piecing that process together across separate freelancers for cover design, layout, and formatting.',
+    work:
+      'Over 100 ebook projects have been delivered end to end: cover design, interior layout, and full publishing preparation handled as one connected pipeline rather than separate handoffs. At peak, one production run delivered more than 50 books, each with its own cover design, layout, and publishing prep, within a single month.',
+    outcome:
+      'Several titles produced through this process have reached bestseller rankings in their category on Amazon. A ranking reflects a point in time rather than a permanent status, but it is a real, independently visible signal that the production quality holds up in a competitive storefront.',
+    relatedServices: [{ label: 'eBook & Digital Publishing', href: '/services/ebook-publishing/' }],
+  },
+  {
+    id: 'devops-and-cloud-infrastructure',
+    icon: 'git-branch',
+    eyebrow: 'DevOps & Cloud Infrastructure',
+    title: 'Automated, documented infrastructure across a range of environments',
+    context:
+      'Engagements have run across university IT departments, individual and student clients, and small-to-mid-sized offices, each arriving with the same underlying problem: infrastructure and deployment processes that depended on manual steps or on one specific person’s knowledge.',
+    work:
+      'Core work across these engagements has included CI/CD pipeline builds, server migrations, jump-server (bastion host) setup, Docker containerization, and ongoing MSP-style infrastructure support, with deep, hands-on Ansible automation used throughout to make the resulting setups repeatable rather than one-off.',
+    outcome:
+      'This reads as a capability and engagement-type summary rather than a single flagship project, because that is what the work actually is: a consistent approach applied across genuinely different environments, each one left running on automated, documented infrastructure instead of manual, single-person-dependent processes.',
+    relatedServices: [
+      { label: 'DevOps', href: '/services/devops/' },
+      { label: 'Cloud Services', href: '/services/cloud/' },
+    ],
+  },
+  {
+    id: 'seo',
+    icon: 'search',
+    eyebrow: 'SEO',
+    title: 'Ongoing SEO work across more than 20 clients',
+    context:
+      'More than 20 SEO clients have been served across Europe, the United States, and Canada, mostly mid-market businesses and startups looking for organic growth rather than a one-time audit.',
+    work:
+      'One recent, representative engagement: a client retained SEO work at roughly $500 a month.',
+    outcome:
+      'That engagement is now producing a measurable return of roughly $6,000 a month attributable to the SEO work, several times the retainer cost. The precise nature of that figure (what it counts, and over what exact period) hasn’t been independently itemized here, so it is presented as a measurable return rather than a specific revenue claim.',
+    relatedServices: [{ label: 'SEO', href: '/services/seo/' }],
+  },
+  {
+    id: 'computer-hardware-sourcing',
+    icon: 'cpu',
+    eyebrow: 'Computer Hardware Sourcing',
+    title: 'Hard-to-source hardware, delivered on deadline',
+    context:
+      'Vendors and offices sometimes need computer hardware, including RAM and hard drives, that isn’t readily available through common retail channels, and need it on a deadline rather than a best-effort timeline.',
+    work:
+      'Sourcing is backed by a BrokerBin subscription and direct U.S. inventory and vendor access, supplying hardware to vendors and offices at competitive market pricing. In one instance, a Japanese company with U.S. operations needed hard-to-source RAM and hard drives on a tight deadline; the components were sourced and supplied at competitive pricing without a quality compromise.',
+    outcome:
+      'The BrokerBin-backed sourcing network and direct vendor access mean hardware requests that would stall through normal retail channels can still be filled reliably and on schedule.',
+    relatedServices: [{ label: 'Computer Hardware', href: '/services/computer-hardware/' }],
+  },
+];
+
+const breadcrumbJsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'BreadcrumbList',
+  itemListElement: [
+    { '@type': 'ListItem', position: 1, name: 'Home', item: `${SITE_URL}/` },
+    { '@type': 'ListItem', position: 2, name: 'Case Studies', item: canonicalUrl },
+  ],
+};
+
+// One Article entry per case study, each independently addressable via
+// its own #anchor @id on this shared URL. No Review/AggregateRating,
+// no ratings, no fabricated dates: datePublished is intentionally
+// omitted rather than invented.
+const caseStudyJsonLd = caseStudies.map((cs) => ({
+  '@context': 'https://schema.org',
+  '@type': 'Article',
+  '@id': `${canonicalUrl}#${cs.id}`,
+  headline: cs.title,
+  description: cs.context,
+  about: cs.relatedServices.map((s) => ({ '@type': 'Service', name: s.label, url: `${SITE_URL}${s.href}` })),
+  author: { '@id': `${SITE_URL}/#organization` },
+  publisher: { '@id': `${SITE_URL}/#organization` },
+  mainEntityOfPage: `${canonicalUrl}#${cs.id}`,
+}));
+---
+
+<BaseLayout
+  title="Case Studies | ByteAndBook"
+  description="Real, anonymized case studies from ByteAndBook engagements: eBook publishing, DevOps and cloud infrastructure, SEO, and computer hardware sourcing."
+  path={path}
+  jsonLd={[breadcrumbJsonLd, ...caseStudyJsonLd]}
+>
+  <Header />
+
+  <main id="main-content" tabindex="-1">
+    <section class="pt-32 pb-12">
+      <Container class="max-w-3xl">
+        <nav class="mb-8 flex items-center gap-2 text-sm text-ink-300" aria-label="Breadcrumb">
+          <a href="/" class="hover:text-ink-200">Home</a>
+          <span>/</span>
+          <span class="text-ink-200">Case Studies</span>
+        </nav>
+
+        <span class="inline-block rounded-full border border-ink-700 bg-ink-900/60 px-4 py-1.5 text-xs font-semibold uppercase tracking-[0.18em] text-signal-400">
+          Case Studies
+        </span>
+        <h1 class="mt-5 text-page-title font-bold text-ink-50">Real Engagements, Client Names Withheld</h1>
+        <p class="mt-5 text-lg text-ink-300">
+          These four case studies describe genuine, client-approved-for-use engagements. Client names
+          are withheld at the client's own request, not because the work is unverified: what's
+          described below is real, not illustrative.
+        </p>
+      </Container>
+    </section>
+
+    <section class="border-t border-ink-800 py-16">
+      <Container class="max-w-3xl">
+        <div class="space-y-16">
+          {caseStudies.map((cs) => (
+            <section id={cs.id} class="scroll-mt-24">
+              <div class="flex h-12 w-12 items-center justify-center rounded-bb-sm bg-signal-500/10 text-signal-400">
+                <Icon name={cs.icon} class="h-6 w-6" />
+              </div>
+              <span class="mt-4 block text-xs font-semibold uppercase tracking-[0.14em] text-signal-400">
+                {cs.eyebrow}
+              </span>
+              <h2 class="mt-2 text-2xl font-bold text-ink-50">{cs.title}</h2>
+              <div class="prose-service mt-4 space-y-4 text-ink-300">
+                <p>{cs.context}</p>
+                <p>{cs.work}</p>
+                <p>{cs.outcome}</p>
+              </div>
+              <div class="mt-5 flex flex-wrap gap-2">
+                {cs.relatedServices.map((s) => (
+                  <a href={s.href} class="rounded-full border border-ink-700 px-3 py-1 text-xs text-ink-300 hover:border-ink-600 hover:text-ink-100">
+                    {s.label} →
+                  </a>
+                ))}
+              </div>
+            </section>
+          ))}
+        </div>
+      </Container>
+    </section>
+
+    <section class="border-t border-ink-800 py-20">
+      <Container>
+        <div class="rounded-bb-lg border border-ink-700 bg-ink-900/60 px-8 py-16 text-center" data-reveal>
+          <h2 class="text-section-title font-bold text-ink-50">Want a Case Study Like This?</h2>
+          <p class="mx-auto mt-4 max-w-xl text-ink-300">
+            Tell us what you're building. We'll scope it against the same disciplines described above.
+          </p>
+          <div class="mt-8">
+            <StartProjectTrigger variant="primary">Start a Project</StartProjectTrigger>
+          </div>
+        </div>
+      </Container>
+    </section>
+  </main>
+
+  <Footer />
+</BaseLayout>

@@ -118,6 +118,19 @@ const ctaHeadings: Record<string, string> = {
   'computer-hardware': 'Talk to Us About Your Hardware Build',
 };
 const ctaHeading = ctaHeadings[service.id] ?? `Discuss Your ${service.data.title} Project`;
+
+// Phase 3: cross-links to the real, anonymized case studies at
+// /case-studies/ that genuinely cover this service, per the source
+// material in docs/phase-3-report.md. Only services the case studies
+// actually describe get a link — no invented relevance.
+const caseStudyLinks: Record<string, string> = {
+  'ebook-publishing': 'ebook-design-and-publishing',
+  devops: 'devops-and-cloud-infrastructure',
+  cloud: 'devops-and-cloud-infrastructure',
+  seo: 'seo',
+  'computer-hardware': 'computer-hardware-sourcing',
+};
+const caseStudyAnchor = caseStudyLinks[service.id];
 ---
 
 <BaseLayout
@@ -219,6 +232,12 @@ const ctaHeading = ctaHeadings[service.id] ?? `Discuss Your ${service.data.title
               </div>
             ))}
           </div>
+        )}
+
+        {caseStudyAnchor && (
+          <p class="mt-8 border-t border-ink-800 pt-6 text-sm text-ink-300">
+            See this in practice: <a href={`/case-studies/#${caseStudyAnchor}`} class="font-medium text-signal-400 hover:text-signal-300">read a real, anonymized case study →</a>
+          </p>
         )}
       </Container>
     </section>

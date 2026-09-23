@@ -243,7 +243,8 @@ const sitemapUrlCount = sitemapFiles.reduce(
   (n, f) => n + (readFileSync(join(DIST, f), 'utf-8').match(/<loc>/g) || []).length,
   0
 );
-check('sitemap contains exactly 24 indexable URLs', sitemapUrlCount === 24);
+// Phase 3: +1 for the new /case-studies/ page.
+check('sitemap contains exactly 25 indexable URLs', sitemapUrlCount === 25);
 
 // duplicate title/description check across all pages
 const titleValues = [...titles.values()];
