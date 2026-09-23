@@ -562,13 +562,22 @@ for (const relPath of allDistHtmlFiles) {
 }
 
 // Organization schema: sameAs present only when a verified social URL
-// actually exists (config/site.ts currently has none).
+// actually exists. Phase 3 job 1 populated Instagram, X, Facebook, and
+// LinkedIn with real, verified URLs; GitHub/Clutch/Trustpilot stay null.
 const siteConfigSource = readFileSync(join(__dirname, '..', 'src', 'config', 'site.ts'), 'utf-8');
-const hasVerifiedSocial = /linkedin:\s*['"]/.test(siteConfigSource) || /github:\s*['"]/.test(siteConfigSource) ||
-  /clutch:\s*['"]/.test(siteConfigSource) || /trustpilot:\s*['"]/.test(siteConfigSource);
-check('config/site.ts: no verified social URL is set yet (expected for this phase)', !hasVerifiedSocial);
-if (!hasVerifiedSocial) {
-  check('homepage: Organization schema has no sameAs (no verified profiles yet)', !homeHtml.includes('"sameAs"'));
+const verifiedFieldPattern = (field) => new RegExp(`${field}:\\s*['"]https`).test(siteConfigSource);
+const hasVerifiedSocial = ['linkedin', 'instagram', 'x', 'facebook', 'github', 'clutch', 'trustpilot'].some(verifiedFieldPattern);
+check('config/site.ts: at least one verified social URL is set (Phase 3 job 1)', hasVerifiedSocial);
+if (hasVerifiedSocial) {
+  check('homepage: Organization schema has a sameAs array', homeHtml.includes('"sameAs"'));
+  for (const url of [
+    'https://www.instagram.com/bytenbook/',
+    'https://x.com/ByteandBook',
+    'https://www.facebook.com/profile.php?id=61594200381025',
+    'https://www.linkedin.com/company/144809939/',
+  ]) {
+    check(`homepage: Organization sameAs includes ${url}`, homeHtml.includes(url));
+  }
 }
 
 // Legacy root files: confirmed obsolete (byte-identical, unreferenced

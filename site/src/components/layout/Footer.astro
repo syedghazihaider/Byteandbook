@@ -1,21 +1,25 @@
 ---
 import Container from '../ui/Container.astro';
+import Icon from '../ui/Icon.astro';
 import { SITE_SOCIAL } from '../../config/site';
 
 const year = new Date().getFullYear();
 const EMAIL = 'info@byteandbook.com';
 
-// V2-5: only renders entries with a real, verified URL in
-// config/site.ts — currently none, so this list (and the "Elsewhere"
-// nav below) is empty and nothing renders. No "#" placeholder links.
+// V2-5 / Phase 3 job 1: only renders entries with a real, verified URL
+// in config/site.ts. No "#" placeholder links — an entry that's still
+// null (GitHub, Clutch, Trustpilot) is simply omitted.
 const socialLinks = (
   [
-    { label: 'LinkedIn', url: SITE_SOCIAL.linkedin },
-    { label: 'GitHub', url: SITE_SOCIAL.github },
-    { label: 'Clutch', url: SITE_SOCIAL.clutch },
-    { label: 'Trustpilot', url: SITE_SOCIAL.trustpilot },
+    { label: 'Instagram', icon: 'instagram', url: SITE_SOCIAL.instagram },
+    { label: 'X (Twitter)', icon: 'x', url: SITE_SOCIAL.x },
+    { label: 'Facebook', icon: 'facebook', url: SITE_SOCIAL.facebook },
+    { label: 'LinkedIn', icon: 'linkedin', url: SITE_SOCIAL.linkedin },
+    { label: 'GitHub', icon: null, url: SITE_SOCIAL.github },
+    { label: 'Clutch', icon: null, url: SITE_SOCIAL.clutch },
+    { label: 'Trustpilot', icon: null, url: SITE_SOCIAL.trustpilot },
   ] as const
-).filter((link): link is { label: string; url: string } => typeof link.url === 'string' && link.url.length > 0);
+).filter((link): link is { label: string; icon: 'instagram' | 'x' | 'facebook' | 'linkedin' | null; url: string } => typeof link.url === 'string' && link.url.length > 0);
 ---
 
 <footer class="border-t border-ink-800 bg-ink-950 py-12">
@@ -44,10 +48,24 @@ const socialLinks = (
     </nav>
 
     {socialLinks.length > 0 && (
-      <nav aria-label="Elsewhere" class="flex flex-wrap gap-x-6 gap-y-3 text-sm text-ink-300">
-        {socialLinks.map((link) => (
-          <a href={link.url} target="_blank" rel="noopener" class="hover:text-ink-50">{link.label}</a>
-        ))}
+      <nav aria-label="Elsewhere" class="flex flex-wrap items-center gap-4">
+        {socialLinks.map((link) =>
+          link.icon ? (
+            <a
+              href={link.url}
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label={`ByteAndBook on ${link.label}`}
+              class="text-ink-300 transition-colors hover:text-ink-50"
+            >
+              <Icon name={link.icon} class="h-5 w-5" />
+            </a>
+          ) : (
+            <a href={link.url} target="_blank" rel="noopener noreferrer" class="text-sm text-ink-300 hover:text-ink-50">
+              {link.label}
+            </a>
+          )
+        )}
       </nav>
     )}
   </Container>

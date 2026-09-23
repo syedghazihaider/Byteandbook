@@ -1,18 +1,27 @@
-// V2-5: central config for verified external profile/review-platform
-// URLs. Every field starts null — ByteAndBook has no confirmed LinkedIn,
-// GitHub, Clutch, or Trustpilot presence yet. Anything reading this
-// config (Organization schema's `sameAs`, Footer social links) must
-// render nothing for a null entry — never a placeholder or "#" link.
-// Fill in a real, verified URL here and it propagates automatically.
+// V2-5 / Phase 3 job 1: central config for verified external profile/
+// review-platform URLs. Anything reading this config (Organization
+// schema's `sameAs`, Footer social links) must render nothing for a
+// null entry — never a placeholder or "#" link. GitHub, Clutch, and
+// Trustpilot stay null — no confirmed ByteAndBook presence on those yet.
+// Instagram, X, Facebook, and LinkedIn are real, verified, active
+// company accounts (confirmed 2026-09-22) — the LinkedIn URL is the
+// public company page, not the /admin/dashboard/ link, which requires
+// login and would be broken for visitors.
 export interface SiteSocial {
   linkedin: string | null;
+  instagram: string | null;
+  x: string | null;
+  facebook: string | null;
   github: string | null;
   clutch: string | null;
   trustpilot: string | null;
 }
 
 export const SITE_SOCIAL: SiteSocial = {
-  linkedin: null,
+  linkedin: 'https://www.linkedin.com/company/144809939/',
+  instagram: 'https://www.instagram.com/bytenbook/',
+  x: 'https://x.com/ByteandBook',
+  facebook: 'https://www.facebook.com/profile.php?id=61594200381025',
   github: null,
   clutch: null,
   trustpilot: null,
