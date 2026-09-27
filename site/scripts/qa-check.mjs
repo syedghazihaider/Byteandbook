@@ -122,7 +122,7 @@ function resolveHref(href, fromRoute) {
   if (!path.startsWith('/')) return 'relative-unexpected';
   if (path === '/') return existsSync(join(DIST, 'index.html')) ? 'ok' : 'missing';
   if (path === '/404.html') return existsSync(join(DIST, '404.html')) ? 'ok' : 'missing';
-  if (path.endsWith('.css') || path.endsWith('.js') || path.endsWith('.txt') || path.endsWith('.xml') || path.endsWith('.svg') || path.endsWith('.ico')) {
+  if (path.endsWith('.css') || path.endsWith('.js') || path.endsWith('.txt') || path.endsWith('.xml') || path.endsWith('.svg') || path.endsWith('.ico') || path.endsWith('.woff2')) {
     return existsSync(join(DIST, path.slice(1))) ? 'ok' : 'missing';
   }
   const asDir = path.endsWith('/') ? path : path + '/';

@@ -58,6 +58,10 @@ Options -Indexes
 # ---------------------------------------------------------------------
 # 4. Caching
 # ---------------------------------------------------------------------
+# Correct MIME type for self-hosted fonts (some servers default to
+# application/octet-stream for .woff2).
+AddType font/woff2 .woff2
+
 <IfModule mod_headers.c>
   # HTML and the chatbot knowledge JSON: always revalidate, so a new
   # deploy is visible immediately (Last-Modified still allows 304s).
@@ -67,14 +71,17 @@ Options -Indexes
 
   # Content-hashed build assets: the filename changes whenever the
   # content does, so they can be cached for a year.
-  #   /_astro/*.<8-char hash>.js|css   and   /styles.<10-char hash>.css
-  <FilesMatch "(\.[A-Za-z0-9_-]{8}\.(js|css)|^styles\.[a-f0-9]{10}\.css)$">
+  #   /_astro/*.<8-char hash>.js|css, /fonts/*.<8-char hash>.woff2,
+  #   and /styles.<10-char hash>.css
+  <FilesMatch "(\.[A-Za-z0-9_-]{8}\.(js|css|woff2)|^styles\.[a-f0-9]{10}\.css)$">
     Header set Cache-Control "public, max-age=31536000, immutable"
   </FilesMatch>
 
   # Unhashed static files (favicon, og-default.jpg, robots.txt, sitemaps):
   # one week, same as the server's current default for static files.
-  <FilesMatch "\.(svg|jpg|jpeg|png|webp|avif|ico|txt|xml|woff2?)$">
+  # (woff2 is deliberately absent: fonts are hashed and use the tier
+  # above; a later matching block here would override it.)
+  <FilesMatch "\.(svg|jpg|jpeg|png|webp|avif|ico|txt|xml)$">
     Header set Cache-Control "public, max-age=604800"
   </FilesMatch>
 </IfModule>

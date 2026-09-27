@@ -111,17 +111,13 @@ const siteGraph = {
       cached stylesheet and newly deployed HTML/JS.
     */}
     <link rel="stylesheet" href={STYLES_HREF} />
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    {/* Only the weights actually used anywhere in the codebase (400
-         regular body text, 500/600/700 via font-medium/semibold/bold —
-         no font-extrabold usage exists) — a Phase 11 trim from the
-         previous 400-800 range, which fetched an unused 800 weight for
-         both families. */}
-    <link
-      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Sora:wght@400;500;600;700&display=swap"
-      rel="stylesheet"
-    />
+    {/* Self-hosted fonts (Phase 3 performance), declared via @font-face
+         in global.css — keep these hrefs in sync with it. Preloaded so the
+         browser fetches them in parallel with the stylesheet instead of
+         discovering them only after it has been parsed. Replaces the
+         render-blocking fonts.googleapis.com stylesheet. */}
+    <link rel="preload" href="/fonts/inter-latin.3100e775.woff2" as="font" type="font/woff2" crossorigin />
+    <link rel="preload" href="/fonts/sora-latin.811e1196.woff2" as="font" type="font/woff2" crossorigin />
     <script type="application/ld+json" set:html={JSON.stringify(siteGraph)} />
     {jsonLd.map((schema) => (
       <script type="application/ld+json" set:html={JSON.stringify(schema)} />
