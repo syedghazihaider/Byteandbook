@@ -54,14 +54,14 @@ const contactOptions = ['Email', 'WhatsApp', 'Phone Call'];
       </button>
     </div>
 
-    <!-- Form view -->
+    {/* Form view */}
     <form data-sp-form novalidate class="sp-form">
       <div role="alert" class="sp-error-summary hidden" data-sp-error-summary></div>
 
-      <!-- Honeypot: invisible to real users (off-screen, unreachable by
+      {/* Honeypot: invisible to real users (off-screen, unreachable by
            tab, hidden from screen readers), matched server-side in
            project-request.php. Any value here means a bot filled every
-           field on the page — never fill this in manually. -->
+           field on the page — never fill this in manually. */}
       <div class="sp-hp" aria-hidden="true">
         <label for="sp-website">Website</label>
         <input id="sp-website" name="website" type="text" tabindex="-1" autocomplete="off" />
@@ -197,7 +197,7 @@ const contactOptions = ['Email', 'WhatsApp', 'Phone Call'];
       </div>
     </form>
 
-    <!-- Success view -->
+    {/* Success view */}
     <div class="sp-success hidden" data-sp-success>
       <h3 class="text-lg font-semibold text-ink-50" tabindex="-1">Your project request has been received.</h3>
       <p class="mt-3 text-sm text-ink-300" data-sp-reference></p>

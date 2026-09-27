@@ -1,0 +1,89 @@
+# ByteAndBook — public_html/.htaccess
+# Copied into dist/ by the Astro build (site/public/), so every deploy zip
+# ships it. There was no .htaccess on the server before this file.
+#
+# HTTP -> HTTPS is NOT handled here: the server already 301s every http://
+# request (host, path and query preserved) before this file is read.
+# That redirect is NOT cPanel's "Force HTTPS Redirect" toggle (confirmed
+# OFF, 2026-09-26); its exact source (LiteSpeed server config or a parent
+# .htaccess outside public_html) is unconfirmed. Duplicating it here would
+# never run. If that redirect ever stops, uncomment the HTTPS block in
+# section 2.
+
+# ---------------------------------------------------------------------
+# 1. Error pages
+# ---------------------------------------------------------------------
+ErrorDocument 404 /404.html
+
+# ---------------------------------------------------------------------
+# 2. Redirects — one canonical URL per page: https://byteandbook.com/...
+# ---------------------------------------------------------------------
+<IfModule mod_rewrite.c>
+  RewriteEngine On
+
+  # SSL certificate validation (AutoSSL / DCV) must never be redirected or
+  # rewritten: leave anything under /.well-known/ exactly as it is today.
+  RewriteRule ^\.well-known/ - [L]
+
+  # /index.html and /any/path/index.html -> the directory URL on the apex
+  # host, in one hop (also covers www.../index.html). Matched against
+  # THE_REQUEST (what the browser actually asked for) so the server's own
+  # internal DirectoryIndex lookup can't loop.
+  RewriteCond %{THE_REQUEST} \s/+((?:[^\s?]*/)?)index\.html[\s?] [NC]
+  RewriteRule ^ https://byteandbook.com/%1 [R=301,L]
+
+  # www -> apex, straight to https, path and query string preserved.
+  RewriteCond %{HTTP_HOST} ^www\.byteandbook\.com$ [NC]
+  RewriteRule ^ https://byteandbook.com%{REQUEST_URI} [R=301,L]
+
+  # HTTPS (disabled: already enforced at server level — see header).
+  # RewriteCond %{HTTPS} !=on
+  # RewriteRule ^ https://byteandbook.com%{REQUEST_URI} [R=301,L]
+</IfModule>
+
+# ---------------------------------------------------------------------
+# 3. Security
+# ---------------------------------------------------------------------
+# Directory listings are currently on site-wide (e.g. /api/ and /_astro/
+# list their files). Turn them off. Files themselves are still served,
+# including /.well-known/pki-validation/* for SSL validation.
+Options -Indexes
+
+# PHP writes error_log files next to the scripts (e.g. /api/error_log).
+# Never serve them publicly.
+<FilesMatch "^(error_log|php_errorlog|\.user\.ini)$">
+  Require all denied
+</FilesMatch>
+
+# ---------------------------------------------------------------------
+# 4. Caching
+# ---------------------------------------------------------------------
+<IfModule mod_headers.c>
+  # HTML and the chatbot knowledge JSON: always revalidate, so a new
+  # deploy is visible immediately (Last-Modified still allows 304s).
+  <FilesMatch "\.(html|json)$">
+    Header set Cache-Control "no-cache"
+  </FilesMatch>
+
+  # Content-hashed build assets: the filename changes whenever the
+  # content does, so they can be cached for a year.
+  #   /_astro/*.<8-char hash>.js|css   and   /styles.<10-char hash>.css
+  <FilesMatch "(\.[A-Za-z0-9_-]{8}\.(js|css)|^styles\.[a-f0-9]{10}\.css)$">
+    Header set Cache-Control "public, max-age=31536000, immutable"
+  </FilesMatch>
+
+  # Unhashed static files (favicon, og-default.jpg, robots.txt, sitemaps):
+  # one week, same as the server's current default for static files.
+  <FilesMatch "\.(svg|jpg|jpeg|png|webp|avif|ico|txt|xml|woff2?)$">
+    Header set Cache-Control "public, max-age=604800"
+  </FilesMatch>
+</IfModule>
+
+# ---------------------------------------------------------------------
+# 5. Compression
+# ---------------------------------------------------------------------
+# LiteSpeed already serves Brotli to browsers that accept it; this is the
+# gzip fallback for clients that don't.
+<IfModule mod_deflate.c>
+  AddOutputFilterByType DEFLATE text/html text/css text/plain text/xml application/javascript application/json application/xml image/svg+xml
+</IfModule>

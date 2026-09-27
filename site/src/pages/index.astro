@@ -68,12 +68,12 @@ const faqs = [
   <Header />
 
   <main id="main-content" tabindex="-1">
-    <!-- Hero -->
+    {/* Hero */}
     <section class="relative flex min-h-dvh items-center overflow-hidden pt-20 sm:pt-24">
-      <!-- Static placeholder backdrop for the Phase 7 Level-1 3D hero
+      {/* Static placeholder backdrop for the Phase 7 Level-1 3D hero
            scene. Deliberately restrained (grid + radial glow, no fake
            motion) rather than shipping a decorative gradient blob as a
-           stand-in for real interactive 3D. -->
+           stand-in for real interactive 3D. */}
       <div class="pointer-events-none absolute inset-0">
         <div class="absolute inset-0 bg-[radial-gradient(60%_50%_at_50%_20%,rgba(56,102,240,0.18),transparent)]"></div>
         <div class="absolute inset-0 bg-[radial-gradient(45%_35%_at_82%_78%,rgba(214,64,159,0.10),transparent)]"></div>
@@ -89,12 +89,12 @@ const faqs = [
         <span class="inline-block rounded-full border border-signal-500/30 bg-ink-900/60 px-4 py-1.5 text-xs font-semibold uppercase tracking-[0.18em] text-signal-400">
           Digital Technology &amp; Growth Agency
         </span>
-        <!-- Phase 2: shortened to fit a real short headline in one or two
+        {/* Phase 2: shortened to fit a real short headline in one or two
              lines at mobile widths (the old 4-part list wrapped into ~6
              lines under text-display's large clamp size, pushing the CTA
              row below the fold) — ties directly into the new hero's three
              interactive category nodes instead of re-listing every
-             discipline in text, since the visual now carries that job. -->
+             discipline in text, since the visual now carries that job. */}
         <h1 class="text-gradient-hero mx-auto mt-6 max-w-3xl text-page-title font-bold md:text-display">
           Three Disciplines, One Team
         </h1>
@@ -109,7 +109,7 @@ const faqs = [
       </Container>
     </section>
 
-    <!-- Categories -->
+    {/* Categories */}
     <section id="services" class="relative scroll-mt-24 py-20">
       <CapabilitySystem3D count={CATEGORIES.length} />
       <Container>
@@ -121,12 +121,12 @@ const faqs = [
           </p>
         </SectionHeading>
 
-        <!-- Phase 2: no bordered card boxes here on purpose — the real
+        {/* Phase 2: no bordered card boxes here on purpose — the real
              interactive backdrop is the shared 3D scene handed off from
              the hero above (see HeroScene/CapabilitySystem3D), so these
              read as labels over that scene rather than another repeated
              card grid. A subtle hover/focus tint is the only affordance,
-             enough to keep the real click/focus target legible. -->
+             enough to keep the real click/focus target legible. */}
         <div class="relative mt-12 grid gap-6 sm:grid-cols-3">
           {CATEGORIES.map((category, i) => (
             <a href={category.path} class="group block rounded-bb-lg p-6 transition-colors duration-300 hover:bg-ink-900/40 focus-visible:bg-ink-900/40" data-reveal data-service-card={i}>
@@ -144,7 +144,7 @@ const faqs = [
       </Container>
     </section>
 
-    <!-- Approach -->
+    {/* Approach */}
     <section id="approach" class="scroll-mt-24 py-20">
       <Container>
         <SectionHeading eyebrow="Process" heading="How We Work" align="center" class="mx-auto max-w-2xl" />
@@ -164,7 +164,7 @@ const faqs = [
       </Container>
     </section>
 
-    <!-- FAQ -->
+    {/* FAQ */}
     <section class="py-20">
       <Container class="max-w-3xl">
         <SectionHeading eyebrow="FAQ" heading="Common Questions" align="center" class="mx-auto max-w-2xl" />
@@ -190,7 +190,7 @@ const faqs = [
       </Container>
     </section>
 
-    <!-- CTA -->
+    {/* CTA */}
     <section class="py-20">
       <Container>
         <div class="rounded-bb-lg border border-ink-700 bg-ink-900/60 px-8 py-16 text-center" data-reveal>

@@ -28,6 +28,12 @@ const SITE_NAME = 'ByteAndBook';
 const { title, description, path, noindex = false, jsonLd = [] } = Astro.props;
 const canonicalUrl = new URL(path, SITE_URL).toString();
 
+// Sitewide social share card: the real ByteAndBook logo (same asset used
+// on the LinkedIn/Instagram/Facebook profiles), cropped to 1200x630 from
+// the square master at public/brand/logo.jpg.
+const ogImageUrl = new URL('/og-default.jpg', SITE_URL).toString();
+const OG_IMAGE_ALT = 'ByteAndBook logo';
+
 // Sitewide identity graph — present on every page (not just the
 // homepage) per standard practice, so any page can be understood in
 // isolation. Only fields with real, verified values are included: no
@@ -83,12 +89,19 @@ const siteGraph = {
     <meta property="og:title" content={title} />
     <meta property="og:description" content={description} />
     <meta property="og:url" content={canonicalUrl} />
+    <meta property="og:image" content={ogImageUrl} />
+    <meta property="og:image:type" content="image/jpeg" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content={OG_IMAGE_ALT} />
 
-    <meta name="twitter:card" content="summary" />
+    <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:title" content={title} />
     <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content={ogImageUrl} />
+    <meta name="twitter:image:alt" content={OG_IMAGE_ALT} />
 
-    <!--
+    {/*
       Compiled by the Tailwind CLI (npm run css:build) into a plain
       static file, linked directly rather than imported into the Astro/
       Vite module graph — see global.css and astro.config.mjs for why.
@@ -96,15 +109,15 @@ const siteGraph = {
       src/generated/styles-manifest.ts) so a deployed CSS change always
       ships under a new URL — no stale-cache mismatch between an old
       cached stylesheet and newly deployed HTML/JS.
-    -->
+    */}
     <link rel="stylesheet" href={STYLES_HREF} />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <!-- Only the weights actually used anywhere in the codebase (400
+    {/* Only the weights actually used anywhere in the codebase (400
          regular body text, 500/600/700 via font-medium/semibold/bold —
          no font-extrabold usage exists) — a Phase 11 trim from the
          previous 400-800 range, which fetched an unused 800 weight for
-         both families. -->
+         both families. */}
     <link
       href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Sora:wght@400;500;600;700&display=swap"
       rel="stylesheet"
@@ -115,7 +128,7 @@ const siteGraph = {
     ))}
     <slot name="head" />
 
-    <!-- Google tag (gtag.js) -->
+    {/* Google tag (gtag.js) */}
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-EEQFCCDHDR"></script>
     <script>
       window.dataLayer = window.dataLayer || [];

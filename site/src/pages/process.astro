@@ -119,11 +119,11 @@ const breadcrumbJsonLd = {
     <section class="border-t border-ink-800 py-16">
       <Container class="max-w-3xl">
         <ol class="relative">
-          <!-- V2-6: single connecting line spanning the whole timeline,
+          {/* V2-6: single connecting line spanning the whole timeline,
                positioned to run through each stage's circle center,
                rather than a per-item pseudo-element — avoids trimming
                logic for the first/last item and stays correct regardless
-               of how many stages exist. Purely decorative. -->
+               of how many stages exist. Purely decorative. */}
           <div class="absolute left-6 top-6 bottom-6 w-px bg-gradient-to-b from-signal-500/50 via-ink-700 to-ink-700 sm:left-7" aria-hidden="true"></div>
           {stages.map((stage, i) => (
             <li class="relative flex gap-4 pb-10 last:pb-0 sm:gap-6" data-reveal>
