@@ -997,7 +997,8 @@ const visibleFaqQuestions = (html) =>
   const faqSrc = readFileSync(join(__dirname, '..', 'src', 'data', 'serviceFaqs.ts'), 'utf-8');
   const slugsWithFaqs = [...faqSrc.matchAll(/^ {2}(?:'([a-z-]+)'|([a-z-]+)): \[/gm)].map((m) => m[1] || m[2]);
   check('serviceFaqs.ts: GEO and SEO have FAQs', slugsWithFaqs.includes('geo') && slugsWithFaqs.includes('seo'));
-  for (const slug of SERVICE_SLUGS) {
+  // The 11 service pages plus the 3 category pages all read serviceFaqs.ts.
+  for (const slug of [...SERVICE_SLUGS, 'growth-ai-discovery', 'web-brand-publishing', 'infrastructure-automation']) {
     const html = readHtml(`services/${slug}/index.html`);
     const schemaQs = faqSchemaQuestions(html);
     const visibleQs = visibleFaqQuestions(html);

@@ -11,6 +11,9 @@ import Container from '../../components/ui/Container.astro';
 import Icon from '../../components/ui/Icon.astro';
 import StartProjectTrigger from '../../components/project/StartProjectTrigger.astro';
 import { getCategory } from '../../lib/categories';
+import FaqSection from '../../components/ui/FaqSection.astro';
+import { faqPageJsonLd } from '../../lib/faq';
+import { serviceFaqs } from '../../data/serviceFaqs';
 
 const category = getCategory('infrastructure-automation')!;
 const allServices = await getCollection('services');
@@ -29,13 +32,18 @@ const breadcrumbJsonLd = {
     { '@type': 'ListItem', position: 3, name: category.heading, item: `${SITE_URL}${category.path}` },
   ],
 };
+
+// Phase 4: reviewed FAQ block (src/data/serviceFaqs.ts, keyed by this
+// category's slug); renders nothing until an entry exists.
+const faqs = serviceFaqs['infrastructure-automation'] ?? [];
+const jsonLd = faqs.length > 0 ? [breadcrumbJsonLd, faqPageJsonLd(faqs)] : [breadcrumbJsonLd];
 ---
 
 <BaseLayout
   title={`${category.heading} | ByteAndBook`}
   description="DevOps, cloud services, and computer hardware: pipelines, cloud infrastructure, and workstation or server builds set up to run reliably."
   path={category.path}
-  jsonLd={[breadcrumbJsonLd]}
+  jsonLd={jsonLd}
 >
   <Header />
 
@@ -123,7 +131,7 @@ const breadcrumbJsonLd = {
           ))}
         </div>
       </Container>
-    </section>
+    </section>{faqs.length > 0 && <FaqSection faqs={faqs} class="border-t border-ink-800 py-16" />}
 
     <section class="py-20">
       <Container>
