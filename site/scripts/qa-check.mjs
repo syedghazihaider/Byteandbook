@@ -454,7 +454,14 @@ for (const term of ['full name', 'phone number', 'WhatsApp', 'project descriptio
 }
 check('privacy/: contact is info@byteandbook.com', privacyHtml.includes('mailto:info@byteandbook.com'));
 check('privacy/: does not claim guaranteed compliance', !/guarantee(s|d)?\s+(GDPR|CCPA)/i.test(privacyHtmlNormalized));
-check('privacy/: accurately states no tracking cookies/analytics', /does not use analytics/i.test(privacyHtmlNormalized));
+// GA4 (with Google Signals) is live since 2026-09-23: the policy must
+// disclose it, and must never again claim the site uses no analytics.
+check('privacy/: discloses Google Analytics 4', /uses Google Analytics 4/i.test(privacyHtmlNormalized));
+check('privacy/: discloses Google Signals', /Google Signals/i.test(privacyHtmlNormalized));
+check('privacy/: discloses analytics cookies (_ga)', /_ga/.test(privacyHtmlNormalized));
+check('privacy/: links the GA opt-out add-on', privacyHtml.includes('href="https://tools.google.com/dlpage/gaoptout"'));
+check('privacy/: links Google ad personalization settings', privacyHtml.includes('href="https://adssettings.google.com"'));
+check('privacy/: no stale "no analytics" / "only Google Fonts" claims', !/does not use analytics|do not currently use any analytics|only third-party resource loaded is Google Fonts|served by Google Fonts/i.test(privacyHtmlNormalized));
 
 // V2.1 Gemini migration: Privacy names the real current AI provider
 // (never a vague "configured AI provider") and discloses the Free Tier

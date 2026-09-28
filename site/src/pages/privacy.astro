@@ -15,7 +15,7 @@ import { TERMS_VERSION } from '../lib/legal';
 
 const SITE_URL = 'https://byteandbook.com';
 const path = '/privacy/';
-const lastUpdated = 'August 2026';
+const lastUpdated = 'September 2026';
 
 const sections = [
   { id: 'introduction', label: 'Introduction' },
@@ -154,10 +154,11 @@ const breadcrumbJsonLd = {
             <p class="mt-3">
               Our website is hosted on Namecheap shared hosting, which processes project-request
               submissions to deliver them by email and provides the mailbox that receives them. Fonts
-              are served by Google Fonts (see section 9). If you use the optional AI Assistant, your
-              message is processed by our configured AI provider, currently Google's Gemini API,
-              solely to generate a response (see section 10). We do not currently use any analytics,
-              advertising, or marketing-automation service provider.
+              are hosted on our own server. We use Google Analytics 4, a web analytics service
+              provided by Google, to understand how visitors use the site (see section 9). If you use
+              the optional AI Assistant, your message is processed by our configured AI provider,
+              currently Google's Gemini API, solely to generate a response (see section 10). We do not
+              currently use any advertising or marketing-automation service provider.
             </p>
           </section>
 
@@ -176,10 +177,22 @@ const breadcrumbJsonLd = {
           <section id="cookies-tracking">
             <h2 class="text-2xl font-bold text-ink-50">9. Cookies and tracking</h2>
             <p class="mt-3">
-              This website does not use analytics, advertising pixels, or tracking cookies, and does
-              not use browser storage (such as localStorage) to track you across visits. The only
-              third-party resource loaded is Google Fonts (typeface files), which is functional, not
-              tracking-related.
+              This website uses Google Analytics 4 to measure how visitors use it, such as which pages
+              are viewed, how visitors arrive, and general device and approximate location
+              information. Google Analytics sets first-party cookies (such as <code>_ga</code>) and
+              sends this usage data to Google. We have enabled Google Signals: for visitors signed in
+              to a Google account with Ads Personalization turned on, Google may associate this usage
+              data with that account to provide aggregated demographic and interest reports and
+              cross-device measurement. We only see aggregated reports, not information about
+              individual visitors. We do not use advertising pixels or run ads through this site. You
+              can opt out of Google Analytics with Google's browser add-on
+              (<a href="https://tools.google.com/dlpage/gaoptout" class="text-signal-400 hover:text-signal-300" rel="noopener noreferrer" target="_blank">tools.google.com/dlpage/gaoptout</a>)
+              and manage ad personalization at
+              <a href="https://adssettings.google.com" class="text-signal-400 hover:text-signal-300" rel="noopener noreferrer" target="_blank">adssettings.google.com</a>.
+              Google explains how it uses this data at
+              <a href="https://policies.google.com/technologies/partner-sites" class="text-signal-400 hover:text-signal-300" rel="noopener noreferrer" target="_blank">policies.google.com/technologies/partner-sites</a>.
+              Other than these analytics cookies, we do not use browser storage to track you across
+              visits.
             </p>
             <p class="mt-3">
               Our project-request backend applies short-term, IP-based rate limiting purely to reduce
