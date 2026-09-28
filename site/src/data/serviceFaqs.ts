@@ -117,6 +117,89 @@ export const serviceFaqs: Record<string, Faq[]> = {
         'All the main formats: EPUB, Kindle and print-ready PDF, for all the major stores, including Kindle Direct Publishing, Apple Books and Google Play, and others as needed.',
     },
   ],
+  'infrastructure-automation': [
+    {
+      question: 'Only one person on our team understands how our deployments work. Can you fix that?',
+      answer:
+        "That's the most common problem we're brought in for. We replace manual, memorized steps with automated pipelines and configuration, and document how everything runs, so the setup no longer depends on one person being available.",
+    },
+    {
+      question: 'Do you only build new setups, or can you fix what we already run?',
+      answer:
+        'Both. Every engagement starts by reviewing your current setup, traffic, and where it breaks or slows down. Often the right answer is fixing and automating what you have rather than rebuilding it.',
+    },
+    {
+      // Same verified facts as /case-studies/#devops-and-cloud-infrastructure.
+      question: 'What kind of organizations have you done infrastructure work for?',
+      answer:
+        'University IT departments, small-to-mid-sized offices, and individual and student clients. The environments differ, but each engagement ended with automated, documented infrastructure instead of manual, single-person-dependent processes. The anonymized write-up is on our case studies page.',
+    },
+    {
+      question: 'What do we have at the end?',
+      answer: 'A working system with monitoring in place from the start, plus the documentation your team needs to operate it.',
+    },
+  ],
+  devops: [
+    {
+      question: 'What does a CI/CD pipeline actually change for us?',
+      answer:
+        'Every commit follows the same defined path: build, automated tests, containerization, then deployment, with monitoring after release. Broken changes get caught by tests before they reach production, and deploying stops being a risky manual event.',
+    },
+    {
+      question: 'Do we need Kubernetes?',
+      answer:
+        "Not always. Kubernetes pays off when you run several services that need to scale and recover independently. A single application often runs better, and far more cheaply to maintain, on Docker with a simpler deployment. We recommend based on your actual workload, not on what's fashionable.",
+    },
+    {
+      // Tooling as described in /case-studies/#devops-and-cloud-infrastructure.
+      question: 'Which tools do you work with?',
+      answer:
+        'Docker for containerization, Kubernetes for orchestration, and Ansible for configuration automation (used heavily across our engagements), together with CI/CD pipeline builds, server migrations, and bastion (jump) host setup for secure access. We treat infrastructure as code, so setups are repeatable instead of one-off.',
+    },
+    {
+      question: "Can you support our infrastructure after it's set up?",
+      answer: 'Yes. Alongside project work we provide ongoing, managed-service-style infrastructure support.',
+    },
+  ],
+  cloud: [
+    {
+      question: 'Which cloud providers do you work with?',
+      answer: 'AWS, Microsoft Azure and Google Cloud Platform.',
+    },
+    {
+      question: 'Can you move our existing servers to the cloud?',
+      answer:
+        'Yes, server migrations are part of our infrastructure work. We design the target setup around how requests actually flow (DNS, load balancing, application servers, databases and storage) before anything moves.',
+    },
+    {
+      question: 'How will we know if something breaks?',
+      answer:
+        'Monitoring is built in at every layer (DNS, load balancer, application and storage), so a problem shows up as an alert pointing to a specific layer, not as a customer complaint.',
+    },
+  ],
+  'computer-hardware': [
+    {
+      // Same verified facts as /case-studies/#computer-hardware-sourcing.
+      question: 'Can you source components that are hard to find?',
+      answer:
+        'Yes. Sourcing is backed by a BrokerBin subscription and direct access to US inventory and vendors, which fills requests that stall in normal retail channels. In one case, a Japanese company with US operations needed hard-to-find RAM and hard drives on a tight deadline; we supplied them at competitive pricing without compromising on quality.',
+    },
+    {
+      question: 'Do you just supply parts, or help decide what to buy?',
+      answer:
+        'Both. Recommendations start from the workload (rendering, AI inference, build pipelines or hosting) and work back to a balanced configuration, instead of a generic parts list where one component bottlenecks the rest. Performance benchmarking is available to confirm the build does what it was specified for.',
+    },
+    {
+      question: 'Do you supply businesses?',
+      answer:
+        'Yes. We supply hardware to vendors and offices at competitive market pricing, as well as specifying individual workstation and server builds.',
+    },
+    {
+      question: 'Do you ship internationally, and is there a warranty?',
+      answer:
+        "We ship within the US and internationally. Every order comes with a 14-day inspection period after delivery, so you can check that the hardware arrived in the condition and specification you ordered and report any problem within that window. If something is wrong, we replace the item or refund it.",
+    },
+  ],
   geo: [
     {
       question: 'How is GEO different from SEO?',
