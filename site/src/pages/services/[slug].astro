@@ -22,6 +22,9 @@ import BrandScene3D from '../../components/three/BrandScene3D.astro';
 import BookScene3D from '../../components/three/BookScene3D.astro';
 import { pillarAccentVar, pillarBadgeClass, pillarDotClass, pillarIconBgClass } from '../../lib/pillarColors';
 import { getCategoryForService } from '../../lib/categories';
+import FaqSection from '../../components/ui/FaqSection.astro';
+import { faqPageJsonLd } from '../../lib/faq';
+import { serviceFaqs } from '../../data/serviceFaqs';
 
 export async function getStaticPaths() {
   const services = await getCollection('services');
@@ -131,13 +134,19 @@ const caseStudyLinks: Record<string, string> = {
   'computer-hardware': 'computer-hardware-sourcing',
 };
 const caseStudyAnchor = caseStudyLinks[service.id];
+
+// Phase 4: reviewed FAQ block (src/data/serviceFaqs.ts). Rendered visibly
+// and as FAQPage schema from the same array; pages without an entry yet
+// render neither.
+const faqs = serviceFaqs[service.id] ?? [];
+const jsonLd = faqs.length > 0 ? [serviceJsonLd, breadcrumbJsonLd, faqPageJsonLd(faqs)] : [serviceJsonLd, breadcrumbJsonLd];
 ---
 
 <BaseLayout
   title={`${service.data.title} | ByteAndBook`}
   description={service.data.metaDescription}
   path={path}
-  jsonLd={[serviceJsonLd, breadcrumbJsonLd]}
+  jsonLd={jsonLd}
 >
   <Header />
 
@@ -241,6 +250,8 @@ const caseStudyAnchor = caseStudyLinks[service.id];
         )}
       </Container>
     </section>
+
+    {faqs.length > 0 && <FaqSection faqs={faqs} class="border-t border-ink-800 py-16" />}
 
     {related.length > 0 && (
       <section class="py-16">
