@@ -10,7 +10,8 @@
     "dev": "npm run css:build && npm run css:hash && astro dev",
     "build": "npm run css:build && npm run css:hash && astro build && npm run chat:knowledge",
     "preview": "astro preview",
-    "test": "node scripts/qa-check.mjs"
+    "test": "node scripts/qa-check.mjs",
+    "indexnow": "node scripts/indexnow.mjs"
   },
   "keywords": [],
   "author": "",

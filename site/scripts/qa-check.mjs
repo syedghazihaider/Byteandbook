@@ -942,6 +942,19 @@ check('styles.css: body stack uses Inter Fallback', /--bb-font-body:\s*"?'?Inter
   check('motion.ts: onVisibilityChange gates compact viewports on load + idle', /let ready = !isCompactViewport\(\);/.test(motionSrc) && /afterLoadAndIdle\(\)\.then/.test(motionSrc));
 }
 
+// IndexNow key file: exactly one public/<32-hex>.txt whose content is the
+// key, shipped to dist/, and kept out of the sitemap (scripts/indexnow.mjs).
+{
+  const keyFiles = readdirSync(PUBLIC_DIR).filter((f) => /^[0-9a-f]{32}\.txt$/.test(f));
+  check('IndexNow: exactly one key file in public/', keyFiles.length === 1);
+  if (keyFiles.length === 1) {
+    const key = keyFiles[0].slice(0, -4);
+    check('IndexNow: key file contains only the key', readFileSync(join(PUBLIC_DIR, keyFiles[0]), 'utf-8') === key);
+    check('IndexNow: key file shipped to dist/', existsSync(join(DIST, keyFiles[0])));
+    check('IndexNow: key file not listed in sitemap', !readFileSync(join(DIST, 'sitemap-0.xml'), 'utf-8').includes(key));
+  }
+}
+
 // ---- Report ---------------------------------------------------------------
 console.log(`QA check: ${checks} assertions, ${failures.length} failure(s).`);
 if (failures.length > 0) {
