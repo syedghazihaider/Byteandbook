@@ -88,29 +88,69 @@ export function initScrollReveal(root: ParentNode = document): void {
   targets.forEach((el) => observer.observe(el));
 }
 
+let loadAndIdle: Promise<void> | null = null;
+
+/** Resolves once the page's `load` event has fired and the main thread is
+ *  next idle (shared, so every caller waits on the same moment). */
+export function afterLoadAndIdle(): Promise<void> {
+  if (!loadAndIdle) {
+    loadAndIdle = new Promise((resolve) => {
+      const whenIdle = () => {
+        if ('requestIdleCallback' in window) requestIdleCallback(() => resolve(), { timeout: 3000 });
+        else setTimeout(resolve, 200);
+      };
+      if (document.readyState === 'complete') whenIdle();
+      else window.addEventListener('load', whenIdle, { once: true });
+    });
+  }
+  return loadAndIdle;
+}
+
 /** Runs `mount()` only once `el` is near the viewport, and `unmount()`
  *  when it leaves — used to pause/dispose WebGL work that's off-screen
- *  rather than burning GPU/battery on canvases the visitor can't see. */
+ *  rather than burning GPU/battery on canvases the visitor can't see.
+ *
+ *  Phase 3b: on compact (phone-width) viewports the first mount also
+ *  waits for afterLoadAndIdle(), so a scene in the first screen no longer
+ *  downloads and boots Three.js while the page is still loading (live
+ *  traces: ~2.3 s of simulated-mobile script on /services/seo/). Until
+ *  then the scene's box stays empty, exactly as it already did while
+ *  Three.js was downloading; service pages' 2D FlowSteps diagram carries
+ *  the same labels meanwhile. Desktop is unchanged: mounts as soon as the
+ *  element is visible. */
 export function onVisibilityChange(
   el: Element,
   mount: () => void,
   unmount: () => void
 ): () => void {
   let mounted = false;
+  let visible = false;
+  let ready = !isCompactViewport();
+
+  const sync = () => {
+    if (visible && ready && !mounted) {
+      mounted = true;
+      mount();
+    } else if (!visible && mounted) {
+      mounted = false;
+      unmount();
+    }
+  };
+
   const observer = new IntersectionObserver(
     (entries) => {
-      for (const entry of entries) {
-        if (entry.isIntersecting && !mounted) {
-          mounted = true;
-          mount();
-        } else if (!entry.isIntersecting && mounted) {
-          mounted = false;
-          unmount();
-        }
-      }
+      for (const entry of entries) visible = entry.isIntersecting;
+      sync();
     },
     { threshold: 0.05 }
   );
   observer.observe(el);
+
+  if (!ready) {
+    afterLoadAndIdle().then(() => {
+      ready = true;
+      sync();
+    });
+  }
   return () => observer.disconnect();
 }

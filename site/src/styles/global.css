@@ -32,6 +32,63 @@
 }
 
 /*
+  Phase 3b (CLS): metric-matched fallbacks. Until Inter/Sora arrive, text
+  renders in Arial scaled and spaced to occupy the same box as the web
+  font, so the swap no longer moves the layout (live traces: the Sora
+  swap on the homepage H1 alone was 0.082 CLS). Values computed with
+  fontTools from the exact woff2 files above vs Arial / Arial Bold,
+  letter-frequency-weighted advance widths (the next/font / Capsize
+  method); both fonts set USE_TYPO_METRICS, so typo metrics are used.
+  Separate 400 and 700 faces so bold text uses real Arial Bold rather
+  than faux bold (500 resolves to the 400 face, 600 to the 700 face).
+  Liberation Sans / Arimo are Arial-metric-compatible (Linux/ChromeOS).
+  Regenerate these if the woff2 files ever change.
+*/
+@font-face {
+  font-family: 'Inter Fallback';
+  font-style: normal;
+  font-weight: 400;
+  src: local('Arial'), local('ArialMT'), local('Liberation Sans'), local('Arimo');
+  size-adjust: 107.34%;
+  ascent-override: 90.25%;
+  descent-override: 22.47%;
+  line-gap-override: 0%;
+}
+
+@font-face {
+  font-family: 'Inter Fallback';
+  font-style: normal;
+  font-weight: 700;
+  src: local('Arial Bold'), local('Arial-BoldMT'), local('Liberation Sans Bold'), local('Arimo Bold');
+  size-adjust: 101.99%;
+  ascent-override: 94.98%;
+  descent-override: 23.65%;
+  line-gap-override: 0%;
+}
+
+@font-face {
+  font-family: 'Sora Fallback';
+  font-style: normal;
+  font-weight: 400;
+  src: local('Arial'), local('ArialMT'), local('Liberation Sans'), local('Arimo');
+  size-adjust: 113.88%;
+  ascent-override: 85.18%;
+  descent-override: 25.47%;
+  line-gap-override: 0%;
+}
+
+@font-face {
+  font-family: 'Sora Fallback';
+  font-style: normal;
+  font-weight: 700;
+  src: local('Arial Bold'), local('Arial-BoldMT'), local('Liberation Sans Bold'), local('Arimo Bold');
+  size-adjust: 107.38%;
+  ascent-override: 90.34%;
+  descent-override: 27.01%;
+  line-gap-override: 0%;
+}
+
+/*
   This file is compiled by the standalone Tailwind CLI (see
   package.json's "css:build" script), NOT by an Astro/Vite plugin, and
   linked as a plain <link rel="stylesheet"> in BaseLayout — never
@@ -135,10 +192,10 @@
   --bb-accent-strong: var(--bb-signal-400);
   --bb-accent-warm: var(--bb-ember-500);
 
-  /* ---- Type (delivered via Google Fonts <link> in BaseLayout, not
-     self-hosted — see BaseLayout.astro for why) ---- */
-  --bb-font-display: 'Sora', system-ui, sans-serif;
-  --bb-font-body: 'Inter', system-ui, sans-serif;
+  /* ---- Type (self-hosted Inter/Sora, see the @font-face rules at the
+     top of this file; each followed by its metric-matched fallback) ---- */
+  --bb-font-display: 'Sora', 'Sora Fallback', system-ui, sans-serif;
+  --bb-font-body: 'Inter', 'Inter Fallback', system-ui, sans-serif;
 
   /* Fluid type scale (clamp: min, preferred-vw, max) */
   --bb-text-xs:   clamp(0.75rem, 0.72rem + 0.15vw, 0.8125rem);

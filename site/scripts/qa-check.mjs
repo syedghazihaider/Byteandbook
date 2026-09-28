@@ -911,6 +911,30 @@ check('styles.css: .chat-launcher rule compiled', stylesCss.includes('.chat-laun
 check('styles.css: mobile-width chat panel rule compiled (max-width:420px media query)', /@media \(max-width:420px\)\{\.chat-panel\{width:calc\(100vw - 1\.5rem\)/.test(stylesCss));
 check('styles.css: chat input disabled-state styling compiled', stylesCss.includes('.chat-input:disabled'));
 
+// ---- 11. SEO Phase 3b: performance + CLS regression guards ----------------
+// GA4: loaded after `load` + idle via an inline loader, never as an early
+// <script async src> tag, and `gtag` stays a real global (is:inline).
+{
+  const pagesToCheck = ['index.html', 'services/seo/index.html', 'work/index.html', '404.html'];
+  for (const p of pagesToCheck) {
+    const html = readHtml(p);
+    check(`${p}: no early <script src=gtag/js> tag`, !/<script[^>]*src="https:\/\/www\.googletagmanager\.com\/gtag\/js/.test(html));
+    check(`${p}: GA4 deferred loader present (load + idle)`, html.includes("addEventListener('load', whenIdle") && html.includes('G-EEQFCCDHDR'));
+    check(`${p}: GA4 snippet is a classic inline script (gtag global)`, /<script>\s*window\.dataLayer = window\.dataLayer \|\| \[\];\s*function gtag\(\)/.test(html));
+  }
+}
+// CLS: metric-matched fallback faces exist and are in both font stacks.
+check('styles.css: Sora Fallback 400 + 700 faces compiled', (stylesCss.match(/font-family:Sora Fallback/g) || []).length === 2 && stylesCss.includes('size-adjust:107.38%'));
+check('styles.css: Inter Fallback 400 + 700 faces compiled', (stylesCss.match(/font-family:Inter Fallback/g) || []).length === 2 && stylesCss.includes('size-adjust:107.34%'));
+check('styles.css: display stack uses Sora Fallback', /--bb-font-display:\s*"?'?Sora'?"?,\s*"?'?Sora Fallback'?"?/.test(stylesCss));
+check('styles.css: body stack uses Inter Fallback', /--bb-font-body:\s*"?'?Inter'?"?,\s*"?'?Inter Fallback'?"?/.test(stylesCss));
+// 3D on phone widths waits for load + idle (desktop unchanged).
+{
+  const motionSrc = readFileSync(join(__dirname, '..', 'src', 'scripts', 'motion.ts'), 'utf-8');
+  check('motion.ts: afterLoadAndIdle() gate exists', /export function afterLoadAndIdle\(\)/.test(motionSrc));
+  check('motion.ts: onVisibilityChange gates compact viewports on load + idle', /let ready = !isCompactViewport\(\);/.test(motionSrc) && /afterLoadAndIdle\(\)\.then/.test(motionSrc));
+}
+
 // ---- Report ---------------------------------------------------------------
 console.log(`QA check: ${checks} assertions, ${failures.length} failure(s).`);
 if (failures.length > 0) {
