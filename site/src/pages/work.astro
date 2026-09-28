@@ -1,11 +1,11 @@
 ---
 // V2-5: real, permanent Work page, replacing the V2-1 placeholder.
 // Explains methodology, capability evidence, and the evidence
-// standard for future case studies — genuinely useful content that
-// doesn't depend on having a published case study yet. The case-study
-// grid below is wired to src/data/caseStudies.ts and renders nothing
-// but an honest empty-state message while that array is empty; adding
-// a real, client-authorized entry there makes it appear automatically.
+// standard for case studies. The case-study section shows the four real,
+// anonymized case studies (src/data/anonymizedCaseStudies.ts, the same
+// source /case-studies/ renders in full) as summary cards linking to
+// their write-ups. Any future named-client entry added to
+// src/data/caseStudies.ts renders below them automatically.
 // Indexable: unlike the V2-1 "coming later" placeholder, this page now
 // has substantial permanent content (methodology, evidence standards)
 // independent of whether any case study exists — see V2-5 report.
@@ -20,6 +20,7 @@ import StartProjectTrigger from '../components/project/StartProjectTrigger.astro
 import CaseStudyCard from '../components/trust/CaseStudyCard.astro';
 import TrustBadge from '../components/trust/TrustBadge.astro';
 import { caseStudies } from '../data/caseStudies';
+import { anonymizedCaseStudies } from '../data/anonymizedCaseStudies';
 
 const SITE_URL = 'https://byteandbook.com';
 const path = '/work/';
@@ -127,32 +128,50 @@ const breadcrumbJsonLd = {
     <section class="border-t border-ink-800 py-16">
       <Container>
         <SectionHeading eyebrow="Case Studies" heading="Verified Project Work" align="center" class="mx-auto max-w-2xl" />
+        <p class="mx-auto mt-4 max-w-2xl text-center text-ink-300">
+          Real engagements, published with client names withheld. Each one is written up in full,
+          including what was done and what came of it, on the case studies page.
+        </p>
 
-        {caseStudies.length > 0 ? (
-          <div class="mt-10 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+        <div class="mt-10 grid gap-6 sm:grid-cols-2">
+          {anonymizedCaseStudies.map((cs) => (
+            <a
+              href={`/case-studies/#${cs.id}`}
+              class="group block rounded-bb-lg border border-ink-700 bg-ink-900/60 p-6 transition-colors hover:border-signal-400"
+              data-reveal
+            >
+              <div class="flex h-10 w-10 items-center justify-center rounded-full bg-signal-500/10 text-signal-400">
+                <Icon name={cs.icon} class="h-5 w-5" />
+              </div>
+              <p class="mt-4 text-xs font-semibold uppercase tracking-[0.18em] text-signal-400">{cs.eyebrow}</p>
+              <h3 class="mt-2 text-lg font-semibold text-ink-50">{cs.title}</h3>
+              <span class="mt-4 inline-flex items-center gap-1 text-sm font-medium text-signal-400 group-hover:text-signal-300">
+                Read the case study →
+              </span>
+            </a>
+          ))}
+        </div>
+
+        {caseStudies.length > 0 && (
+          <div class="mt-6 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
             {caseStudies.map((caseStudy) => (
               <CaseStudyCard caseStudy={caseStudy} />
             ))}
           </div>
-        ) : (
-          <div class="mx-auto mt-10 max-w-xl rounded-bb-lg border border-ink-700 bg-ink-900/60 p-10 text-center" data-reveal>
-            <div class="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-signal-500/10 text-signal-400">
-              <Icon name="search" class="h-6 w-6" />
-            </div>
-            <p class="mt-5 text-ink-300">
-              Verified case studies will be published here as client-authorized work becomes
-              available. Until then, the service pages above show how each discipline actually
-              works, and the evidence standard above shows what any future case study has to meet.
-            </p>
-          </div>
         )}
+
+        <div class="mt-8 text-center">
+          <a href="/case-studies/" class="inline-flex items-center gap-1 text-sm font-medium text-signal-400 hover:text-signal-300">
+            See all case studies →
+          </a>
+        </div>
       </Container>
     </section>
 
     <section class="border-t border-ink-800 py-20">
       <Container>
         <div class="rounded-bb-lg border border-ink-700 bg-ink-900/60 px-8 py-16 text-center" data-reveal>
-          <h2 class="text-section-title font-bold text-ink-50">Want to Be the First Case Study?</h2>
+          <h2 class="text-section-title font-bold text-ink-50">Have a Project Like These?</h2>
           <p class="mx-auto mt-4 max-w-xl text-ink-300">
             Tell us what you're building. We'll scope it against the same process described above.
           </p>

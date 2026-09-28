@@ -519,7 +519,19 @@ const aboutNorm = norm(aboutHtml);
 check('work/: no leftover "in progress" placeholder text', !/case studies are in progress/i.test(workNorm));
 check('work/: explains methodology', /methodology|nine-stage process/i.test(workNorm));
 check('work/: explains evidence standards', /evidence standard/i.test(workNorm));
-check('work/: handles empty case-study state honestly', /will be published here as client-authorized work becomes available/i.test(workNorm));
+// Phase 3b: /work/ must reflect the real, anonymized case studies on
+// /case-studies/ (never claim none exist) and link to each one's anchor.
+{
+  const csHtml = readHtml('case-studies/index.html');
+  const csSource = readFileSync(join(__dirname, '..', 'src', 'data', 'anonymizedCaseStudies.ts'), 'utf-8');
+  const csIds = [...csSource.matchAll(/^\s*id: '([^']+)'/gm)].map((m) => m[1]);
+  check('anonymizedCaseStudies.ts: has the 4 real case studies', csIds.length === 4);
+  for (const id of csIds) {
+    check(`case-studies/: has anchor #${id}`, csHtml.includes(`id="${id}"`));
+    check(`work/: links to /case-studies/#${id}`, workHtml.includes(`href="/case-studies/#${id}"`));
+  }
+  check('work/: no longer claims case studies are yet to come', !/will be published here as client-authorized work becomes available|be the first case study/i.test(workNorm));
+}
 check('work/: links to /process/', /href="\/process\/"/.test(workHtml));
 check('work/: stays indexable (real permanent content, not a placeholder)', /<meta name="robots" content="index, follow"/.test(workHtml));
 

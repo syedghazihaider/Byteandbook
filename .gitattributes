@@ -1,0 +1,5 @@
+# Files under site/public/ are copied byte-for-byte into the deploy build
+# (dist/). Check them out with LF regardless of core.autocrlf so every
+# build is reproducible and matches what was deployed. text=auto leaves
+# binary files (fonts, images) untouched.
+site/public/** text=auto eol=lf
