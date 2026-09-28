@@ -83,6 +83,11 @@ const added = files.filter((p) => !prevPaths.has(p));
 // Changed files: compare bytes against the previous release.
 const tmp = mkdtempSync(join(tmpdir(), 'bb-prev-'));
 let changed = [];
+// Pages whose visible content changed, ignoring a new content-hashed
+// stylesheet link (which changes on every page whenever any CSS changes).
+// Only these are worth submitting to IndexNow.
+let contentChanged = new Set();
+const withoutCssHash = (buf) => buf.toString('utf-8').replace(/\/styles\.[a-f0-9]{10}\.css/g, '/styles.css');
 try {
   execFileSync(TAR, ['-xf', prevPath, '-C', tmp]);
   const prevFile = (e) => {
@@ -96,7 +101,12 @@ try {
     const e = byPath.get(p);
     if (!e) return false;
     const f = prevFile(e);
-    return !f || !readFileSync(f).equals(readFileSync(join(DIST, ...p.split('/'))));
+    const now = readFileSync(join(DIST, ...p.split('/')));
+    if (!f) return true;
+    const before = readFileSync(f);
+    if (before.equals(now)) return false;
+    if (!p.endsWith('.html') || withoutCssHash(before) !== withoutCssHash(now)) contentChanged.add(p);
+    return true;
   });
 } finally {
   rmSync(tmp, { recursive: true, force: true });
@@ -126,7 +136,7 @@ writeFileSync(
 );
 
 // --- report ------------------------------------------------------------------
-const pages = [...added, ...changed]
+const pages = [...added, ...changed.filter((p) => contentChanged.has(p))]
   .filter((p) => p.endsWith('index.html') && !p.startsWith('style-guide/') && !p.startsWith('checkout/'))
   .map((p) => p.replace(/index\.html$/, ''));
 console.log(`package: ${name}-deploy.zip, ${files.length} files, ${(statSync(outZip).size / 1024).toFixed(0)} KB`);
@@ -135,6 +145,6 @@ for (const p of added) console.log(`    + ${p}`);
 for (const p of changed) console.log(`    ~ ${p}`);
 console.log(`  delete list: ${name}-delete-after-deploy.txt (${toDelete.length} file(s))`);
 if (pages.length) {
-  console.log(`  changed pages (for IndexNow, after the deploy is live):`);
+  console.log(`  pages with changed content (for IndexNow, after the deploy is live; stylesheet-link-only changes ignored):`);
   console.log(`    npm run indexnow -- --submit ${pages.map((p) => `--url "${p || SITE + '/'}"`).join(' ')}`);
 }

@@ -249,9 +249,7 @@ const jsonLd = faqs.length > 0 ? [serviceJsonLd, breadcrumbJsonLd, faqPageJsonLd
           </p>
         )}
       </Container>
-    </section>
-
-    {faqs.length > 0 && <FaqSection faqs={faqs} class="border-t border-ink-800 py-16" />}
+    </section>{faqs.length > 0 && <FaqSection faqs={faqs} class="border-t border-ink-800 py-16" />}
 
     {related.length > 0 && (
       <section class="py-16">
