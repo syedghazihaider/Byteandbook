@@ -63,29 +63,46 @@ if (urls.length === 0) fail('no URLs to submit');
 console.log(`indexnow: ${urls.length} URL(s), key ${key}`);
 for (const u of urls) console.log(`  ${u}`);
 
-if (!submit) {
-  console.log('indexnow: dry run, nothing sent. Add --submit to send.');
-  process.exit(0);
+// Everything after this point uses the network, so it never calls
+// process.exit(): exiting while a fetch connection is still closing
+// crashes Node on Windows (libuv UV_HANDLE_CLOSING assertion). It sets
+// process.exitCode and lets the process end on its own instead.
+async function send() {
+  // --- key must be live before submitting ----------------------------------
+  let live;
+  try {
+    live = await fetch(keyLocation, { cache: 'no-store' });
+  } catch (e) {
+    return `could not fetch ${keyLocation}: ${e.message}`;
+  }
+  const liveText = (await live.text()).trim();
+  if (!live.ok || liveText !== key) return `${keyLocation} is not serving the key (HTTP ${live.status}); deploy it first`;
+
+  // --- submit --------------------------------------------------------------
+  const res = await fetch(ENDPOINT, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json; charset=utf-8' },
+    body: JSON.stringify({ host: HOST, key, keyLocation, urlList: urls }),
+  });
+  await res.text();
+  const meaning = {
+    200: 'OK, URLs received',
+    202: 'Accepted, key validation pending',
+    400: 'Bad request (invalid format)',
+    403: 'Forbidden: key not valid / not found at keyLocation',
+    422: 'Unprocessable: URLs do not belong to the host, or key mismatch',
+    429: 'Too many requests: slow down',
+  };
+  console.log(`indexnow: HTTP ${res.status} ${meaning[res.status] ?? ''}`.trim());
+  return res.status === 200 || res.status === 202 ? null : `submission rejected (HTTP ${res.status})`;
 }
 
-// --- key must be live before submitting ------------------------------------
-const live = await fetch(keyLocation, { cache: 'no-store' }).catch((e) => fail(`could not fetch ${keyLocation}: ${e.message}`));
-const liveText = (await live.text()).trim();
-if (!live.ok || liveText !== key) fail(`${keyLocation} is not serving the key (HTTP ${live.status}); deploy it first`);
-
-// --- submit ----------------------------------------------------------------
-const res = await fetch(ENDPOINT, {
-  method: 'POST',
-  headers: { 'Content-Type': 'application/json; charset=utf-8' },
-  body: JSON.stringify({ host: HOST, key, keyLocation, urlList: urls }),
-});
-const meaning = {
-  200: 'OK, URLs received',
-  202: 'Accepted, key validation pending',
-  400: 'Bad request (invalid format)',
-  403: 'Forbidden: key not valid / not found at keyLocation',
-  422: 'Unprocessable: URLs do not belong to the host, or key mismatch',
-  429: 'Too many requests: slow down',
-};
-console.log(`indexnow: HTTP ${res.status} ${meaning[res.status] ?? ''}`.trim());
-process.exit(res.status === 200 || res.status === 202 ? 0 : 1);
+if (!submit) {
+  console.log('indexnow: dry run, nothing sent. Add --submit to send.');
+} else {
+  const error = await send();
+  if (error) {
+    console.error(`indexnow: ${error}`);
+    process.exitCode = 1;
+  }
+}
