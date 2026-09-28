@@ -259,9 +259,13 @@ longer in the repo; it survives only inside
 - `scripts/` — `hash-css.mjs` and `build-chat-knowledge.mjs` (part of
   `npm run build`), `qa-check.mjs` (`npm test`, ~1,980 assertions — run
   after every build), `indexnow.mjs` (`npm run indexnow`, dry run unless
-  `--submit`; only after a deploy is live).
-- `site/*deploy*.zip` — past deploy packages (untracked). The latest one
-  is the rollback copy for the next deploy.
+  `--submit`; only after a deploy is live), `package-deploy.mjs`
+  (`npm run package -- --name <x> --previous <live zip>`: builds the
+  deploy zip plus `<x>-delete-after-deploy.txt`, the stale files to move
+  to cPanel trash after the upload is verified).
+- `site/*deploy*.zip`, `site/*-delete-after-deploy.txt` — past deploy
+  packages and their delete lists (gitignored). The zip that is live is
+  the rollback copy and the `--previous` for the next `npm run package`.
 
 **Docs (repo root)** — `ARCHITECTURE.md`, `AUDIT.md`, `DESIGN_SYSTEM.md`,
 `3D_ART_DIRECTION.md`, `DEPLOYMENT_PLAN.md`, `docs/` (Phase 1 report and

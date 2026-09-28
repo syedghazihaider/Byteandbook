@@ -34,3 +34,7 @@ site/src/generated/
 Thumbs.db
 site/lighthouse-reports/
 .playwright-mcp/
+
+# Deploy packages and their stale-file lists (scripts/package-deploy.mjs).
+site/*deploy*.zip
+site/*-delete-after-deploy.txt

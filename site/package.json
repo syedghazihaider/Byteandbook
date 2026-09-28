@@ -11,7 +11,8 @@
     "build": "npm run css:build && npm run css:hash && astro build && npm run chat:knowledge",
     "preview": "astro preview",
     "test": "node scripts/qa-check.mjs",
-    "indexnow": "node scripts/indexnow.mjs"
+    "indexnow": "node scripts/indexnow.mjs",
+    "package": "node scripts/package-deploy.mjs"
   },
   "keywords": [],
   "author": "",
