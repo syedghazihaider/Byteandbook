@@ -1,0 +1,209 @@
+---
+// Phase 4: one static page per published Insights article
+// (src/content/insights/<slug>.md -> /insights/<slug>/). Drafts get no
+// route and no listing. Everything below is generated from the article's
+// frontmatter: BlogPosting + BreadcrumbList schema (+ FAQPage when the
+// article has a visible FAQ), byline, related services, and related
+// articles (same category or shared tags) for cluster cross-linking.
+import { getCollection, render, type CollectionEntry } from 'astro:content';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Header from '../../components/layout/Header.astro';
+import Footer from '../../components/layout/Footer.astro';
+import Container from '../../components/ui/Container.astro';
+import FaqSection from '../../components/ui/FaqSection.astro';
+import InsightCard from '../../components/insights/InsightCard.astro';
+import StartProjectTrigger from '../../components/project/StartProjectTrigger.astro';
+import { faqPageJsonLd } from '../../lib/faq';
+import { authorByName } from '../../data/authors';
+
+export async function getStaticPaths() {
+  const articles = (await getCollection('insights')).filter((a) => !a.data.draft);
+  return articles.map((article) => ({ params: { slug: article.id }, props: { article } }));
+}
+
+interface Props {
+  article: CollectionEntry<'insights'>;
+}
+const { article } = Astro.props;
+const { Content } = await render(article);
+const data = article.data;
+
+const SITE_URL = 'https://byteandbook.com';
+const path = `/insights/${article.id}/`;
+const canonicalUrl = data.canonical ?? new URL(path, SITE_URL).toString();
+
+// Related services: every slug must be a real service page (fail the
+// build on a typo rather than ship a broken link).
+const allServices = await getCollection('services');
+const relatedServices = (data.relatedServices ?? []).map((slug) => {
+  const s = allServices.find((x) => x.id === slug);
+  if (!s) throw new Error(`insights/${article.id}: unknown relatedServices slug "${slug}"`);
+  return s;
+});
+
+// Related articles: same category or at least one shared tag, most
+// overlap first, then newest. Max 3.
+const tags = new Set(data.tags ?? []);
+const relatedArticles = (await getCollection('insights'))
+  .filter((a) => !a.data.draft && a.id !== article.id)
+  .map((a) => ({
+    a,
+    score: (a.data.category === data.category ? 1 : 0) + (a.data.tags ?? []).filter((t) => tags.has(t)).length,
+  }))
+  .filter((x) => x.score > 0)
+  .sort((x, y) => y.score - x.score || y.a.data.publishedDate.valueOf() - x.a.data.publishedDate.valueOf())
+  .slice(0, 3)
+  .map((x) => x.a);
+
+const author = authorByName(data.author);
+const fmt = (d: Date) => d.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric', timeZone: 'UTC' });
+const words = (article.body ?? '').split(/\s+/).filter(Boolean).length;
+const readingMinutes = Math.max(1, Math.round(words / 230));
+
+const organizationRef = { '@id': `${SITE_URL}/#organization` };
+const articleJsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'BlogPosting',
+  '@id': `${canonicalUrl}#article`,
+  headline: data.title,
+  description: data.description,
+  datePublished: data.publishedDate.toISOString(),
+  dateModified: (data.updatedDate ?? data.publishedDate).toISOString(),
+  author: author
+    ? { '@type': 'Person', name: author.name, jobTitle: author.role, worksFor: organizationRef, ...(author.profileUrl ? { url: author.profileUrl } : {}) }
+    : organizationRef,
+  publisher: organizationRef,
+  mainEntityOfPage: canonicalUrl,
+  url: canonicalUrl,
+  image: `${SITE_URL}/og-default.jpg`,
+  wordCount: words,
+  ...(relatedServices.length > 0
+    ? { about: relatedServices.map((s) => ({ '@type': 'Service', name: s.data.title, url: `${SITE_URL}/services/${s.id}/` })) }
+    : {}),
+  ...(data.tags && data.tags.length > 0 ? { keywords: data.tags.join(', ') } : {}),
+};
+const breadcrumbJsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'BreadcrumbList',
+  itemListElement: [
+    { '@type': 'ListItem', position: 1, name: 'Home', item: `${SITE_URL}/` },
+    { '@type': 'ListItem', position: 2, name: 'Insights', item: `${SITE_URL}/insights/` },
+    { '@type': 'ListItem', position: 3, name: data.title, item: canonicalUrl },
+  ],
+};
+const faqs = data.faqs ?? [];
+const jsonLd = [articleJsonLd, breadcrumbJsonLd, ...(faqs.length > 0 ? [faqPageJsonLd(faqs)] : [])];
+---
+
+<BaseLayout title={`${data.title} | ByteAndBook`} description={data.description} path={path} jsonLd={jsonLd}>
+  <Header />
+
+  <main id="main-content" tabindex="-1">
+    <section class="pt-32 pb-10">
+      <Container class="max-w-3xl">
+        <nav class="mb-8 flex flex-wrap items-center gap-2 text-sm text-ink-300" aria-label="Breadcrumb">
+          <a href="/" class="hover:text-ink-200">Home</a>
+          <span>/</span>
+          <a href="/insights/" class="hover:text-ink-200">Insights</a>
+          <span>/</span>
+          <span class="text-ink-200">{data.category}</span>
+        </nav>
+
+        <span class="inline-block rounded-full border border-ink-700 bg-ink-900/60 px-4 py-1.5 text-xs font-semibold uppercase tracking-[0.18em] text-signal-400">
+          {data.category}
+        </span>
+        <h1 class="mt-5 text-page-title font-bold text-ink-50">{data.title}</h1>
+        <p class="mt-5 text-lg text-ink-300">{data.description}</p>
+
+        <div class="mt-6 flex flex-wrap items-center gap-x-3 gap-y-1 border-t border-ink-800 pt-4 text-sm text-ink-300">
+          {author && <span class="font-medium text-ink-200">{author.name}</span>}
+          {author && <span aria-hidden="true">·</span>}
+          <time datetime={data.publishedDate.toISOString()}>{fmt(data.publishedDate)}</time>
+          {data.updatedDate && (
+            <>
+              <span aria-hidden="true">·</span>
+              <span>Updated <time datetime={data.updatedDate.toISOString()}>{fmt(data.updatedDate)}</time></span>
+            </>
+          )}
+          <span aria-hidden="true">·</span>
+          <span>{readingMinutes} min read</span>
+        </div>
+      </Container>
+    </section>
+
+    <article class="pb-16">
+      <Container class="max-w-3xl">
+        <div class="prose-article">
+          <Content />
+        </div>
+
+        {data.sources && data.sources.length > 0 && (
+          <section class="mt-12 border-t border-ink-800 pt-8" aria-labelledby="sources-heading">
+            <h2 id="sources-heading" class="text-sm font-semibold uppercase tracking-[0.18em] text-ink-300">Sources</h2>
+            <ol class="mt-4 list-decimal space-y-2 pl-5 text-sm text-ink-300">
+              {data.sources.map((src) => (
+                <li>
+                  <a href={src.url} class="text-signal-400 hover:text-signal-300" rel="noopener noreferrer" target="_blank">{src.label}</a>
+                </li>
+              ))}
+            </ol>
+          </section>
+        )}
+
+        {author && (
+          <aside class="mt-12 rounded-bb-lg border border-ink-700 bg-ink-900/60 p-6" aria-label="About the author">
+            <p class="text-xs font-semibold uppercase tracking-[0.18em] text-ink-300">Written by</p>
+            <p class="mt-2 font-semibold text-ink-50">{author.name}</p>
+            <p class="text-sm text-ink-300">{author.bio}</p>
+          </aside>
+        )}
+      </Container>
+    </article>
+
+    {faqs.length > 0 && <FaqSection faqs={faqs} class="border-t border-ink-800 py-16" />}
+
+    {relatedServices.length > 0 && (
+      <section class="border-t border-ink-800 py-16">
+        <Container class="max-w-3xl">
+          <h2 class="text-2xl font-bold text-ink-50">Related Services</h2>
+          <div class="mt-6 grid gap-4 sm:grid-cols-2">
+            {relatedServices.map((s) => (
+              <a href={`/services/${s.id}/`} class="block rounded-bb-md border border-ink-700 bg-ink-900/60 px-5 py-4 transition-colors hover:border-signal-400">
+                <span class="font-semibold text-ink-50">{s.data.title}</span>
+                <span class="mt-1 block text-sm text-ink-300">{s.data.summary}</span>
+              </a>
+            ))}
+          </div>
+        </Container>
+      </section>
+    )}
+
+    {relatedArticles.length > 0 && (
+      <section class="border-t border-ink-800 py-16">
+        <Container>
+          <h2 class="text-2xl font-bold text-ink-50">Related Insights</h2>
+          <div class="mt-8 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+            {relatedArticles.map((a) => <InsightCard article={a} />)}
+          </div>
+        </Container>
+      </section>
+    )}
+
+    <section class="py-16">
+      <Container>
+        <div class="rounded-bb-lg border border-ink-700 bg-ink-900/60 px-8 py-14 text-center" data-reveal>
+          <h2 class="text-2xl font-bold text-ink-50 md:text-3xl">Have a Project in Mind?</h2>
+          <p class="mx-auto mt-3 max-w-xl text-ink-300">
+            Tell us what you're building. We'll scope it against the same process described on
+            every service page.
+          </p>
+          <div class="mt-7">
+            <StartProjectTrigger variant="primary">Start a Project</StartProjectTrigger>
+          </div>
+        </div>
+      </Container>
+    </section>
+  </main>
+
+  <Footer />
+</BaseLayout>

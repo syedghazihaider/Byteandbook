@@ -321,6 +321,76 @@
     line-height: 1.75;
   }
 
+  /* Phase 4: long-form Insights article body (rendered Markdown). The
+     page H1 is the article title, so Markdown content starts at ##. */
+  .prose-article {
+    color: var(--bb-ink-300);
+    font-size: var(--bb-text-lg);
+    line-height: 1.75;
+  }
+  .prose-article > * + * { margin-top: 1.25em; }
+  .prose-article h2 {
+    margin-top: 2.25em;
+    color: var(--bb-ink-50);
+    font-size: 1.625rem;
+    font-weight: 700;
+    line-height: 1.25;
+  }
+  .prose-article h3 {
+    margin-top: 1.75em;
+    color: var(--bb-ink-50);
+    font-size: 1.25rem;
+    font-weight: 600;
+    line-height: 1.35;
+  }
+  .prose-article h2 + *, .prose-article h3 + * { margin-top: 0.75em; }
+  .prose-article strong { color: var(--bb-ink-50); font-weight: 600; }
+  .prose-article a {
+    color: var(--bb-signal-400);
+    text-decoration: underline;
+    text-underline-offset: 3px;
+  }
+  .prose-article a:hover { color: var(--bb-signal-300); }
+  .prose-article ul, .prose-article ol { padding-left: 1.4em; }
+  .prose-article ul { list-style: disc; }
+  .prose-article ol { list-style: decimal; }
+  .prose-article li + li { margin-top: 0.4em; }
+  .prose-article li::marker { color: var(--bb-ink-500); }
+  .prose-article blockquote {
+    border-left: 3px solid var(--bb-signal-400);
+    padding-left: 1.1em;
+    color: var(--bb-ink-200);
+    font-style: italic;
+  }
+  .prose-article code {
+    border-radius: var(--bb-radius-sm);
+    background: var(--bb-ink-800);
+    padding: 0.1em 0.35em;
+    font-size: 0.9em;
+  }
+  .prose-article pre {
+    overflow-x: auto;
+    border: 1px solid var(--bb-ink-800);
+    border-radius: var(--bb-radius-md);
+    background: var(--bb-ink-900);
+    padding: 1em 1.25em;
+    font-size: 0.875rem;
+  }
+  .prose-article pre code { background: none; padding: 0; }
+  .prose-article table {
+    display: block;
+    overflow-x: auto;
+    border-collapse: collapse;
+    font-size: 0.95rem;
+  }
+  .prose-article th, .prose-article td {
+    border: 1px solid var(--bb-ink-800);
+    padding: 0.5em 0.75em;
+    text-align: left;
+  }
+  .prose-article th { color: var(--bb-ink-50); font-weight: 600; }
+  .prose-article hr { border-color: var(--bb-ink-800); margin: 2.5em 0; }
+
   /* Level 3: scroll reveal. Starts hidden only once JS has confirmed it
      will run (.js-ready gate below) — otherwise a slow script load
      would leave real content invisible. */

@@ -1,5 +1,6 @@
 import { defineCollection, z } from 'astro:content';
 import { glob } from 'astro/loaders';
+import { authors } from './data/authors';
 
 // Content Layer API (Astro v5+). Schema enforces SEO fields on every
 // service entry at build time — a service page cannot ship without a
@@ -29,13 +30,10 @@ const services = defineCollection({
   }),
 });
 
-// V2-7: article architecture for the future Insights hub. No entries
-// exist yet — src/content/insights/ is deliberately empty (not even a
-// placeholder file), and there is deliberately no /insights/<slug>/
-// route yet either, per CLAUDE.md's rule against fabricating articles
-// or routes. The schema is ready so publishing a real, reviewed
-// article later just means adding one markdown file plus a small
-// getStaticPaths route — no schema/collection changes needed then.
+// Insights articles: one markdown file per article in
+// src/content/insights/, published at /insights/<file-name>/ by
+// src/pages/insights/[slug].astro. Only real, reviewed articles go here
+// (CLAUDE.md: never fabricate articles).
 const insights = defineCollection({
   loader: glob({ pattern: '**/*.md', base: './src/content/insights' }),
   schema: z.object({
@@ -43,9 +41,15 @@ const insights = defineCollection({
     description: z.string().max(160),
     publishedDate: z.coerce.date(),
     updatedDate: z.coerce.date().optional(),
-    // Only ever set to a real, verified author — omitted (not a
-    // fallback "ByteAndBook Team" placeholder) when unset.
-    author: z.string().optional(),
+    // Must exactly match a real person in src/data/authors.ts (build
+    // fails otherwise). Omitted means the article is published under
+    // the ByteAndBook organization, never a generic placeholder name.
+    author: z
+      .string()
+      .refine((name) => authors.some((a) => a.name === name), {
+        message: 'author must match a name in src/data/authors.ts',
+      })
+      .optional(),
     category: z.enum(['Growth', 'Technology', 'Infrastructure', 'Creative', 'GEO & AI Search']),
     relatedServices: z.array(z.string()).optional(),
     tags: z.array(z.string()).optional(),
@@ -55,6 +59,11 @@ const insights = defineCollection({
     // insights/[slug].astro's getStaticPaths filter.
     draft: z.boolean().default(false),
     sources: z.array(z.object({ label: z.string(), url: z.string() })).optional(),
+    // Phase 4: the primary query this article targets. Not rendered;
+    // used for QA/reporting (one article per target keyword).
+    targetKeyword: z.string().optional(),
+    // Optional visible FAQ section, also emitted as FAQPage schema.
+    faqs: z.array(z.object({ question: z.string(), answer: z.string() })).optional(),
   }),
 });
 

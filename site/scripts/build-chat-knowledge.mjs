@@ -261,6 +261,34 @@ for (const page of SCRAPE_PAGES) {
   if (mainHtml) scrapedChunks.push(...chunkByHeadings(mainHtml, page.category));
 }
 
+// Phase 4: service-page FAQs (src/data/serviceFaqs.ts) are read from each
+// built service page's FAQPage JSON-LD; the service body itself already
+// comes from the markdown above, so only the FAQ is added here.
+//
+// Chunks containing a dollar figure are skipped: the assistant must never
+// quote prices, and a case-study figure like "a retainer of about $500 a
+// month" would read as one (same reason /case-studies/ isn't scraped).
+// The page itself still shows the full answer.
+const noDollarFigures = (chunk) => !/\$\d/.test(JSON.stringify(chunk));
+for (const s of services) {
+  const filePath = join(DIST, 'services', s.service.slug, 'index.html');
+  if (existsSync(filePath)) scrapedChunks.push(...extractFaqChunks(readFileSync(filePath, 'utf-8')).filter(noDollarFigures));
+}
+
+// Phase 4: published Insights articles (drafts are never built, so they
+// can't leak in here).
+const INSIGHTS_DIST = join(DIST, 'insights');
+if (existsSync(INSIGHTS_DIST)) {
+  for (const entry of readdirSync(INSIGHTS_DIST, { withFileTypes: true })) {
+    const filePath = join(INSIGHTS_DIST, entry.name, 'index.html');
+    if (!entry.isDirectory() || !existsSync(filePath)) continue;
+    const html = readFileSync(filePath, 'utf-8');
+    scrapedChunks.push(...extractFaqChunks(html).filter(noDollarFigures));
+    const mainHtml = extractMain(html);
+    if (mainHtml) scrapedChunks.push(...chunkByHeadings(mainHtml, `insights:${entry.name}`).filter(noDollarFigures));
+  }
+}
+
 // ---------------------------------------------------------------------
 // Write output
 // ---------------------------------------------------------------------

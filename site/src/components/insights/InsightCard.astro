@@ -1,10 +1,7 @@
 ---
-// Renders one published Insights article summary. Not currently used
-// anywhere — the insights content collection is empty until a real,
-// reviewed article exists — but built to the full schema now (see
-// content.config.ts) so publishing the first one needs no template
-// work. Author only renders when the entry actually has one — never a
-// generic team-byline fallback standing in for an unverified name.
+// Renders one published Insights article summary, on /insights/ and in
+// each article's "Related Insights" block. Author only renders when the
+// entry actually has one — never a generic team-byline fallback.
 import type { CollectionEntry } from 'astro:content';
 
 interface Props {

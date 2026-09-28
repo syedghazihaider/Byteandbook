@@ -71,12 +71,23 @@ const nonIndexablePages = {
   '/style-guide/': 'style-guide/index.html',
   '/checkout/': 'checkout/index.html',
 };
+// Phase 4: every built Insights article page (drafts are never built)
+// joins the indexable set, so each one gets the full per-page checks
+// below: internal links, unique title/description, canonical, H1, etc.
+const INSIGHTS_CONTENT_DIR = join(__dirname, '..', 'src', 'content', 'insights');
+const publishedArticleSlugs = existsSync(join(DIST, 'insights'))
+  ? readdirSync(join(DIST, 'insights'), { withFileTypes: true })
+      .filter((e) => e.isDirectory() && existsSync(join(DIST, 'insights', e.name, 'index.html')))
+      .map((e) => e.name)
+      .sort()
+  : [];
+for (const slug of publishedArticleSlugs) indexablePages[`/insights/${slug}/`] = `insights/${slug}/index.html`;
 const allPages = { ...indexablePages, ...nonIndexablePages };
 
 for (const [route, relPath] of Object.entries(allPages)) {
   check(`route exists: ${route} -> dist/${relPath}`, existsSync(join(DIST, relPath)));
 }
-check('exactly 27 known routes defined in this check', Object.keys(allPages).length === 27);
+check(`exactly ${27 + publishedArticleSlugs.length} known routes defined in this check (27 + ${publishedArticleSlugs.length} article(s))`, Object.keys(allPages).length === 27 + publishedArticleSlugs.length);
 
 // ---- 2. Core static assets --------------------------------------------
 // V2.0.1: styles.css is now content-hashed (scripts/hash-css.mjs) to
@@ -243,8 +254,9 @@ const sitemapUrlCount = sitemapFiles.reduce(
   (n, f) => n + (readFileSync(join(DIST, f), 'utf-8').match(/<loc>/g) || []).length,
   0
 );
-// Phase 3: +1 for the new /case-studies/ page.
-check('sitemap contains exactly 25 indexable URLs', sitemapUrlCount === 25);
+// Phase 3: +1 for the new /case-studies/ page. Phase 4: +1 per published
+// Insights article.
+check(`sitemap contains exactly ${25 + publishedArticleSlugs.length} indexable URLs (25 + ${publishedArticleSlugs.length} article(s))`, sitemapUrlCount === 25 + publishedArticleSlugs.length);
 
 // duplicate title/description check across all pages
 const titleValues = [...titles.values()];
@@ -700,11 +712,36 @@ check('insights/: no leftover "coming soon" placeholder text', !/articles are co
 check('insights/: real permanent content present (knowledge areas)', /knowledge areas/i.test(insightsNorm));
 check('insights/: AI search / GEO explanation present', /generative engine optimization|ai search/i.test(insightsNorm));
 check('insights/: evidence standards present', /evidence standard/i.test(insightsNorm));
-check('insights/: honest empty-article-state message present', /first articles are in progress/i.test(insightsNorm));
+if (publishedArticleSlugs.length === 0) {
+  check('insights/: honest empty-article-state message present (no articles yet)', /first articles are in progress/i.test(insightsNorm));
+} else {
+  check('insights/: empty-state message gone once articles exist', !/first articles are in progress/i.test(insightsNorm));
+  for (const slug of publishedArticleSlugs) {
+    check(`insights/: lists /insights/${slug}/`, insightsHtml.includes(`href="/insights/${slug}/"`));
+  }
+}
 check('insights/: links to at least 3 real service pages', (insightsHtml.match(/href="\/services\/[a-z-]+\/"/g) || []).length >= 3);
 check('insights/: links to /work/ (evidence-standard cross-link)', /href="\/work\/"/.test(insightsHtml));
 check('src/content.config.ts: insights collection schema exists', readFileSync(join(__dirname, '..', 'src', 'content.config.ts'), 'utf-8').includes("defineCollection"));
-check('src/content/insights/: no fake article files (collection is empty)', !existsSync(join(__dirname, '..', 'src', 'content', 'insights')) || readdirSync(join(__dirname, '..', 'src', 'content', 'insights')).length === 0);
+// Phase 4 (replaces the V2-7 "collection must be empty" guard): every
+// article file must build to exactly one page unless it's a draft, and
+// drafts must never produce a page or a sitemap entry.
+{
+  const articleFiles = existsSync(INSIGHTS_CONTENT_DIR) ? readdirSync(INSIGHTS_CONTENT_DIR).filter((f) => f.endsWith('.md')) : [];
+  const sitemapXml = sitemapFiles.map((f) => readFileSync(join(DIST, f), 'utf-8')).join('');
+  for (const file of articleFiles) {
+    const slug = file.replace(/\.md$/, '');
+    const isDraft = /^draft:\s*true\s*$/m.test(readFileSync(join(INSIGHTS_CONTENT_DIR, file), 'utf-8').split(/^---\s*$/m)[1] || '');
+    if (isDraft) {
+      check(`insights draft ${slug}: no page built`, !existsSync(join(DIST, 'insights', slug)));
+      check(`insights draft ${slug}: not in sitemap`, !sitemapXml.includes(`/insights/${slug}/`));
+    } else {
+      check(`insights ${slug}: page built`, publishedArticleSlugs.includes(slug));
+      check(`insights ${slug}: in sitemap`, sitemapXml.includes(`>https://byteandbook.com/insights/${slug}/<`));
+    }
+  }
+  check('insights: every built article page has a source file (no orphan pages)', publishedArticleSlugs.every((slug) => articleFiles.includes(`${slug}.md`)));
+}
 check('components/insights/InsightCard.astro exists', existsSync(join(__dirname, '..', 'src', 'components', 'insights', 'InsightCard.astro')));
 if (existsSync(join(__dirname, '..', 'src', 'components', 'insights', 'InsightCard.astro'))) {
   const cardSrc = readFileSync(join(__dirname, '..', 'src', 'components', 'insights', 'InsightCard.astro'), 'utf-8');
@@ -940,6 +977,50 @@ check('styles.css: body stack uses Inter Fallback', /--bb-font-body:\s*"?'?Inter
   const motionSrc = readFileSync(join(__dirname, '..', 'src', 'scripts', 'motion.ts'), 'utf-8');
   check('motion.ts: afterLoadAndIdle() gate exists', /export function afterLoadAndIdle\(\)/.test(motionSrc));
   check('motion.ts: onVisibilityChange gates compact viewports on load + idle', /let ready = !isCompactViewport\(\);/.test(motionSrc) && /afterLoadAndIdle\(\)\.then/.test(motionSrc));
+}
+
+// ---- 12. Phase 4: FAQ blocks + Insights articles ---------------------------
+// FAQPage schema must mirror the visible FAQ exactly (Google's FAQPage
+// rule): same questions, same order, as the <summary> elements rendered.
+function faqSchemaQuestions(html) {
+  const out = [];
+  for (const m of html.matchAll(/<script type="application\/ld\+json">([\s\S]*?)<\/script>/g)) {
+    let d;
+    try { d = JSON.parse(m[1]); } catch { continue; }
+    if (d['@type'] === 'FAQPage') out.push(...d.mainEntity.map((q) => q.name));
+  }
+  return out;
+}
+const visibleFaqQuestions = (html) =>
+  [...html.matchAll(/<summary[^>]*>([\s\S]*?)<svg/g)].map((m) => m[1].replace(/<[^>]+>/g, '').replace(/&#39;|&apos;/g, "'").replace(/&quot;/g, '"').replace(/&amp;/g, '&').trim());
+{
+  const faqSrc = readFileSync(join(__dirname, '..', 'src', 'data', 'serviceFaqs.ts'), 'utf-8');
+  const slugsWithFaqs = [...faqSrc.matchAll(/^ {2}(?:'([a-z-]+)'|([a-z-]+)): \[/gm)].map((m) => m[1] || m[2]);
+  check('serviceFaqs.ts: GEO and SEO have FAQs', slugsWithFaqs.includes('geo') && slugsWithFaqs.includes('seo'));
+  for (const slug of SERVICE_SLUGS) {
+    const html = readHtml(`services/${slug}/index.html`);
+    const schemaQs = faqSchemaQuestions(html);
+    const visibleQs = visibleFaqQuestions(html);
+    if (slugsWithFaqs.includes(slug)) {
+      check(`services/${slug}/: FAQ has 3-6 questions`, visibleQs.length >= 3 && visibleQs.length <= 6);
+      check(`services/${slug}/: FAQPage schema matches visible FAQ exactly`, JSON.stringify(schemaQs) === JSON.stringify(visibleQs));
+    } else {
+      check(`services/${slug}/: no FAQ section or FAQPage schema without reviewed FAQs`, schemaQs.length === 0 && visibleQs.length === 0);
+    }
+  }
+}
+for (const slug of publishedArticleSlugs) {
+  const html = readHtml(`insights/${slug}/index.html`);
+  const blocks = [...html.matchAll(/<script type="application\/ld\+json">([\s\S]*?)<\/script>/g)].map((m) => { try { return JSON.parse(m[1]); } catch { return {}; } });
+  const post = blocks.find((b) => b['@type'] === 'BlogPosting');
+  check(`insights/${slug}/: BlogPosting schema present`, !!post);
+  if (post) {
+    check(`insights/${slug}/: BlogPosting has headline, datePublished, dateModified`, !!(post.headline && post.datePublished && post.dateModified));
+    check(`insights/${slug}/: BlogPosting canonical matches page`, post.mainEntityOfPage === `https://byteandbook.com/insights/${slug}/`);
+    check(`insights/${slug}/: author is a Person or the Organization, never a placeholder`, (post.author?.['@type'] === 'Person' && !!post.author.name) || post.author?.['@id'] === 'https://byteandbook.com/#organization');
+  }
+  check(`insights/${slug}/: BreadcrumbList schema present`, blocks.some((b) => b['@type'] === 'BreadcrumbList'));
+  check(`insights/${slug}/: FAQPage schema (if any) matches visible FAQ exactly`, JSON.stringify(faqSchemaQuestions(html)) === JSON.stringify(visibleFaqQuestions(html)));
 }
 
 // IndexNow key file: exactly one public/<32-hex>.txt whose content is the
