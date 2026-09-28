@@ -11,4 +11,8 @@
 // The PHP backend's own copy of this constant (public/api/project-request.php)
 // must be updated to match by hand whenever this value changes — there's
 // no shared build step between the two languages/runtimes.
-export const TERMS_VERSION = '2026-08-v2';
+//
+// v3 (2026-09-v3): Privacy Policy §7/§9 now disclose Google Analytics 4 and
+// Google Signals (published 2026-09-27), and Terms §28 states ByteAndBook
+// is a New York LLC (2026-09-28).
+export const TERMS_VERSION = '2026-09-v3';

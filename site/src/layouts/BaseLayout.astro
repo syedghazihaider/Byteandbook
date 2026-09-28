@@ -37,10 +37,10 @@ const OG_IMAGE_ALT = 'ByteAndBook logo';
 // Sitewide identity graph — present on every page (not just the
 // homepage) per standard practice, so any page can be understood in
 // isolation. Only fields with real, verified values are included: the
-// logo is the real brand asset (public/brand/logo.jpg); no legal entity
-// name confirmed (see /terms/
-// section 27), no physical address/phone — all correctly omitted
-// rather than invented. `sameAs` is sourced from config/site.ts and
+// logo is the real brand asset (public/brand/logo.jpg); the entity is a
+// New York LLC (confirmed 2026-09-28, /terms/ section 28), so the address
+// states only region + country; no street address, legal name or phone
+// has been approved for publication, so those stay omitted. `sameAs` is sourced from config/site.ts and
 // only appears at all once a verified external profile URL exists —
 // see V2-5 report for why it's absent right now.
 const organizationId = `${SITE_URL}/#organization`;
@@ -66,6 +66,11 @@ const siteGraph = {
         width: 2000,
         height: 2000,
         caption: SITE_NAME,
+      },
+      address: {
+        '@type': 'PostalAddress',
+        addressRegion: 'NY',
+        addressCountry: 'US',
       },
       description:
         'ByteAndBook is a digital technology and growth agency spanning marketing, software engineering, cloud infrastructure, and brand design.',

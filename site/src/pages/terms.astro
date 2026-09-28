@@ -2,10 +2,9 @@
 // V2-4: real, published Terms of Service, replacing the V2-1
 // placeholder. Now indexable — a Terms page is standard practice for a
 // professional agency site and reinforces GEO entity/service clarity
-// per CLAUDE.md. Jurisdiction is deliberately phrased conservatively
-// (see section 27) rather than naming a specific state/country, because
-// ByteAndBook's governing legal entity has not been confirmed — see the
-// V2-4 report for what still needs deciding before this can be tightened.
+// per CLAUDE.md. Section 28 states the entity (a New York LLC, confirmed
+// 2026-09-28) and deliberately says nothing more: no address, and no
+// separately chosen governing-law clause beyond the existing wording.
 import BaseLayout from '../layouts/BaseLayout.astro';
 import Header from '../components/layout/Header.astro';
 import Footer from '../components/layout/Footer.astro';
@@ -15,7 +14,7 @@ import { TERMS_VERSION } from '../lib/legal';
 
 const SITE_URL = 'https://byteandbook.com';
 const path = '/terms/';
-const lastUpdated = 'August 2026';
+const lastUpdated = 'September 2026';
 
 const sections = [
   { id: 'introduction', label: 'Introduction' },
@@ -367,11 +366,10 @@ const breadcrumbJsonLd = {
           <section id="governing-law">
             <h2 class="text-2xl font-bold text-ink-50">28. Governing law / jurisdiction</h2>
             <p class="mt-3">
-              These Terms are governed by the laws applicable to ByteAndBook's place of business, and
-              any dispute arising under them is subject to the exclusive jurisdiction of the competent
-              courts of that place, without regard to conflict-of-law principles. ByteAndBook will
-              update this section to name a specific governing jurisdiction once its operating legal
-              entity is finalized.
+              ByteAndBook is a limited liability company organized in the State of New York, United
+              States. These Terms are governed by the laws applicable to ByteAndBook's place of
+              business, and any dispute arising under them is subject to the exclusive jurisdiction of
+              the competent courts of that place, without regard to conflict-of-law principles.
             </p>
           </section>
         </div>
