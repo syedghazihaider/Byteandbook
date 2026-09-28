@@ -7,21 +7,27 @@ standing instructions — do not ask the user to repeat them.
 ByteAndBook
 Domain: https://byteandbook.com
 
-## CURRENT VERIFIED ENVIRONMENT
-- Namecheap Stellar Shared Hosting, cPanel.
+## CURRENT VERIFIED ENVIRONMENT (updated 2026-09-27)
+- Namecheap Stellar Shared Hosting, cPanel, LiteSpeed web server. Reach
+  cPanel only via Namecheap → Hosting List → cPanel (direct cPanel login
+  does not work for this account).
 - Live document root: `/home/bytesbra/public_html`
-- Current live site is static.
-- Current application source is `index.html`.
-- Existing stack: HTML5, inline CSS, Tailwind CDN, vanilla JavaScript,
-  Google Fonts, Font Awesome.
-- No active PHP application. No active WordPress runtime. No backend/API.
-  No active database connection.
+- Live site = the static build of `site/` (Astro 5), uploaded manually as a
+  zip of `site/dist/` and extracted over `public_html`. `main` matches live.
+- Stack: Astro 5 static output, Tailwind 3 (compiled by the standalone CLI,
+  not Vite), Three.js + GSAP (lazy-loaded), self-hosted Inter/Sora fonts,
+  GA4 (G-EEQFCCDHDR, loaded after page load).
+- Two small PHP endpoints are live: `api/project-request.php` (Start
+  Project form, sends mail) and `api/chat.php` (AI assistant via Gemini;
+  key read from `/home/bytesbra/.byteandbook/gemini.key`, outside
+  public_html). No WordPress runtime, no database connection.
+- `public_html/.htaccess` ships from `site/public/.htaccess`: www→apex and
+  index.html redirects, 404 page, no directory listings, cache headers.
+  HTTP→HTTPS is done at server level (not the cPanel toggle, which is off).
 - `bytesbra_wp928.sql` is an **orphaned legacy WordPress database** and must
   NOT be imported, modified, connected, or deleted.
-- Existing login/signup/cart/checkout functionality is demo-only.
-- Existing login/signup stores data in `localStorage` and must NOT be
-  retained as production authentication.
-- Existing contact form is disabled/demo-only.
+- No login/signup/cart. `/checkout/` is a payment page for existing order
+  references only (`noindex`, and excluded from the sitemap).
 
 ## SERVER SAFETY
 Never overwrite or delete:
@@ -216,23 +222,70 @@ skills, or integrations are genuinely required for this project.
   keys, payment, external service authorization, system-wide changes, or
   could affect production, ask the user first.
 
-## FILE INVENTORY (as of 2026-08-27)
-- `index.html` — existing static single-page site ("ByteAndBook - Creative
-  Agency"), Tailwind CDN + vanilla JS/CSS, no build step. This is the
-  current live application source — do not modify except within an
-  explicitly approved phase.
-- `byteandbook github.txt` — same byte size as `index.html` (85,067 bytes);
-  appears to be a copy/export of the same page. Not yet diffed against
-  `index.html` — treat as reference until confirmed identical.
+## FILE INVENTORY (as of 2026-09-27)
+The old single-file site (`index.html`, `byteandbook github.txt`) is no
+longer in the repo; it survives only inside
+`byteandbook-backup-2026-08-26.zip`.
+
+**Source — `site/` (Astro 5 project; run everything from here)**
+- `src/pages/` — one `.astro` file per route: `index`, `about`, `process`,
+  `work`, `case-studies`, `insights`, `contact`, `privacy`, `terms`,
+  `refund-policy`, `checkout`, `404`, `style-guide` (noindex); plus
+  `services/index`, the three category pages (`growth-ai-discovery`,
+  `web-brand-publishing`, `infrastructure-automation`) and `[slug].astro`
+  for the 11 individual services.
+- `src/content/services/*.md` — the 11 service pages' content (single
+  source of truth, also read by the chatbot knowledge build).
+- `src/data/` — `anonymizedCaseStudies.ts` (the 4 real case studies, read
+  by `/case-studies/` and `/work/`), `caseStudies.ts` (future named-client
+  entries, empty), `leadership.ts` (empty).
+- `src/layouts/BaseLayout.astro` — every page's `<head>`: title, meta,
+  canonical, OG/Twitter, Organization/WebSite JSON-LD, font preloads, the
+  deferred GA4 loader.
+- `src/components/` — `layout`, `ui`, `three` (3D scenes), `diagrams`
+  (2D FlowSteps), `chat`, `project` (Start Project modal), `trust`,
+  `legal`, `checkout`, `insights`.
+- `src/scripts/` — `motion.ts` (reduced-motion, compact-viewport and
+  load+idle gates for 3D), `three/*` (scene code), `chatbot.ts`.
+- `src/styles/global.css` — design tokens, self-hosted `@font-face` +
+  metric-matched fallback faces, Tailwind input.
+- `src/config/site.ts` (verified social URLs), `src/lib/` (categories,
+  legal version, pillar colors), `src/generated/` (build output, ignored).
+- `public/` — copied as-is into the build: `.htaccess`, `robots.txt`,
+  `favicon.svg`, `og-default.jpg`, `brand/logo.jpg` (square master logo),
+  `fonts/` (Inter/Sora latin woff2 + OFL licences), `api/*.php`, the
+  IndexNow key file `87d4b1f75ad953141401e3595ed2dd6a.txt`. Checked out
+  with LF line endings (`.gitattributes`) so builds are reproducible.
+- `scripts/` — `hash-css.mjs` and `build-chat-knowledge.mjs` (part of
+  `npm run build`), `qa-check.mjs` (`npm test`, ~1,980 assertions — run
+  after every build), `indexnow.mjs` (`npm run indexnow`, dry run unless
+  `--submit`; only after a deploy is live).
+- `site/*deploy*.zip` — past deploy packages (untracked). The latest one
+  is the rollback copy for the next deploy.
+
+**Docs (repo root)** — `ARCHITECTURE.md`, `AUDIT.md`, `DESIGN_SYSTEM.md`,
+`3D_ART_DIRECTION.md`, `DEPLOYMENT_PLAN.md`, `docs/` (Phase 1 report and
+deploy instructions). Some predate the Astro rebuild; verify against the
+code before relying on them.
+
+**Legacy — never modify or delete**
 - `bytesbra_wp928.sql` — orphaned legacy WordPress database dump
   (`bytesbra_wp928`, table prefix `wpfq_`). Reference only — never import,
   modify, connect, or delete.
-- `byteandbook-backup-2026-08-26.zip` — dated backup archive of the prior
-  site state. Never overwrite or delete.
+- `byteandbook-backup-2026-08-26.zip` — backup of the old single-file
+  site. Never overwrite or delete.
+- `byteandbook-backup-pre-phase1-2026-09-22.zip`,
+  `byteandbook-deploy-phase1-2026-09-22.zip` — Phase 1 backup/deploy
+  archives (untracked).
 
 ## STANDING SAFETY RULES (do not repeat each session)
-1. Do not modify `index.html` unless the current approved phase explicitly
-   calls for it.
+1. Do not modify the site's critical entry points unless the current
+   approved phase explicitly calls for it, and always show the diff first:
+   `site/public/.htaccess` (a mistake can take the whole site down),
+   `site/public/api/chat.php` and `site/public/api/project-request.php`
+   (live backend endpoints), `site/src/layouts/BaseLayout.astro` (every
+   page's head, schema and analytics), `site/astro.config.mjs` (site URL,
+   sitemap), and the IndexNow key file in `site/public/`.
 2. Do not modify or delete `byteandbook-backup-2026-08-26.zip`.
 3. Do not modify, import, or connect `bytesbra_wp928.sql`.
 4. Do not touch `.well-known` or SSL configuration.
