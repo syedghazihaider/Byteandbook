@@ -200,6 +200,61 @@ export const serviceFaqs: Record<string, Faq[]> = {
         "We ship within the US and internationally. Every order comes with a 14-day inspection period after delivery, so you can check that the hardware arrived in the condition and specification you ordered and report any problem within that window. If something is wrong, we replace the item or refund it.",
     },
   ],
+  'growth-ai-discovery': [
+    {
+      question: 'Where should I start: SEO, GEO, ads or social media?',
+      answer:
+        "It depends on where you are today. If you need leads soon and have little search traffic, paid campaigns bring visitors immediately while SEO builds. If you already rank on Google but AI tools don't mention you, start with GEO. If you post regularly but can't tell what it produces, start by measuring social properly. The trade-off: paid traffic stops when the spend stops, while SEO and GEO build up over time but take longer to show results. The research step decides this with you instead of guessing.",
+    },
+    {
+      question: 'Do I need SEO and GEO as separate services?',
+      answer:
+        "Usually not. GEO builds on the same foundations as SEO (crawlable pages, clear content, structured data), so for most businesses they're planned together. GEO adds the parts search rankings don't cover: how AI tools describe and cite you.",
+    },
+    {
+      question: 'Do you sell fixed marketing packages?',
+      answer:
+        "No. Channels and content are chosen to fit your budget and timeline, so a business that needs local leads and one that needs national awareness don't get the same bundle.",
+    },
+    {
+      question: 'How do you report results?',
+      answer:
+        'In plain numbers tied to your goals (leads, conversions and where they came from), using data from tools like Google Analytics and Search Console, not a dashboard of vanity metrics. The plan is adjusted based on what those numbers show.',
+    },
+  ],
+  'digital-marketing': [
+    {
+      question: 'Which ad platforms do you run campaigns on?',
+      answer: 'Google Ads and Meta (Facebook and Instagram).',
+    },
+    {
+      question: 'Why build a dedicated landing page instead of sending ads to my homepage?',
+      answer:
+        'Because a homepage has to serve every visitor, while an ad makes one specific promise. A landing page that continues exactly what the ad said converts better, and it gives each campaign its own clean conversion data instead of mixing it into site-wide numbers.',
+    },
+    {
+      question: 'How do you know whether a campaign is working?',
+      answer:
+        'Every conversion (a form submission, call or purchase) is tracked back to the campaign and ad that produced it, so campaigns are judged on cost per lead or sale, not on clicks or impressions.',
+    },
+  ],
+  'social-media-marketing': [
+    {
+      question: 'Which platforms do you manage?',
+      answer:
+        'Instagram, Facebook and LinkedIn. Community management is included: we reply to comments and messages, not just publish posts.',
+    },
+    {
+      question: 'How do you know if social media is actually working?',
+      answer:
+        'Engagement is tracked through to audience growth, and audience growth through to leads. Links from social posts are tagged, so visits and enquiries in your analytics show which posts and platforms produced them, instead of judging success by likes alone.',
+    },
+    {
+      question: 'Do you create the content or just post it?',
+      answer:
+        'Both. Content is planned and produced with a distribution plan attached: which platform, what format, and what each post is meant to lead to.',
+    },
+  ],
   geo: [
     {
       question: 'How is GEO different from SEO?',
