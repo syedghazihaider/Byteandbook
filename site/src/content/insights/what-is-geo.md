@@ -20,7 +20,7 @@ faqs:
     answer: "Google says no. Its documentation states there are no additional technical requirements: a page must be indexed and eligible to be shown in Google Search with a snippet, and existing SEO best practices continue to apply."
   - question: "Can I control whether AI tools use my content?"
     answer: "Partly, through robots.txt. OpenAI, for example, documents separate crawlers: OAI-SearchBot surfaces sites in ChatGPT search, while GPTBot collects content that may be used to train its models. You can allow one and block the other, depending on whether you want to be cited, trained on, both or neither."
-draft: true
+draft: false
 ---
 
 Generative engine optimization (GEO) is the practice of making a business's information easy for AI answer engines to find, understand and cite accurately. These are tools like ChatGPT search, Perplexity and Google's AI Overviews, which answer a question directly instead of only returning a list of links.
