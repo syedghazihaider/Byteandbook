@@ -44,6 +44,19 @@ it. Build and test locally/staging first. When deployment is eventually
 approved, deploy only production website files to
 `/home/bytesbra/public_html` and preserve `.well-known`.
 
+**Offer to do it, don't just describe it.** Once the user has approved a
+deployment (or any other task — a git push, a live check, a cPanel/file
+upload), and the assistant actually has a way to perform it (Claude Code's
+local shell/SFTP access, or a chat session's browser automation via an
+already-authenticated tab), do it directly instead of only handing the
+user manual click-by-click steps. Manual instructions are the fallback
+for when neither assistant has a working path to do the step itself, not
+the default. This still requires the user's explicit go-ahead for the
+specific action each time (per the approval rule above and each
+assistant's own safety rules for irreversible/production actions) — the
+change is not skipping approval, it's offering to be the one who acts
+once approval is given, rather than leaving it to the user by default.
+
 ## MAIN OBJECTIVE
 Completely rebuild ByteAndBook into a premium international-standard
 Digital Technology & Growth Agency website.
