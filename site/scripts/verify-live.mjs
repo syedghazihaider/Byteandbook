@@ -60,6 +60,19 @@ async function getBuffer(path) {
 // the first object of the given @type, looking inside a top-level @graph
 // array too (BaseLayout.astro emits Organization/WebSite as one script
 // with @graph, and FAQPage as its own separate script).
+// Decodes the small set of HTML entities Astro emits when rendering
+// question/answer text (it doesn't escape anything else). The FAQPage
+// JSON-LD carries the raw string; the visible <summary>/<p> markup has it
+// HTML-escaped, so comparing them requires decoding one side first.
+function decodeEntities(s) {
+  return s
+    .replace(/&#39;/g, "'")
+    .replace(/&quot;/g, '"')
+    .replace(/&amp;/g, '&')
+    .replace(/&lt;/g, '<')
+    .replace(/&gt;/g, '>');
+}
+
 function findLdType(html, type) {
   const scripts = [...html.matchAll(/<script type="application\/ld\+json">([\s\S]*?)<\/script>/g)].map((m) => m[1]);
   for (const s of scripts) {
@@ -226,8 +239,8 @@ console.log(`verify-live: checking ${SITE} ...`);
     const visible = [...body.matchAll(
       /<summary[^>]*>([\s\S]*?)<svg[\s\S]*?<\/svg>\s*<\/summary>\s*<p[^>]*>([\s\S]*?)<\/p>/g
     )].map((m) => ({
-      question: m[1].replace(/<[^>]+>/g, '').trim(),
-      answer: m[2].replace(/<[^>]+>/g, '').trim(),
+      question: decodeEntities(m[1].replace(/<[^>]+>/g, '')).trim(),
+      answer: decodeEntities(m[2].replace(/<[^>]+>/g, '')).trim(),
     }));
 
     check(`/services/${slug}/: visible FAQ count matches schema count`, visible.length === schemaQAs.length);
@@ -288,7 +301,19 @@ if (skipFiles) {
   files.sort();
 
   let mismatched = 0;
+  // Not raw-fetchable, by design: .htaccess is server config (LiteSpeed
+  // returns 403 for it), and the PHP endpoints execute rather than serve
+  // their source (a plain GET gets 405, not the file). Checked for
+  // existence/behavior elsewhere (security section, manual testing) —
+  // skip them here instead of treating "not served as static text" as a
+  // deploy mismatch.
+  const NOT_RAW_COMPARABLE = [/^\.htaccess$/, /^api\/.*\.php$/];
+  let skipped = 0;
   for (const rel of files) {
+    if (NOT_RAW_COMPARABLE.some((re) => re.test(rel))) {
+      skipped++;
+      continue;
+    }
     const local = readFileSync(join(DIST, ...rel.split('/')));
     const { res, buf } = await getBuffer(`/${rel}`);
     checks++;
@@ -297,7 +322,10 @@ if (skipFiles) {
       fail(`file not byte-identical live: /${rel} (status ${res.status})`);
     }
   }
-  console.log(`  dist/ vs live: ${files.length} files, ${files.length - mismatched} byte-identical`);
+  console.log(
+    `  dist/ vs live: ${files.length} files, ${files.length - skipped - mismatched} byte-identical`
+      + (skipped ? `, ${skipped} skipped (not raw-fetchable)` : '')
+  );
 }
 
 // ---- Report -----------------------------------------------------------------
