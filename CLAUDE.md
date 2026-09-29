@@ -222,7 +222,7 @@ skills, or integrations are genuinely required for this project.
   keys, payment, external service authorization, system-wide changes, or
   could affect production, ask the user first.
 
-## FILE INVENTORY (as of 2026-09-27)
+## FILE INVENTORY (as of 2026-09-28)
 The old single-file site (`index.html`, `byteandbook github.txt`) is no
 longer in the repo; it survives only inside
 `byteandbook-backup-2026-08-26.zip`.
@@ -233,24 +233,45 @@ longer in the repo; it survives only inside
   `refund-policy`, `checkout`, `404`, `style-guide` (noindex); plus
   `services/index`, the three category pages (`growth-ai-discovery`,
   `web-brand-publishing`, `infrastructure-automation`) and `[slug].astro`
-  for the 11 individual services.
+  for the 11 individual services. `insights/[slug].astro` (Phase 4): the
+  article template — BlogPosting + BreadcrumbList (+ FAQPage when the
+  article has `faqs`) schema, byline from `authors.ts`, sources, related
+  services and related articles (same category or shared tags); draft
+  articles never build.
 - `src/content/services/*.md` — the 11 service pages' content (single
   source of truth, also read by the chatbot knowledge build).
 - `src/data/` — `anonymizedCaseStudies.ts` (the 4 real case studies, read
   by `/case-studies/` and `/work/`), `caseStudies.ts` (future named-client
-  entries, empty), `leadership.ts` (empty).
+  entries, empty), `leadership.ts` (empty), `serviceFaqs.ts` (Phase 4:
+  reviewed FAQ Q&As keyed by service/category slug, rendered on the
+  matching `/services/<slug>/` page and as FAQPage schema from the same
+  array — 14 pages, 52 answers total), `authors.ts` (Phase 4: Insights
+  article bylines; an article's author must match an entry here or the
+  build fails).
 - `src/layouts/BaseLayout.astro` — every page's `<head>`: title, meta,
   canonical, OG/Twitter, Organization/WebSite JSON-LD, font preloads, the
   deferred GA4 loader.
 - `src/components/` — `layout`, `ui`, `three` (3D scenes), `diagrams`
   (2D FlowSteps), `chat`, `project` (Start Project modal), `trust`,
-  `legal`, `checkout`, `insights`.
+  `legal`, `checkout`, `insights`. `ui/FaqSection.astro` (Phase 4): the
+  accordion FAQ list, extracted from the homepage and reused on service/
+  category pages and Insights articles — pair with `lib/faq.ts`'s
+  `faqPageJsonLd()` on the same array so schema and visible copy can never
+  drift apart.
 - `src/scripts/` — `motion.ts` (reduced-motion, compact-viewport and
   load+idle gates for 3D), `three/*` (scene code), `chatbot.ts`.
 - `src/styles/global.css` — design tokens, self-hosted `@font-face` +
   metric-matched fallback faces, Tailwind input.
 - `src/config/site.ts` (verified social URLs), `src/lib/` (categories,
-  legal version, pillar colors), `src/generated/` (build output, ignored).
+  legal version, pillar colors, `faq.ts` — the `Faq` type and
+  `faqPageJsonLd()` builder shared by the homepage, service pages and
+  Insights articles), `src/generated/` (build output, ignored).
+- Legal entity: ByteAndBook is a New York LLC (Terms of Service §28; no
+  street address published). Organization schema's `address` carries only
+  `addressRegion: "NY"` and `addressCountry: "US"`. `TERMS_VERSION` (in
+  `src/lib/legal.ts` and mirrored in `public/api/project-request.php`,
+  recorded on every project request) is currently `2026-09-v3` — bump it
+  together in both places whenever Terms or Privacy changes materially.
 - `public/` — copied as-is into the build: `.htaccess`, `robots.txt`,
   `favicon.svg`, `og-default.jpg`, `brand/logo.jpg` (square master logo),
   `fonts/` (Inter/Sora latin woff2 + OFL licences), `api/*.php`, the
@@ -262,7 +283,17 @@ longer in the repo; it survives only inside
   `--submit`; only after a deploy is live), `package-deploy.mjs`
   (`npm run package -- --name <x> --previous <live zip>`: builds the
   deploy zip plus `<x>-delete-after-deploy.txt`, the stale files to move
-  to cPanel trash after the upload is verified).
+  to cPanel trash after the upload is verified), `verify-live.mjs`
+  (`npm run verify-live`, optionally `-- --skip-files` or
+  `-- --delete-list <file>`: post-deploy check against the live site —
+  www→apex and `/index.html` redirects, 404 handling, security headers,
+  cache headers on hashed vs. static assets, the IndexNow key file, the
+  Organization schema's NY/US-only address, all 14 FAQ pages' schema
+  matching their visible copy exactly, the most recent
+  `*-delete-after-deploy.txt` files actually returning 404, and — unless
+  skipped — every file in `dist/` byte-identical to what's live). Run
+  this from a machine whose network can actually reach byteandbook.com;
+  it can't be verified from a sandboxed egress-restricted environment.
 - `site/*deploy*.zip`, `site/*-delete-after-deploy.txt` — past deploy
   packages and their delete lists (gitignored). The zip that is live is
   the rollback copy and the `--previous` for the next `npm run package`.
