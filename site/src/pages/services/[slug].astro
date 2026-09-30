@@ -103,6 +103,16 @@ const isHardware = service.id === 'computer-hardware';
 const isBranding = service.id === 'branding';
 const isEbook = service.id === 'ebook-publishing';
 
+// Phase 9 SEO: per-service <title> override so the meta title can be a
+// full 50-60 char descriptive phrase (for SERP display and keyword
+// coverage) without changing the short on-page H1/breadcrumb title
+// (service.data.title), which stays the clean display name.
+const seoTitles: Record<string, string> = {
+  seo: 'SEO Services: Technical & Content SEO | ByteAndBook',
+  devops: 'DevOps Services: CI/CD & Cloud Automation | ByteAndBook',
+};
+const pageTitle = seoTitles[service.id] ?? `${service.data.title} | ByteAndBook`;
+
 // Natural, per-service CTA phrasing — avoids the "Discuss a {title} Project"
 // template's grammar break on vowel-leading titles (SEO, eBook) and lets
 // GEO use its short name instead of the full "GEO (Generative Engine
@@ -143,7 +153,7 @@ const jsonLd = faqs.length > 0 ? [serviceJsonLd, breadcrumbJsonLd, faqPageJsonLd
 ---
 
 <BaseLayout
-  title={`${service.data.title} | ByteAndBook`}
+  title={pageTitle}
   description={service.data.metaDescription}
   path={path}
   jsonLd={jsonLd}
