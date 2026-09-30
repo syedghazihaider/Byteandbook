@@ -17,4 +17,5 @@ with monitoring instrumented at every layer.
 
 Weighing raw AWS against a managed platform? See
 [AWS vs. managed hosting](/insights/aws-vs-managed-hosting/) for a
-cost-structure and decision-framework breakdown.
+cost-structure and decision-framework breakdown, or our
+[team track record](/team-track-record/) for real, verified reviews.

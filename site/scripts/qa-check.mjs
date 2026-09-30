@@ -255,8 +255,8 @@ const sitemapUrlCount = sitemapFiles.reduce(
   0
 );
 // Phase 3: +1 for the new /case-studies/ page. Phase 4: +1 per published
-// Insights article.
-check(`sitemap contains exactly ${25 + publishedArticleSlugs.length} indexable URLs (25 + ${publishedArticleSlugs.length} article(s))`, sitemapUrlCount === 25 + publishedArticleSlugs.length);
+// Insights article. Phase 5: +1 for the new /team-track-record/ page.
+check(`sitemap contains exactly ${26 + publishedArticleSlugs.length} indexable URLs (26 + ${publishedArticleSlugs.length} article(s))`, sitemapUrlCount === 26 + publishedArticleSlugs.length);
 
 // duplicate title/description check across all pages
 const titleValues = [...titles.values()];

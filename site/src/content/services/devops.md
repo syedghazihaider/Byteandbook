@@ -17,3 +17,5 @@ path to production, with monitoring closing the loop.
 
 Further reading: [DevOps for startups](/insights/devops-for-startups/)
 and [the CI/CD checklist every team should use](/insights/cicd-checklist/).
+See real, verified reviews from this discipline on our
+[team track record](/team-track-record/) page.
