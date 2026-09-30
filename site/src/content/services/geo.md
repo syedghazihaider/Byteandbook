@@ -25,3 +25,7 @@ addresses that gap without replacing SEO fundamentals. We don't promise
 a specific AI ranking or guaranteed citations, since no one can control
 how a given model responds, only that the structural reasons a business
 gets misunderstood or skipped are addressed.
+
+For a fuller explanation of what GEO is, how AI answer engines choose
+what to cite, and how it differs from SEO, see our guide:
+[What Is GEO (Generative Engine Optimization)?](/insights/what-is-geo/)
