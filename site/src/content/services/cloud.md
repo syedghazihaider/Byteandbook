@@ -3,7 +3,7 @@ title: Cloud Services
 pillar: Infrastructure
 category: infrastructure-automation
 summary: Cloud infrastructure designed for load, resilience, and clear observability.
-metaDescription: Cloud infrastructure design and management, from DNS and load balancing through application, storage, and monitoring layers.
+metaDescription: "Cloud infrastructure design and management: DNS, load balancing, application hosting, storage, and monitoring, built for reliability and scale."
 icon: cloud
 animationLevel: '1'
 order: 8
