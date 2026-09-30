@@ -29,3 +29,8 @@ gets misunderstood or skipped are addressed.
 For a fuller explanation of what GEO is, how AI answer engines choose
 what to cite, and how it differs from SEO, see our guide:
 [What Is GEO (Generative Engine Optimization)?](/insights/what-is-geo/)
+
+Related reading: [GEO vs SEO](/insights/geo-vs-seo/),
+[why ChatGPT might not mention your company](/insights/why-doesnt-chatgpt-mention-your-company/),
+[how to get cited by AI](/insights/how-to-get-cited-by-ai/), and our
+[AI search readiness checklist](/insights/ai-search-readiness-checklist/).

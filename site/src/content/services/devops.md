@@ -14,3 +14,6 @@ capabilities: ['CI/CD pipeline design', 'Containerization with Docker', 'Kuberne
 DevOps here means a pipeline you can actually see: every commit moves
 through build, test, containerization and orchestration on a defined
 path to production, with monitoring closing the loop.
+
+Further reading: [DevOps for startups](/insights/devops-for-startups/)
+and [the CI/CD checklist every team should use](/insights/cicd-checklist/).

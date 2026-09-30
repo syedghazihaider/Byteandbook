@@ -63,4 +63,5 @@ technical and on-page foundations above matter either way. What's
 different is how the content gets used once it's retrieved — see our
 [GEO service](/services/geo/) and [What Is GEO?](/insights/what-is-geo/)
 for how that second layer works, and why it builds on SEO fundamentals
-rather than replacing them.
+rather than replacing them. For a direct side-by-side, see
+[GEO vs SEO](/insights/geo-vs-seo/).

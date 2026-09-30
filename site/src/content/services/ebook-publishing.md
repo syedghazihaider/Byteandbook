@@ -56,6 +56,8 @@ project after the eBook is already finished.
 ## Cost and process
 
 Pricing depends on manuscript length, illustration needs, and how many
-platforms the eBook is being formatted for. [Start a project](/contact/)
-and we'll scope it against your specific manuscript rather than quote a
-one-size-fits-all package price.
+platforms the eBook is being formatted for. See our
+[eBook formatting cost guide](/insights/ebook-formatting-cost/) for
+typical ranges across DIY, freelance and professional routes, or
+[start a project](/contact/) and we'll scope it against your specific
+manuscript.
