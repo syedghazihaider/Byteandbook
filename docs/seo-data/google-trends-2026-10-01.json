@@ -1,0 +1,389 @@
+{
+ "_note": "Google Trends, US, last 12 months (collected 2026-10-01). Values are RELATIVE interest (0-100) WITHIN each comparison group only; never search counts; groups cannot be compared with each other. Terms near 0 are below Trends' reporting threshold: no reliable signal.",
+ "groups": {
+  "seo services | digital marketing services | social media marketing services | web development services | devops services": {
+   "seo services": {
+    "avg_12m": 64.4,
+    "avg_first_third": 57.6,
+    "avg_last_third": 69.9,
+    "points": 53
+   },
+   "digital marketing services": {
+    "avg_12m": 25.6,
+    "avg_first_third": 25.6,
+    "avg_last_third": 22.1,
+    "points": 53
+   },
+   "social media marketing services": {
+    "avg_12m": 7.7,
+    "avg_first_third": 7.8,
+    "avg_last_third": 5.8,
+    "points": 53
+   },
+   "web development services": {
+    "avg_12m": 8.7,
+    "avg_first_third": 7.4,
+    "avg_last_third": 7.7,
+    "points": 53
+   },
+   "devops services": {
+    "avg_12m": 5.9,
+    "avg_first_third": 4.9,
+    "avg_last_third": 4.3,
+    "points": 53
+   }
+  },
+  "devops consulting | cloud migration services | aws consulting | managed it services | custom software development": {
+   "devops consulting": {
+    "avg_12m": 1.5,
+    "avg_first_third": 1.1,
+    "avg_last_third": 1.4,
+    "points": 53
+   },
+   "cloud migration services": {
+    "avg_12m": 4.8,
+    "avg_first_third": 4.6,
+    "avg_last_third": 3.8,
+    "points": 53
+   },
+   "aws consulting": {
+    "avg_12m": 5.1,
+    "avg_first_third": 4.1,
+    "avg_last_third": 3.9,
+    "points": 53
+   },
+   "managed it services": {
+    "avg_12m": 63.6,
+    "avg_first_third": 55.4,
+    "avg_last_third": 67.6,
+    "points": 53
+   },
+   "custom software development": {
+    "avg_12m": 11.5,
+    "avg_first_third": 8.9,
+    "avg_last_third": 11.6,
+    "points": 53
+   }
+  },
+  "ebook formatting | kindle formatting | self publishing services | ebook cover design | book formatting": {
+   "ebook formatting": {
+    "avg_12m": 4.8,
+    "avg_first_third": 3.1,
+    "avg_last_third": 1.9,
+    "points": 53
+   },
+   "kindle formatting": {
+    "avg_12m": 3.7,
+    "avg_first_third": 3.8,
+    "avg_last_third": 2.9,
+    "points": 53
+   },
+   "self publishing services": {
+    "avg_12m": 6.9,
+    "avg_first_third": 5.1,
+    "avg_last_third": 6.5,
+    "points": 53
+   },
+   "ebook cover design": {
+    "avg_12m": 0.7,
+    "avg_first_third": 0.0,
+    "avg_last_third": 0.1,
+    "points": 53
+   },
+   "book formatting": {
+    "avg_12m": 66.3,
+    "avg_first_third": 64.1,
+    "avg_last_third": 54.5,
+    "points": 53
+   }
+  },
+  "logo design | brand identity design | logo design services | brand guidelines | logo design cost": {
+   "logo design": {
+    "avg_12m": 49.5,
+    "avg_first_third": 41.9,
+    "avg_last_third": 36.8,
+    "points": 53
+   },
+   "brand identity design": {
+    "avg_12m": 2.2,
+    "avg_first_third": 1.5,
+    "avg_last_third": 1.9,
+    "points": 53
+   },
+   "logo design services": {
+    "avg_12m": 1.7,
+    "avg_first_third": 1.6,
+    "avg_last_third": 1.3,
+    "points": 53
+   },
+   "brand guidelines": {
+    "avg_12m": 25.2,
+    "avg_first_third": 24.5,
+    "avg_last_third": 16.5,
+    "points": 53
+   },
+   "logo design cost": {
+    "avg_12m": 1.8,
+    "avg_first_third": 1.8,
+    "avg_last_third": 1.0,
+    "points": 53
+   }
+  },
+  "llms.txt | ai overviews | chatgpt seo | perplexity seo | ai search optimization": {
+   "llms.txt": {
+    "avg_12m": 16.5,
+    "avg_first_third": 9.6,
+    "avg_last_third": 18.4,
+    "points": 53
+   },
+   "ai overviews": {
+    "avg_12m": 49.0,
+    "avg_first_third": 37.4,
+    "avg_last_third": 44.1,
+    "points": 53
+   },
+   "chatgpt seo": {
+    "avg_12m": 19.9,
+    "avg_first_third": 19.2,
+    "avg_last_third": 15.9,
+    "points": 53
+   },
+   "perplexity seo": {
+    "avg_12m": 9.3,
+    "avg_first_third": 10.5,
+    "avg_last_third": 4.1,
+    "points": 53
+   },
+   "ai search optimization": {
+    "avg_12m": 48.0,
+    "avg_first_third": 41.3,
+    "avg_last_third": 42.4,
+    "points": 53
+   }
+  },
+  "kubernetes vs docker | terraform vs ansible | technical seo | core web vitals | cloud migration checklist": {
+   "kubernetes vs docker": {
+    "avg_12m": 10.7,
+    "avg_first_third": 10.2,
+    "avg_last_third": 8.3,
+    "points": 53
+   },
+   "terraform vs ansible": {
+    "avg_12m": 0.7,
+    "avg_first_third": 0.5,
+    "avg_last_third": 0.1,
+    "points": 53
+   },
+   "technical seo": {
+    "avg_12m": 46.8,
+    "avg_first_third": 40.4,
+    "avg_last_third": 46.9,
+    "points": 53
+   },
+   "core web vitals": {
+    "avg_12m": 37.9,
+    "avg_first_third": 20.3,
+    "avg_last_third": 32.0,
+    "points": 53
+   },
+   "cloud migration checklist": {
+    "avg_12m": 0.2,
+    "avg_first_third": 0.0,
+    "avg_last_third": 0.0,
+    "points": 53
+   }
+  },
+  "generative engine optimization | generative engine optimization services | geo agency | ai search optimization | ai visibility": {
+   "generative engine optimization": {
+    "avg_12m": 11.8,
+    "avg_first_third": 8.5,
+    "avg_last_third": 11.6,
+    "points": 53
+   },
+   "generative engine optimization services": {
+    "avg_12m": 1.3,
+    "avg_first_third": 1.4,
+    "avg_last_third": 1.1,
+    "points": 53
+   },
+   "geo agency": {
+    "avg_12m": 2.1,
+    "avg_first_third": 1.3,
+    "avg_last_third": 2.6,
+    "points": 53
+   },
+   "ai search optimization": {
+    "avg_12m": 14.3,
+    "avg_first_third": 12.2,
+    "avg_last_third": 12.6,
+    "points": 53
+   },
+   "ai visibility": {
+    "avg_12m": 45.9,
+    "avg_first_third": 36.2,
+    "avg_last_third": 41.2,
+    "points": 53
+   }
+  },
+  "seo for saas | saas seo | saas seo agency | technical seo | seo audit": {
+   "seo for saas": {
+    "avg_12m": 14.2,
+    "avg_first_third": 20.4,
+    "avg_last_third": 8.4,
+    "points": 53
+   },
+   "saas seo": {
+    "avg_12m": 24.0,
+    "avg_first_third": 27.4,
+    "avg_last_third": 17.9,
+    "points": 53
+   },
+   "saas seo agency": {
+    "avg_12m": 2.7,
+    "avg_first_third": 3.4,
+    "avg_last_third": 2.4,
+    "points": 53
+   },
+   "technical seo": {
+    "avg_12m": 42.0,
+    "avg_first_third": 36.2,
+    "avg_last_third": 42.1,
+    "points": 53
+   },
+   "seo audit": {
+    "avg_12m": 55.8,
+    "avg_first_third": 39.9,
+    "avg_last_third": 64.4,
+    "points": 53
+   }
+  },
+  "seo cost | web development cost | custom software development cost | devops cost | logo design cost": {
+   "seo cost": {
+    "avg_12m": 57.5,
+    "avg_first_third": 57.8,
+    "avg_last_third": 38.9,
+    "points": 53
+   },
+   "web development cost": {
+    "avg_12m": 13.2,
+    "avg_first_third": 11.5,
+    "avg_last_third": 8.8,
+    "points": 53
+   },
+   "custom software development cost": {
+    "avg_12m": 1.9,
+    "avg_first_third": 1.5,
+    "avg_last_third": 1.1,
+    "points": 53
+   },
+   "devops cost": {
+    "avg_12m": 15.0,
+    "avg_first_third": 14.1,
+    "avg_last_third": 6.7,
+    "points": 53
+   },
+   "logo design cost": {
+    "avg_12m": 10.1,
+    "avg_first_third": 10.5,
+    "avg_last_third": 5.0,
+    "points": 53
+   }
+  },
+  "server hardware | used server hardware | refurbished servers | server memory | workstation build": {
+   "server hardware": {
+    "avg_12m": 20.9,
+    "avg_first_third": 17.8,
+    "avg_last_third": 17.8,
+    "points": 53
+   },
+   "used server hardware": {
+    "avg_12m": 2.8,
+    "avg_first_third": 2.9,
+    "avg_last_third": 2.2,
+    "points": 53
+   },
+   "refurbished servers": {
+    "avg_12m": 0.5,
+    "avg_first_third": 0.1,
+    "avg_last_third": 0.6,
+    "points": 53
+   },
+   "server memory": {
+    "avg_12m": 37.2,
+    "avg_first_third": 22.5,
+    "avg_last_third": 36.9,
+    "points": 53
+   },
+   "workstation build": {
+    "avg_12m": 2.9,
+    "avg_first_third": 2.5,
+    "avg_last_third": 2.2,
+    "points": 53
+   }
+  },
+  "managed it services | microsoft 365 support | intune | microsoft 365 migration | azure consulting": {
+   "managed it services": {
+    "avg_12m": 45.6,
+    "avg_first_third": 39.8,
+    "avg_last_third": 48.4,
+    "points": 53
+   },
+   "microsoft 365 support": {
+    "avg_12m": 10.4,
+    "avg_first_third": 8.9,
+    "avg_last_third": 7.9,
+    "points": 53
+   },
+   "intune": {
+    "avg_12m": 74.8,
+    "avg_first_third": 68.9,
+    "avg_last_third": 68.0,
+    "points": 53
+   },
+   "microsoft 365 migration": {
+    "avg_12m": 2.2,
+    "avg_first_third": 1.5,
+    "avg_last_third": 2.0,
+    "points": 53
+   },
+   "azure consulting": {
+    "avg_12m": 2.6,
+    "avg_first_third": 1.9,
+    "avg_last_third": 1.9,
+    "points": 53
+   }
+  },
+  "answer engine optimization | aeo | ai seo | generative engine optimization | geo seo": {
+   "answer engine optimization": {
+    "avg_12m": 6.1,
+    "avg_first_third": 4.6,
+    "avg_last_third": 6.0,
+    "points": 53
+   },
+   "aeo": {
+    "avg_12m": 35.2,
+    "avg_first_third": 21.1,
+    "avg_last_third": 32.5,
+    "points": 53
+   },
+   "ai seo": {
+    "avg_12m": 52.4,
+    "avg_first_third": 47.1,
+    "avg_last_third": 40.5,
+    "points": 53
+   },
+   "generative engine optimization": {
+    "avg_12m": 9.3,
+    "avg_first_third": 6.8,
+    "avg_last_third": 9.1,
+    "points": 53
+   },
+   "geo seo": {
+    "avg_12m": 5.0,
+    "avg_first_third": 3.8,
+    "avg_last_third": 5.1,
+    "points": 53
+   }
+  }
+ }
+}
