@@ -991,8 +991,10 @@ function faqSchemaQuestions(html) {
   }
   return out;
 }
+// The article table of contents is also a <details>/<summary>; it carries
+// data-toc and is not part of the FAQ.
 const visibleFaqQuestions = (html) =>
-  [...html.matchAll(/<summary[^>]*>([\s\S]*?)<svg/g)].map((m) => m[1].replace(/<[^>]+>/g, '').replace(/&#39;|&apos;/g, "'").replace(/&quot;/g, '"').replace(/&amp;/g, '&').trim());
+  [...html.replace(/<details data-toc[\s\S]*?<\/details>/g, '').matchAll(/<summary[^>]*>([\s\S]*?)<svg/g)].map((m) => m[1].replace(/<[^>]+>/g, '').replace(/&#39;|&apos;/g, "'").replace(/&quot;/g, '"').replace(/&amp;/g, '&').trim());
 {
   const faqSrc = readFileSync(join(__dirname, '..', 'src', 'data', 'serviceFaqs.ts'), 'utf-8');
   const slugsWithFaqs = [...faqSrc.matchAll(/^ {2}(?:'([a-z-]+)'|([a-z-]+)): \[/gm)].map((m) => m[1] || m[2]);
@@ -1022,6 +1024,55 @@ for (const slug of publishedArticleSlugs) {
   }
   check(`insights/${slug}/: BreadcrumbList schema present`, blocks.some((b) => b['@type'] === 'BreadcrumbList'));
   check(`insights/${slug}/: FAQPage schema (if any) matches visible FAQ exactly`, JSON.stringify(faqSchemaQuestions(html)) === JSON.stringify(visibleFaqQuestions(html)));
+}
+
+// ---- 13. SXO pass: conversion + mobile-usability guards --------------------
+{
+  const stripTags = (h) => h.replace(/<(script|style|svg)[^>]*>[\s\S]*?<\/>/g, '').replace(/<[^>]+>/g, ' ');
+  // Every individual service page has a "Start a Project" button in the
+  // hero (before the first H2), not only at the bottom. On phones the
+  // header button is inside the hamburger menu, so a page whose only CTA
+  // is at the bottom hides its main conversion action thousands of
+  // pixels down.
+  for (const slug of SERVICE_SLUGS) {
+    const main = readHtml(`services/${slug}/index.html`).match(/<main[\s\S]*?<\/main>/)[0];
+    const firstH2 = main.indexOf('<h2');
+    const firstCta = main.search(/data-start-project-trigger|Start a Project/);
+    check(`services/${slug}/: "Start a Project" CTA appears before the first H2 (hero CTA)`, firstCta !== -1 && (firstH2 === -1 || firstCta < firstH2));
+  }
+  // The service hero's case-study link only exists where a real case study does.
+  for (const slug of ['seo', 'ebook-publishing', 'devops', 'cloud', 'computer-hardware']) {
+    const main = readHtml(`services/${slug}/index.html`).match(/<main[\s\S]*?<\/main>/)[0];
+    const firstH2 = main.indexOf('<h2');
+    const link = main.indexOf('See a real case study');
+    check(`services/${slug}/: hero links to its real case study`, link !== -1 && link < firstH2);
+  }
+  for (const slug of ['web-development', 'software-development', 'branding', 'digital-marketing', 'social-media-marketing', 'geo']) {
+    check(`services/${slug}/: no hero case-study link (none exists for it)`, !/See a real case study/.test(readHtml(`services/${slug}/index.html`).match(/<main[\s\S]*?<\/main>/)[0].split('<h2')[0]));
+  }
+  // Homepage proof section links both evidence pages, with no numbers.
+  const home = readHtml('index.html');
+  check('home: proof section links /case-studies/', /href="\/case-studies\/"[^>]*>[\s\S]*?Case Studies/.test(home));
+  check('home: proof section links /team-track-record/', /href="\/team-track-record\/"[^>]*>[\s\S]*?Team Track Record/.test(home));
+  const proofBlock = home.slice(home.indexOf('See the Work Behind the Claims'), home.indexOf('Common Questions'));
+  check('home: proof section carries no numeric claims', !/\d/.test(stripTags(proofBlock).replace(/Four real engagements/, '')));
+  // Privacy: long external URLs must wrap, or the page scrolls sideways on phones.
+  const privacy = readHtml('privacy/index.html');
+  const extLinks = [...privacy.match(/<main[\s\S]*?<\/main>/)[0].matchAll(/<a [^>]*target="_blank"[^>]*>/g)].map((m) => m[0]);
+  check('privacy: external links wrap long URLs (break-words)', extLinks.length >= 3 && extLinks.every((a) => /break-words/.test(a)));
+  // FAQ rows: the padding is on <summary> so the whole row is the tap target.
+  const faqComp = readFileSync(join(__dirname, '..', 'src', 'components', 'ui', 'FaqSection.astro'), 'utf-8');
+  check('FaqSection: <summary> carries the row padding (full-row tap target)', /<summary[^>]*\bpy-5\b/.test(faqComp) && !/<details class="group py-5"/.test(faqComp));
+  // Articles: related services near the top; a TOC when there are 4+ sections.
+  for (const slug of publishedArticleSlugs) {
+    const html = readHtml(`insights/${slug}/index.html`);
+    const h2Count = (html.match(/<h2 id=/g) || []).length;
+    const hasToc = /<details data-toc/.test(html);
+    check(`insights/${slug}/: table of contents present iff 4+ sections (${h2Count} H2)`, hasToc === (h2Count >= 4));
+    if (/Related services:/.test(html)) {
+      check(`insights/${slug}/: related-services line is above the article body`, html.indexOf('Related services:') < html.indexOf('prose-article'));
+    }
+  }
 }
 
 // IndexNow key file: exactly one public/<32-hex>.txt whose content is the

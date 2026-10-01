@@ -179,6 +179,21 @@ const jsonLd = faqs.length > 0 ? [serviceJsonLd, breadcrumbJsonLd, faqPageJsonLd
           </a>
           <h1 class="mt-5 text-page-title font-bold text-ink-50">{service.data.title}</h1>
           <p class="mt-5 text-lg text-ink-300">{service.data.summary}</p>
+
+          {/* SXO pass: a primary CTA in the hero. Before this, the only
+               "Start a Project" in the page body was at the very bottom
+               (thousands of pixels down on a phone, where the header
+               button lives inside the hamburger menu). The service is
+               pre-selected in the form, same as the bottom CTA. The case
+               study link only appears where a real one exists. */}
+          <div class="mt-8 flex flex-wrap items-center gap-x-6 gap-y-4">
+            <StartProjectTrigger service={service.id} variant="primary">Start a Project</StartProjectTrigger>
+            {caseStudyAnchor && (
+              <a href={`/case-studies/#${caseStudyAnchor}`} class="text-sm font-medium text-signal-400 hover:text-signal-300">
+                See a real case study →
+              </a>
+            )}
+          </div>
         </div>
       </Container>
     </section>

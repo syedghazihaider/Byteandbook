@@ -156,6 +156,34 @@ const faqs: Faq[] = [
       </Container>
     </section>
 
+    {/* Proof (SXO pass): the two existing evidence pages, surfaced on the
+         homepage where a first-time visitor decides whether to trust us.
+         Deliberately no numbers or quotes here: everything specific lives
+         on the linked pages, with their own honest framing. */}
+    <section class="py-20">
+      <Container>
+        <SectionHeading eyebrow="Proof" heading="See the Work Behind the Claims" align="center" class="mx-auto max-w-2xl" />
+        <div class="mt-12 grid gap-6 md:grid-cols-2">
+          <a href="/case-studies/" class="group block rounded-bb-lg border border-ink-700 bg-ink-900/60 p-6 transition-colors hover:border-signal-400" data-reveal>
+            <h3 class="text-lg font-semibold text-ink-50">Case Studies</h3>
+            <p class="mt-2 text-sm text-ink-300">
+              Four real engagements across eBook publishing, DevOps and cloud infrastructure, SEO,
+              and hardware sourcing, written up in full with client names withheld.
+            </p>
+            <span class="mt-4 inline-flex items-center gap-1 text-sm font-medium text-signal-400 group-hover:text-signal-300">Read the case studies →</span>
+          </a>
+          <a href="/team-track-record/" class="group block rounded-bb-lg border border-ink-700 bg-ink-900/60 p-6 transition-colors hover:border-signal-400" data-reveal>
+            <h3 class="text-lg font-semibold text-ink-50">Team Track Record</h3>
+            <p class="mt-2 text-sm text-ink-300">
+              Verified reviews and client video shoutouts earned by our engineers and sales manager
+              on their own freelance profiles, before byteandbook.com existed as a business site.
+            </p>
+            <span class="mt-4 inline-flex items-center gap-1 text-sm font-medium text-signal-400 group-hover:text-signal-300">See the track record →</span>
+          </a>
+        </div>
+      </Container>
+    </section>
+
     {/* FAQ */}
     <FaqSection faqs={faqs} />
 

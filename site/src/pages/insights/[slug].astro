@@ -25,7 +25,9 @@ interface Props {
   article: CollectionEntry<'insights'>;
 }
 const { article } = Astro.props;
-const { Content } = await render(article);
+const { Content, headings } = await render(article);
+// SXO pass: "In this article" jump list for long articles (H2s only).
+const tocItems = headings.filter((h) => h.depth === 2);
 const data = article.data;
 
 const SITE_URL = 'https://byteandbook.com';
@@ -133,11 +135,42 @@ const jsonLd = [articleJsonLd, breadcrumbJsonLd, ...(faqs.length > 0 ? [faqPageJ
           <span aria-hidden="true">·</span>
           <span>{readingMinutes} min read</span>
         </div>
+
+        {relatedServices.length > 0 && (
+          <p class="mt-4 text-sm text-ink-300">
+            Related services:
+            {relatedServices.map((s, i) => (
+              <>
+                {i > 0 ? ' · ' : ' '}
+                <a href={`/services/${s.id}/`} class="font-medium text-signal-400 hover:text-signal-300">{s.data.title}</a>
+              </>
+            ))}
+          </p>
+        )}
       </Container>
     </section>
 
     <article class="pb-16">
       <Container class="max-w-3xl">
+        {tocItems.length >= 4 && (
+          <details data-toc class="group mb-10 rounded-bb-lg border border-ink-700 bg-ink-900/60">
+            <summary class="flex cursor-pointer list-none items-center justify-between gap-4 px-5 py-4 font-semibold text-ink-50">
+              In this article ({tocItems.length} sections)
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" class="h-5 w-5 shrink-0 text-ink-300 transition-transform duration-200 group-open:rotate-45" aria-hidden="true">
+                <line x1="12" y1="5" x2="12" y2="19" />
+                <line x1="5" y1="12" x2="19" y2="12" />
+              </svg>
+            </summary>
+            <ol class="space-y-1 border-t border-ink-800 px-5 py-4 text-sm">
+              {tocItems.map((h) => (
+                <li>
+                  <a href={`#${h.slug}`} class="block py-1.5 text-ink-300 hover:text-signal-300">{h.text}</a>
+                </li>
+              ))}
+            </ol>
+          </details>
+        )}
+
         <div class="prose-article">
           <Content />
         </div>
