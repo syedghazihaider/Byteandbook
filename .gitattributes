@@ -3,3 +3,7 @@
 # build is reproducible and matches what was deployed. text=auto leaves
 # binary files (fonts, images) untouched.
 site/public/** text=auto eol=lf
+
+# Service content markdown is read into rendered HTML, so CRLF vs LF
+# checkouts (Windows vs Linux) must not change build output byte-for-byte.
+site/src/content/** text=auto eol=lf

@@ -25,7 +25,11 @@ const path = '/insights/';
 const services = (await getCollection('services')).sort((a, b) => a.data.order - b.data.order);
 const articles = (await getCollection('insights'))
   .filter((a) => !a.data.draft)
-  .sort((a, b) => b.data.publishedDate.valueOf() - a.data.publishedDate.valueOf());
+  .sort(
+    (a, b) =>
+      b.data.publishedDate.valueOf() - a.data.publishedDate.valueOf() ||
+      a.data.title.localeCompare(b.data.title),
+  );
 
 const knowledgeAreas: { pillar: Pillar; description: string; slugs: string[] }[] = [
   {

@@ -279,7 +279,10 @@ for (const s of services) {
 // can't leak in here).
 const INSIGHTS_DIST = join(DIST, 'insights');
 if (existsSync(INSIGHTS_DIST)) {
-  for (const entry of readdirSync(INSIGHTS_DIST, { withFileTypes: true })) {
+  const insightsEntries = readdirSync(INSIGHTS_DIST, { withFileTypes: true }).sort((a, b) =>
+    a.name.localeCompare(b.name),
+  );
+  for (const entry of insightsEntries) {
     const filePath = join(INSIGHTS_DIST, entry.name, 'index.html');
     if (!entry.isDirectory() || !existsSync(filePath)) continue;
     const html = readFileSync(filePath, 'utf-8');

@@ -51,7 +51,12 @@ const relatedArticles = (await getCollection('insights'))
     score: (a.data.category === data.category ? 1 : 0) + (a.data.tags ?? []).filter((t) => tags.has(t)).length,
   }))
   .filter((x) => x.score > 0)
-  .sort((x, y) => y.score - x.score || y.a.data.publishedDate.valueOf() - x.a.data.publishedDate.valueOf())
+  .sort(
+    (x, y) =>
+      y.score - x.score ||
+      y.a.data.publishedDate.valueOf() - x.a.data.publishedDate.valueOf() ||
+      x.a.data.title.localeCompare(y.a.data.title),
+  )
   .slice(0, 3)
   .map((x) => x.a);
 
