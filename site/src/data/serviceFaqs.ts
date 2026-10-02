@@ -179,6 +179,11 @@ export const serviceFaqs: Record<string, Faq[]> = {
   ],
   'computer-hardware': [
     {
+      question: 'What hardware do you supply, and how does ordering work?',
+      answer:
+        'We supply any type of computer hardware, from individual components to complete workstations, servers and networking equipment. You place the order and we deliver it to your doorstep anywhere in the United States, with nationwide shipping. Our pricing is below the standard market and online rate for the same hardware; request a quote and compare it with what you are seeing elsewhere.',
+    },
+    {
       // Same verified facts as /case-studies/#computer-hardware-sourcing.
       question: 'Can you source components that are hard to find?',
       answer:
@@ -192,7 +197,7 @@ export const serviceFaqs: Record<string, Faq[]> = {
     {
       question: 'Do you supply businesses?',
       answer:
-        'Yes. We supply hardware to vendors and offices at competitive market pricing, as well as specifying individual workstation and server builds.',
+        'Yes. We supply hardware to vendors and offices at pricing below the standard market rate, delivered to the door, as well as specifying individual workstation and server builds.',
     },
     {
       question: 'Do you ship internationally, and is there a warranty?',
