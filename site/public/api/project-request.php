@@ -340,7 +340,11 @@ if ($email === '' || !filter_var($email, FILTER_VALIDATE_EMAIL) || strlen($email
 // by digit count after stripping formatting characters, rather than by
 // a rigid format regex, so any valid US number typed in a common style
 // is accepted.
-if ($mobile === '' || !preg_match('/^[+0-9()\-.\s]{7,24}$/', $mobile)) {
+// Owner decision 2026-10-02: the phone number is optional. Blank is
+// accepted; anything typed is still validated.
+if ($mobile === '') {
+    // optional, nothing to validate
+} elseif (!preg_match('/^[+0-9()\-.\s]{7,24}$/', $mobile)) {
     $errors['mobile'] = 'Please provide a valid US phone number, e.g. (555) 123-4567.';
 } else {
     $mobileDigits = preg_replace('/\D/', '', $mobile);
@@ -421,7 +425,7 @@ $bodyLines = [
     '',
     "Full Name: {$fullName}",
     "Email: {$email}",
-    "Phone: {$mobile}",
+    "Phone: " . ($mobile !== '' ? $mobile : '(not provided)'),
 ];
 if ($company !== '') {
     $bodyLines[] = "Company / Brand: {$company}";
