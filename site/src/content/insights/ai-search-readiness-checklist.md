@@ -21,7 +21,9 @@ faqs:
 draft: false
 ---
 
-Most "AI search readiness checklists" you'll find right now are landing pages: a headline, a stat, and a "Get your copy" button that gates the actual checklist behind an email form. We checked several of the currently ranking ones before writing this, and that pattern is real, though not universal — at least one of the higher-ranking guides does publish its full checklist inline with no gate at all, so it's a common shortcut, not an industry requirement.
+Most "AI search readiness checklists" you'll find right now are landing pages: a headline, a stat, and a "Get your copy" button that gates the actual checklist behind an email form.
+
+We checked several of the currently ranking ones before writing this, and that pattern is real, though not universal — at least one of the higher-ranking guides does publish its full checklist inline with no gate at all, so it's a common shortcut, not an industry requirement.
 
 This is the second kind. Everything below is the actual checklist, in full, free to work through right now. No download, no email. If you'd rather see the reasoning behind these categories — how AI platforms actually retrieve and cite content — read [How to Get Cited by AI](/insights/how-to-get-cited-by-ai/) first; this article is the do-it-yourself audit that follows from it.
 
@@ -85,6 +87,8 @@ Work through the six sections in order. The first two (crawlability and structur
 
 ## What we found researching this
 
-Before writing this checklist, we looked at several currently-ranking "AI search readiness checklist" and "GEO checklist" pages to see what the standard actually looks like. The pattern of a landing page promoting a gated PDF or email-gated download is real and common among them — but it isn't universal. At least one widely-cited guide we checked runs a genuinely thorough, ungated checklist inline on the page itself, organized into clear categories with specific test-and-fix guidance for each item. So the honest finding is: gating is common, not guaranteed, and the better competing content is the ungated kind. This checklist follows that better pattern — fully inline, specific enough to act on without more research, and free.
+Before writing this checklist, we looked at several currently-ranking "AI search readiness checklist" and "GEO checklist" pages to see what the standard actually looks like. The pattern of a landing page promoting a gated PDF or email-gated download is real and common among them — but it isn't universal.
+
+At least one widely-cited guide we checked runs a genuinely thorough, ungated checklist inline on the page itself, organized into clear categories with specific test-and-fix guidance for each item. So the honest finding is: gating is common, not guaranteed, and the better competing content is the ungated kind. This checklist follows that better pattern — fully inline, specific enough to act on without more research, and free.
 
 For the reasoning behind why these categories matter — how ChatGPT search, Perplexity and Google AI Overviews actually source their citations differently — see [How to Get Cited by AI](/insights/how-to-get-cited-by-ai/). For background on GEO as a discipline, see [What Is GEO?](/insights/what-is-geo/). If you'd like this audit done for you, with the fixes implemented, see our [GEO service](/services/geo/).

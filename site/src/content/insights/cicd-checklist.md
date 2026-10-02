@@ -24,7 +24,9 @@ Most CI/CD checklists you'll find online make you trade an email address for the
 
 ## Why this is ungated
 
-A checklist that's hidden behind a signup form has an obvious business reason to exist that way — it's a lead-generation asset, not primarily a reference document. That's a legitimate way to run a content business, but it means the checklist you actually get is secondary to the email address it collects. This one is written to be used directly: copy the items you need into your own tracker, adapt the pipeline YAML to your stack, and don't give us your email for it.
+A checklist that's hidden behind a signup form has an obvious business reason to exist that way — it's a lead-generation asset, not primarily a reference document. That's a legitimate way to run a content business, but it means the checklist you actually get is secondary to the email address it collects.
+
+This one is written to be used directly: copy the items you need into your own tracker, adapt the pipeline YAML to your stack, and don't give us your email for it.
 
 ## Source control
 
@@ -150,7 +152,9 @@ The `sast` job pulls in GitLab's maintained SAST template rather than reimplemen
 
 ## How this differs from a generic "best practices" list
 
-The distinction that matters is enforceable versus aspirational. "Write good tests" is aspirational — nobody disagrees with it, and it changes nothing about what actually ships. "Test failures block the merge, enforced by branch protection" is enforceable — it's either configured or it isn't, and you can check which in thirty seconds by looking at your repository settings. Every item in this checklist was written to pass that test: if you can't point to where it's configured (a setting, a required CI job, a gate in the deploy pipeline), it doesn't belong on the list, because it won't survive contact with a deadline.
+The distinction that matters is enforceable versus aspirational. "Write good tests" is aspirational — nobody disagrees with it, and it changes nothing about what actually ships. "Test failures block the merge, enforced by branch protection" is enforceable — it's either configured or it isn't, and you can check which in thirty seconds by looking at your repository settings.
+
+Every item in this checklist was written to pass that test: if you can't point to where it's configured (a setting, a required CI job, a gate in the deploy pipeline), it doesn't belong on the list, because it won't survive contact with a deadline.
 
 That's also why this checklist is shorter in some places than others. Source control and security scanning have hard, binary settings to check. Culture-adjacent items — "communicate deploys well," "review code thoughtfully" — are real, but they don't belong on an enforceable checklist, so they're left out rather than padded in as vague bullet points that look actionable but aren't.
 

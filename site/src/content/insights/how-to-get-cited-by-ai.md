@@ -29,13 +29,17 @@ draft: false
 
 If you've read a "get cited by AI" guide before, it probably told you to write clear content, add schema markup, and keep your information consistent. That advice isn't wrong. It's also not enough, because it treats "AI search" as one thing. It isn't.
 
-ChatGPT search, Perplexity and Google's AI Overviews are built differently, pull from different indexes, and use different signals to decide what to cite. A page that gets picked up constantly by Perplexity can be invisible in ChatGPT search, and vice versa. If you want to actually improve your odds, you need to understand each platform's mechanics well enough to act on them, not just apply one generic checklist to all three.
+ChatGPT search, Perplexity and Google's AI Overviews are built differently, pull from different indexes, and use different signals to decide what to cite. A page that gets picked up constantly by Perplexity can be invisible in ChatGPT search, and vice versa.
+
+If you want to actually improve your odds, you need to understand each platform's mechanics well enough to act on them, not just apply one generic checklist to all three.
 
 This article covers how each platform actually sources its citations, the real crawler names and code you need to configure access correctly, and what changes to your content genuinely move the needle. No plugin to sell, no gated download. For the difference between GEO and SEO in general, see [What Is GEO?](/insights/what-is-geo/); for a step-by-step audit, see the companion [AI Search Readiness Checklist](/insights/ai-search-readiness-checklist/).
 
 ## The one thing all three platforms have in common
 
-Before the differences: every platform that cites live sources follows the same three-stage process described in the original GEO research — retrieval, extraction, synthesis. A crawler (or an index built from one) finds candidate pages, the model reads them and pulls out passages that answer the question, and it writes a response that cites the sources it used. If your page never gets retrieved, nothing downstream matters. That's why crawler access is the first thing to get right, not an afterthought.
+Before the differences: every platform that cites live sources follows the same three-stage process described in the original GEO research — retrieval, extraction, synthesis.
+
+A crawler (or an index built from one) finds candidate pages, the model reads them and pulls out passages that answer the question, and it writes a response that cites the sources it used. If your page never gets retrieved, nothing downstream matters. That's why crawler access is the first thing to get right, not an afterthought.
 
 Where the platforms diverge is in what they retrieve from, how aggressively they fan a single question out into multiple sub-searches, and how they decide which passages are trustworthy enough to quote. That's the part worth understanding platform by platform.
 
@@ -68,15 +72,21 @@ Perplexity answers tend to carry visibly numbered citations, often five or more 
 
 ### Google AI Overviews and AI Mode
 
-Google's approach is the odd one out, and it's worth explaining because it surprises people. There is no separate "AI crawler" building a separate AI index. AI Overviews and AI Mode draw on the same index Googlebot has always built for ordinary Search. Google's own documentation is direct about this: "There are no additional technical requirements" to appear in AI Overviews or AI Mode beyond being indexed and eligible to show with a snippet in regular Search results.
+Google's approach is the odd one out, and it's worth explaining because it surprises people. There is no separate "AI crawler" building a separate AI index. AI Overviews and AI Mode draw on the same index Googlebot has always built for ordinary Search.
 
-What is different is retrieval behavior. Google has described using "query fan-out" — breaking a single prompt into multiple related searches across subtopics, then pulling from a wider, more varied set of supporting pages than a single ten-blue-links result page would show. That's why a page that ranks respectably, but not necessarily #1, for a narrow sub-question can still get pulled into an AI Overview: it doesn't need to win the whole query, just win one of the fanned-out sub-searches.
+Google's own documentation is direct about this: "There are no additional technical requirements" to appear in AI Overviews or AI Mode beyond being indexed and eligible to show with a snippet in regular Search results.
+
+What is different is retrieval behavior. Google has described using "query fan-out" — breaking a single prompt into multiple related searches across subtopics, then pulling from a wider, more varied set of supporting pages than a single ten-blue-links result page would show.
+
+That's why a page that ranks respectably, but not necessarily #1, for a narrow sub-question can still get pulled into an AI Overview: it doesn't need to win the whole query, just win one of the fanned-out sub-searches.
 
 Google-Extended is the separate, AI-specific token here, but it controls training and grounding data use for Google's other AI systems (like Gemini), not eligibility for AI Overviews or AI Mode, which run on the standard Search index and standard Googlebot access.
 
 ### A note on Anthropic (Claude)
 
-Claude doesn't currently run a consumer-facing search-and-cite product comparable to ChatGPT search or Perplexity, but Anthropic does run three separate crawlers worth knowing if you're setting robots.txt rules anyway: **ClaudeBot** (training), **Claude-SearchBot** (used to improve search result quality when Claude is asked to search), and **Claude-User** (fires on user-directed fetches, similar to ChatGPT-User). Anthropic's own support documentation lays out all three separately so site owners can make a distinct decision about each rather than blocking or allowing Claude wholesale.
+Claude doesn't currently run a consumer-facing search-and-cite product comparable to ChatGPT search or Perplexity, but Anthropic does run three separate crawlers worth knowing if you're setting robots.txt rules anyway: **ClaudeBot** (training), **Claude-SearchBot** (used to improve search result quality when Claude is asked to search), and **Claude-User** (fires on user-directed fetches, similar to ChatGPT-User).
+
+Anthropic's own support documentation lays out all three separately so site owners can make a distinct decision about each rather than blocking or allowing Claude wholesale.
 
 ### Why the platform differences matter in practice
 
@@ -152,7 +162,9 @@ A few things worth being precise about:
 
 llms.txt is a proposed file, placed at the root of your domain, meant to give AI systems a clean, markdown-formatted summary of a site — what it is, and links to its most important pages — instead of making a model try to parse full HTML navigation and layout.
 
-The caveat first, since most articles bury it: as of this writing, no major AI platform (not OpenAI, not Perplexity, not Google, not Anthropic) has publicly confirmed that it reads or uses llms.txt to decide what to crawl, retrieve or cite. It's a community-proposed convention, not an adopted standard. Publishing one costs you almost nothing and can't hurt, but don't treat it as a lever that moves citations — the crawler and content work above does that.
+The caveat first, since most articles bury it: as of this writing, no major AI platform (not OpenAI, not Perplexity, not Google, not Anthropic) has publicly confirmed that it reads or uses llms.txt to decide what to crawl, retrieve or cite.
+
+It's a community-proposed convention, not an adopted standard. Publishing one costs you almost nothing and can't hurt, but don't treat it as a lever that moves citations — the crawler and content work above does that.
 
 With that said, here's a real, working example:
 
@@ -227,6 +239,8 @@ Run each of the four search-facing crawlers against your live robots.txt before 
 
 ## What doesn't work
 
-Skip anything that promises guaranteed placement, "AI SEO packages" sold as a fixed monthly fee for a specific number of citations, or tactics built around gaming a single platform's current quirks. These systems change their retrieval and ranking behavior as the underlying models are updated, sometimes without any announcement. The durable version of this work is the boring version: keep the right crawlers allowed, keep your entity information consistent, and write content that answers the question in the first sentence with something specific enough to quote.
+Skip anything that promises guaranteed placement, "AI SEO packages" sold as a fixed monthly fee for a specific number of citations, or tactics built around gaming a single platform's current quirks. These systems change their retrieval and ranking behavior as the underlying models are updated, sometimes without any announcement.
+
+The durable version of this work is the boring version: keep the right crawlers allowed, keep your entity information consistent, and write content that answers the question in the first sentence with something specific enough to quote.
 
 If you want a structured way to work through this yourself, see the [AI Search Readiness Checklist](/insights/ai-search-readiness-checklist/). For background on how GEO relates to conventional SEO, see [What Is GEO?](/insights/what-is-geo/). If you'd rather have it handled, see our [GEO service](/services/geo/).

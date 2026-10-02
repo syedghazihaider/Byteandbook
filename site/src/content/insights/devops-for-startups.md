@@ -106,7 +106,9 @@ jobs:
             ghcr.io/${{ github.repository }}:latest
 ```
 
-The `test` job gates everything: it runs on every pull request, so a broken build never reaches `main` in the first place. The `build-and-push` job only runs on a push to `main` (not on pull requests) and depends on `test` passing, so a red pipeline never produces a shippable image. From here, a Kubernetes deployment step or a `render deploys create` / `railway up` call is a small addition, not a rewrite.
+The `test` job gates everything: it runs on every pull request, so a broken build never reaches `main` in the first place. The `build-and-push` job only runs on a push to `main` (not on pull requests) and depends on `test` passing, so a red pipeline never produces a shippable image.
+
+From here, a Kubernetes deployment step or a `render deploys create` / `railway up` call is a small addition, not a rewrite.
 
 For the seed-to-Series-A stage, pair this with a minimal Terraform module rather than clicking through a cloud console — even something this small is worth version-controlling:
 
@@ -174,11 +176,15 @@ These aren't abstract — DORA's research clusters organizations into elite, hig
 
 (The 2024 report noted an unusual inversion: medium performers actually posted a lower change failure rate than high performers that year — a reminder to read your own trend line, not just chase a static target.)
 
-A startup with one deploy a week and a same-day lead time is already closer to "high performer" than to "low performer," and that's a genuinely useful thing to know before you decide you need to hire a platform team. Track these four numbers from your CI/CD system and incident log from day one — even a spreadsheet is enough — and you'll have an honest answer to "is our delivery process getting better" instead of a gut feeling.
+A startup with one deploy a week and a same-day lead time is already closer to "high performer" than to "low performer," and that's a genuinely useful thing to know before you decide you need to hire a platform team.
+
+Track these four numbers from your CI/CD system and incident log from day one — even a spreadsheet is enough — and you'll have an honest answer to "is our delivery process getting better" instead of a gut feeling.
 
 ## Culture, briefly — because it's the part that actually fails
 
-Tooling advice like the above is necessary but not sufficient. DORA's own research, going back to the *Accelerate* book, is consistent on this point: the tools matter less than whether the organization actually uses them the way they're designed to be used. A team with a perfect GitHub Actions pipeline that still merges Friday afternoon hotfixes without review, or that treats a failing test as something to re-run until it passes rather than something to fix, gets none of the benefit the pipeline is supposed to provide.
+Tooling advice like the above is necessary but not sufficient. DORA's own research, going back to the *Accelerate* book, is consistent on this point: the tools matter less than whether the organization actually uses them the way they're designed to be used.
+
+A team with a perfect GitHub Actions pipeline that still merges Friday afternoon hotfixes without review, or that treats a failing test as something to re-run until it passes rather than something to fix, gets none of the benefit the pipeline is supposed to provide.
 
 Two practices matter more than any specific tool choice:
 

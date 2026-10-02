@@ -25,7 +25,9 @@ draft: false
 
 Generative engine optimization (GEO) is the practice of making a business's information easy for AI answer engines to find, understand and cite accurately. These are tools like ChatGPT search, Perplexity and Google's AI Overviews, which answer a question directly instead of only returning a list of links.
 
-The term was formalized in a 2023 research paper, *GEO: Generative Engine Optimization* by Aggarwal and colleagues, later accepted to KDD 2024, a major data-mining conference. The paper describes generative engines as systems that gather information from multiple sources and summarize it with large language models, and it points out the problem this creates for website owners: they have little control over when and how their content appears in those answers.
+The term was formalized in a 2023 research paper, *GEO: Generative Engine Optimization* by Aggarwal and colleagues, later accepted to KDD 2024, a major data-mining conference.
+
+The paper describes generative engines as systems that gather information from multiple sources and summarize it with large language models, and it points out the problem this creates for website owners: they have little control over when and how their content appears in those answers.
 
 ## Why GEO exists: search now answers instead of listing
 

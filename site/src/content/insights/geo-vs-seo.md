@@ -18,7 +18,9 @@ sources:
 draft: false
 ---
 
-GEO (generative engine optimization) and SEO (search engine optimization) are not competing disciplines. SEO gets your business crawled, indexed and ranked. GEO is what happens after that: whether an AI answer engine actually reads your indexed pages, understands them correctly, and decides to mention you. You cannot skip the first step to do the second. Most explanations of this stop at the marketing layer — what to write, how to structure it. Fewer explain the technical layer underneath it: whether the AI crawler reading your site can even see the page in the first place. Both layers decide whether you show up.
+GEO (generative engine optimization) and SEO (search engine optimization) are not competing disciplines. SEO gets your business crawled, indexed and ranked. GEO is what happens after that: whether an AI answer engine actually reads your indexed pages, understands them correctly, and decides to mention you. You cannot skip the first step to do the second.
+
+Most explanations of this stop at the marketing layer — what to write, how to structure it. Fewer explain the technical layer underneath it: whether the AI crawler reading your site can even see the page in the first place. Both layers decide whether you show up.
 
 ## The one-sentence version
 
@@ -77,9 +79,13 @@ Say the business is a regional HVAC repair company. Its three test questions mig
 - Perplexity cites a local directory listing instead of the business's own site, because the directory's page structure is easier to extract a clean answer from.
 - Gemini's answer draws heavily on whichever competitor has FAQ schema markup matching its visible text exactly.
 
-None of that is a verdict on the business — it's a map of exactly where the gap is. If ChatGPT is working from stale information, that points at inconsistent NAP (name, address, phone) data across the web, or content that changed on the site without a corresponding update anywhere else the model might have seen it. If a directory listing keeps winning the citation instead of the business's own page, that's a sign the business's own page isn't structured as cleanly as the directory's. If competitors with FAQ schema are winning Gemini's citations, that's a concrete, fixable technical gap, not a content-quality problem.
+None of that is a verdict on the business — it's a map of exactly where the gap is. If ChatGPT is working from stale information, that points at inconsistent NAP (name, address, phone) data across the web, or content that changed on the site without a corresponding update anywhere else the model might have seen it.
 
-This is also why running each question two or three times matters, not once. The first run might show the business missing entirely; the second, run an hour later, might show it mentioned but only vaguely. Both runs are real data — the variation itself tells you the business sits right at the edge of being retrieved, which is a very different (and more fixable) problem than never being retrieved at all.
+If a directory listing keeps winning the citation instead of the business's own page, that's a sign the business's own page isn't structured as cleanly as the directory's. If competitors with FAQ schema are winning Gemini's citations, that's a concrete, fixable technical gap, not a content-quality problem.
+
+This is also why running each question two or three times matters, not once. The first run might show the business missing entirely; the second, run an hour later, might show it mentioned but only vaguely.
+
+Both runs are real data — the variation itself tells you the business sits right at the edge of being retrieved, which is a very different (and more fixable) problem than never being retrieved at all.
 
 ## The technical checklist, in more detail
 
@@ -92,26 +98,38 @@ Each of the four technical checks above has a concrete way to run it without spe
 
 ## Why the crawler layer matters more than most GEO content admits
 
-A large share of AI answer-engine traffic comes from crawlers that were never built to run your site the way a browser does. Vercel's analysis of AI crawler traffic to its network, published in December 2024, measured roughly 569 million GPTBot requests and 370 million Claude crawler requests in a single month — and found that none of the major AI crawlers it measured executed JavaScript. ChatGPT's and Claude's crawlers did fetch JavaScript files in a meaningful share of requests (11.5% and 23.84%, respectively), but fetching a script and running it are different things; without execution, content that only appears after a script runs is invisible to those crawlers. If your pricing, service descriptions or FAQ content render client-side, an AI crawler may be receiving a near-empty page regardless of how well that content reads to a human visitor or how well it's written for citation.
+A large share of AI answer-engine traffic comes from crawlers that were never built to run your site the way a browser does. Vercel's analysis of AI crawler traffic to its network, published in December 2024, measured roughly 569 million GPTBot requests and 370 million Claude crawler requests in a single month — and found that none of the major AI crawlers it measured executed JavaScript.
 
-This is the gap a pure-marketing GEO checklist can't see, because it audits what a browser shows a person, not what a crawler receives. A comparison table telling you to "write clear, citable facts" is correct but incomplete if those facts never reach the engine's retrieval step in the first place. The fix isn't necessarily removing JavaScript — it's making sure your core facts also exist in server-rendered HTML, a static export, or structured data that doesn't depend on script execution.
+ChatGPT's and Claude's crawlers did fetch JavaScript files in a meaningful share of requests (11.5% and 23.84%, respectively), but fetching a script and running it are different things; without execution, content that only appears after a script runs is invisible to those crawlers.
+
+If your pricing, service descriptions or FAQ content render client-side, an AI crawler may be receiving a near-empty page regardless of how well that content reads to a human visitor or how well it's written for citation.
+
+This is the gap a pure-marketing GEO checklist can't see, because it audits what a browser shows a person, not what a crawler receives. A comparison table telling you to "write clear, citable facts" is correct but incomplete if those facts never reach the engine's retrieval step in the first place.
+
+The fix isn't necessarily removing JavaScript — it's making sure your core facts also exist in server-rendered HTML, a static export, or structured data that doesn't depend on script execution.
 
 ## What a clean result actually looks like
 
-The GEO research that coined the term (Aggarwal and colleagues, later accepted to KDD 2024, a major data-mining conference) tested specific content changes — adding citations, statistics, quotations, clearer structure — against a benchmark set of queries, and reported visibility improvements of up to 40%, with the effect varying by subject area. That's a controlled research result, not a guarantee for any specific business, but it points at the right kind of change: not vaguer marketing copy, but content that states a specific, checkable fact plainly enough that a model can lift it out and attribute it correctly.
+The GEO research that coined the term (Aggarwal and colleagues, later accepted to KDD 2024, a major data-mining conference) tested specific content changes — adding citations, statistics, quotations, clearer structure — against a benchmark set of queries, and reported visibility improvements of up to 40%, with the effect varying by subject area.
+
+That's a controlled research result, not a guarantee for any specific business, but it points at the right kind of change: not vaguer marketing copy, but content that states a specific, checkable fact plainly enough that a model can lift it out and attribute it correctly.
 
 Put the technical and marketing pieces together and a useful mental model is this: SEO and crawlability get you retrieved. Clear, well-structured, fact-dense content gets you extracted correctly. Consistency across your site, your listings and your schema gets you cited without contradiction. Skip any one layer and the others can't fully compensate.
 
 ## Turning a one-off audit into an ongoing measurement
 
-A single audit run is a snapshot; the useful version of this is a small, repeated log. A simple spreadsheet works: one row per question, one column per engine, and for each cell record whether the business was mentioned, how accurately, and which competing source was cited instead. Re-run the same fixed set of questions on a fixed schedule — monthly is usually often enough, since these answers don't shift daily the way a stock price does, but they do shift as models update and as your own site and structured data change.
+A single audit run is a snapshot; the useful version of this is a small, repeated log. A simple spreadsheet works: one row per question, one column per engine, and for each cell record whether the business was mentioned, how accurately, and which competing source was cited instead.
+
+Re-run the same fixed set of questions on a fixed schedule — monthly is usually often enough, since these answers don't shift daily the way a stock price does, but they do shift as models update and as your own site and structured data change.
 
 Two things to watch for as the log fills in:
 
 - **Directional change, not absolute numbers.** Because generative engines are non-deterministic, a single month where your presence rate is 40% instead of 60% isn't necessarily a regression — run the same questions again before concluding anything. What matters is the trend across several audit cycles, and whether it moves the same direction as the technical and content changes you made.
 - **Which competitor keeps winning, and why.** If the same competing page keeps getting cited across multiple engines and multiple months, that page is worth studying directly: open its structured data, check whether its FAQ markup matches its visible text, and see whether it states the same kind of fact your page states but in a more self-contained sentence.
 
-This is the same discipline SEO already asks for — rank tracking over time beats a single check — applied to a metric (presence and accuracy inside a generated answer) that doesn't yet have the mature tooling rank trackers built up over two decades. Building the habit manually now, with a plain spreadsheet, is a reasonable substitute until better tooling exists, and it forces a closer read of *why* an engine chose what it chose, which a dashboard number alone wouldn't show you.
+This is the same discipline SEO already asks for — rank tracking over time beats a single check — applied to a metric (presence and accuracy inside a generated answer) that doesn't yet have the mature tooling rank trackers built up over two decades.
+
+Building the habit manually now, with a plain spreadsheet, is a reasonable substitute until better tooling exists, and it forces a closer read of *why* an engine chose what it chose, which a dashboard number alone wouldn't show you.
 
 ## Common mistakes on both sides
 
@@ -122,6 +140,8 @@ This is the same discipline SEO already asks for — rank tracking over time bea
 
 ## Putting it together
 
-Run the live audit above once as a baseline, fix what the technical checks turn up first (since a page that never reaches the crawler can't be helped by better copy), then re-run the same questions monthly. Track presence and accuracy across repeated runs, not a single lucky answer. That's the whole practice: SEO fundamentals done properly, GEO's extra layer of clarity and consistency built on top, and a technical check on both ends to make sure nothing upstream is quietly filtering out the content you're optimizing.
+Run the live audit above once as a baseline, fix what the technical checks turn up first (since a page that never reaches the crawler can't be helped by better copy), then re-run the same questions monthly. Track presence and accuracy across repeated runs, not a single lucky answer.
+
+That's the whole practice: SEO fundamentals done properly, GEO's extra layer of clarity and consistency built on top, and a technical check on both ends to make sure nothing upstream is quietly filtering out the content you're optimizing.
 
 If you want a technical crawlability and structured-data review alongside the content work, see our [GEO service](/services/geo/). For the search fundamentals GEO depends on, see [SEO](/services/seo/).

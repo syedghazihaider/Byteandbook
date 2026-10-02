@@ -29,7 +29,11 @@ Most comparisons of AWS and managed hosting are written by one side or the other
 
 ## What we found researching this
 
-Before writing this, we checked what's currently published on "AWS vs. managed hosting" to see whether it was worth adding to. The honest finding: it's **not** the heavily gated, lead-capture pattern you sometimes see on comparison topics — the pages we reviewed from Liquid Web, Cloudways and Yogi's VPS were all freely readable with no signup wall. The real gap is different: the content leans qualitative and vendor-favorable rather than gated. Articles describe the trade-offs in general terms — "managed is more expensive but easier," "AWS is cheaper but requires expertise" — without a concrete cost-structure breakdown or a framework tied to team size and growth stage, and each one naturally steers the comparison toward whatever the publishing company sells. That's the gap this article tries to close: a comparison that isn't selling either option.
+Before writing this, we checked what's currently published on "AWS vs. managed hosting" to see whether it was worth adding to. The honest finding: it's **not** the heavily gated, lead-capture pattern you sometimes see on comparison topics — the pages we reviewed from Liquid Web, Cloudways and Yogi's VPS were all freely readable with no signup wall.
+
+The real gap is different: the content leans qualitative and vendor-favorable rather than gated.
+
+Articles describe the trade-offs in general terms — "managed is more expensive but easier," "AWS is cheaper but requires expertise" — without a concrete cost-structure breakdown or a framework tied to team size and growth stage, and each one naturally steers the comparison toward whatever the publishing company sells. That's the gap this article tries to close: a comparison that isn't selling either option.
 
 ## The core difference: what you're actually paying for
 
@@ -49,7 +53,9 @@ Before writing this, we checked what's currently published on "AWS vs. managed h
 
 The AWS-is-cheaper argument compares a $20/month EC2 instance to a $99/month managed plan and calls it a day. That skips the part where someone has to configure that EC2 instance securely, keep the OS and dependencies patched, set up backups and actually test that they restore, build scaling rules before a traffic spike (not during one), and be reachable when something breaks at 2am.
 
-[Liquid Web's comparison of managed vs. unmanaged cloud hosting](https://www.liquidweb.com/what-is-cloud-hosting/managed-vs-unmanaged/) makes this point directly: unmanaged infrastructure looks cheaper upfront but shifts security, maintenance and support onto your own team, and the real comparison is the unmanaged sticker price plus what it costs to staff that ongoing work — whether that's a fraction of an existing engineer's time or a dedicated hire. [Yogi's VPS](https://yogisvps.com/managed-wordpress-vs-aws/) frames the same trade-off from the hosting side: AWS "requires DevOps setup" and ongoing performance tuning that a managed platform provides by default.
+[Liquid Web's comparison of managed vs. unmanaged cloud hosting](https://www.liquidweb.com/what-is-cloud-hosting/managed-vs-unmanaged/) makes this point directly: unmanaged infrastructure looks cheaper upfront but shifts security, maintenance and support onto your own team, and the real comparison is the unmanaged sticker price plus what it costs to staff that ongoing work — whether that's a fraction of an existing engineer's time or a dedicated hire.
+
+[Yogi's VPS](https://yogisvps.com/managed-wordpress-vs-aws/) frames the same trade-off from the hosting side: AWS "requires DevOps setup" and ongoing performance tuning that a managed platform provides by default.
 
 Neither side of that trade-off is free. The honest way to compare cost is:
 
@@ -88,9 +94,13 @@ The mistake we see most often isn't picking the "wrong" platform — it's moving
 
 ## Migrating between the two isn't a one-way door
 
-It's worth saying plainly: this isn't a decision you make once and live with forever. Plenty of companies start on managed hosting, move to raw AWS as they scale and hire infrastructure staff, and that's the more common direction — but the reverse also happens. A team that over-provisioned AWS expertise it didn't end up needing, or that lost the engineer who owned the infrastructure, can move back to a managed platform without it being a failure of the original decision. Treat the choice as matched to your current stage, not as a permanent architectural commitment, and revisit it when your team size or technical maturity genuinely changes rather than on a fixed schedule.
+It's worth saying plainly: this isn't a decision you make once and live with forever. Plenty of companies start on managed hosting, move to raw AWS as they scale and hire infrastructure staff, and that's the more common direction — but the reverse also happens.
 
-One practical middle step worth knowing about if a full migration feels premature: Infrastructure as Code (tools like Terraform or AWS CloudFormation) lets you define your infrastructure in version-controlled configuration before you're running it entirely by hand. Teams sometimes adopt this on a managed platform's underlying cloud account first, or on a managed-AWS provider, as a way to build the operational muscle and documentation a later self-managed setup will need — without taking on full operational ownership on day one.
+A team that over-provisioned AWS expertise it didn't end up needing, or that lost the engineer who owned the infrastructure, can move back to a managed platform without it being a failure of the original decision. Treat the choice as matched to your current stage, not as a permanent architectural commitment, and revisit it when your team size or technical maturity genuinely changes rather than on a fixed schedule.
+
+One practical middle step worth knowing about if a full migration feels premature: Infrastructure as Code (tools like Terraform or AWS CloudFormation) lets you define your infrastructure in version-controlled configuration before you're running it entirely by hand.
+
+Teams sometimes adopt this on a managed platform's underlying cloud account first, or on a managed-AWS provider, as a way to build the operational muscle and documentation a later self-managed setup will need — without taking on full operational ownership on day one.
 
 ## A worked example of what "total cost" actually includes
 
@@ -111,8 +121,14 @@ The point isn't that one column is objectively cheaper — it's that comparing o
 
 ## Security and compliance: a factor beyond cost
 
-One consideration that doesn't reduce neatly to a dollar figure is who's accountable when something goes wrong. Managed hosts typically take on patching cadence, backup integrity and a documented incident-response process as part of the service — useful if you don't have the in-house capacity to own that yourself, and often a real factor in compliance frameworks that expect documented operational controls. Raw AWS gives you the tools to build all of that (IAM policies, encrypted storage, VPC network isolation, CloudTrail logging), but building it is a project, and maintaining it is a standing responsibility — not a checkbox you tick once during setup. If your industry has specific compliance requirements (healthcare, finance, and similar), factor in whether your team can own that ongoing responsibility before assuming raw AWS is the more "serious" choice by default.
+One consideration that doesn't reduce neatly to a dollar figure is who's accountable when something goes wrong. Managed hosts typically take on patching cadence, backup integrity and a documented incident-response process as part of the service — useful if you don't have the in-house capacity to own that yourself, and often a real factor in compliance frameworks that expect documented operational controls.
+
+Raw AWS gives you the tools to build all of that (IAM policies, encrypted storage, VPC network isolation, CloudTrail logging), but building it is a project, and maintaining it is a standing responsibility — not a checkbox you tick once during setup.
+
+If your industry has specific compliance requirements (healthcare, finance, and similar), factor in whether your team can own that ongoing responsibility before assuming raw AWS is the more "serious" choice by default.
 
 ## Where this fits with what we do
 
-If you're at the "scaling" row in that table and considering the move, that's exactly the transition our [DevOps](/services/devops/) and [Cloud Services](/services/cloud/) work is built around: pipelines, containerization and infrastructure design that let you take on raw AWS (or another cloud) without recreating a managed host's operational discipline from scratch. If you're earlier than that, the honest answer is often to stay on managed hosting a while longer — and we'd rather tell you that than sell you infrastructure you don't need yet.
+If you're at the "scaling" row in that table and considering the move, that's exactly the transition our [DevOps](/services/devops/) and [Cloud Services](/services/cloud/) work is built around: pipelines, containerization and infrastructure design that let you take on raw AWS (or another cloud) without recreating a managed host's operational discipline from scratch.
+
+If you're earlier than that, the honest answer is often to stay on managed hosting a while longer — and we'd rather tell you that than sell you infrastructure you don't need yet.

@@ -42,7 +42,9 @@ These are market ranges gathered from formatting services, marketplaces and publ
 
 The free tier is real but limited. Calibre and Amazon's own Kindle Create convert a manuscript into an ebook file at no cost, but the output is plain and the tools are unforgiving of anything beyond simple chapter breaks.
 
-The paid tier is where most self-publishers who go the DIY route actually land. Atticus is a one-time purchase around $147 and runs on any operating system; Vellum is around $250 and is Mac-only, according to [The Books Central's formatting cost breakdown](https://thebookscentral.com/blog/book-formatting-cost/). Both produce clean, professional-looking output for straightforward text, and because they're one-time purchases rather than subscriptions, the cost is fixed no matter how many books you format afterward — which is the same "own it once" logic that a tool like Cambric's $199 one-time license leans on in its own [book formatting cost guide](https://cambric.pub/guides/how-much-does-book-formatting-cost/).
+The paid tier is where most self-publishers who go the DIY route actually land. Atticus is a one-time purchase around $147 and runs on any operating system; Vellum is around $250 and is Mac-only, according to [The Books Central's formatting cost breakdown](https://thebookscentral.com/blog/book-formatting-cost/).
+
+Both produce clean, professional-looking output for straightforward text, and because they're one-time purchases rather than subscriptions, the cost is fixed no matter how many books you format afterward — which is the same "own it once" logic that a tool like Cambric's $199 one-time license leans on in its own [book formatting cost guide](https://cambric.pub/guides/how-much-does-book-formatting-cost/).
 
 Where DIY software runs into trouble: illustrated layouts, complex footnotes, multiple embedded fonts, and formatting for several retailers at once with each one's quirks. That's usually the point where a plain-text novel stays DIY and an illustrated book doesn't.
 
@@ -50,7 +52,9 @@ Where DIY software runs into trouble: illustrated layouts, complex footnotes, mu
 
 Hiring an individual formatter through Upwork, Fiverr, or Reedsy is the middle path — more polish and troubleshooting than software alone, less overhead than an agency.
 
-Upwork's own project-pricing guidance for eBook specialists breaks down by scope: basic manuscript conversion runs roughly $200-$500 per project, layout formatting $500-$1,000, and more complex work like multi-format export or validation and repair climbing into the $1,000-$3,500+ range for senior-level freelancers, per [Upwork's eBooks freelancer marketplace](https://www.upwork.com/hire/ebooks-freelancers/). At the lower end, individual freelancers on Fiverr commonly price a standard-length ebook formatting job well under $200, and [Kindlepreneur's roundup of formatting services](https://kindlepreneur.com/book-formatting-services/) cites Reedsy freelance formatters at roughly $200-$300 for a standard-length fiction book.
+Upwork's own project-pricing guidance for eBook specialists breaks down by scope: basic manuscript conversion runs roughly $200-$500 per project, layout formatting $500-$1,000, and more complex work like multi-format export or validation and repair climbing into the $1,000-$3,500+ range for senior-level freelancers, per [Upwork's eBooks freelancer marketplace](https://www.upwork.com/hire/ebooks-freelancers/).
+
+At the lower end, individual freelancers on Fiverr commonly price a standard-length ebook formatting job well under $200, and [Kindlepreneur's roundup of formatting services](https://kindlepreneur.com/book-formatting-services/) cites Reedsy freelance formatters at roughly $200-$300 for a standard-length fiction book.
 
 The wide spread reflects experience level and how the freelancer prices scope creep. A $50 gig on Fiverr for basic conversion and a $400 Reedsy formatter handling a full print-and-ebook package are both accurately described as "freelance formatting" — read the gig scope carefully before comparing two quotes as if they're the same job.
 
@@ -58,15 +62,21 @@ The wide spread reflects experience level and how the freelancer prices scope cr
 
 Dedicated formatting services and small studios sit above individual freelancers in price and typically include more structured process: a style sheet, a proof round, and support across multiple output formats.
 
-Kindlepreneur's comparison of formatting services lists concrete anchors: Ebook Launch starts at $219 for books up to 50,000 words, Elite Authors starts at $329 per book, and BookBaby starts at $399, with most professional services clustering in the $200-$400 range for a standard book (per [Kindlepreneur](https://kindlepreneur.com/book-formatting-services/)). The Books Central's own breakdown gives a similar shape by category: basic ebook formatting at $50-$150, print-and-ebook combined at $200-$500, and academic or technical books — which need footnotes, indexes, and consistent cross-references — at $400-$1,000+ (per [The Books Central](https://thebookscentral.com/blog/book-formatting-cost/)).
+Kindlepreneur's comparison of formatting services lists concrete anchors: Ebook Launch starts at $219 for books up to 50,000 words, Elite Authors starts at $329 per book, and BookBaby starts at $399, with most professional services clustering in the $200-$400 range for a standard book (per [Kindlepreneur](https://kindlepreneur.com/book-formatting-services/)).
+
+The Books Central's own breakdown gives a similar shape by category: basic ebook formatting at $50-$150, print-and-ebook combined at $200-$500, and academic or technical books — which need footnotes, indexes, and consistent cross-references — at $400-$1,000+ (per [The Books Central](https://thebookscentral.com/blog/book-formatting-cost/)).
 
 What pushes a project past the $500-$700 mark within this tier is usually one of: a second or third retailer format, a print interior in addition to the ebook, multiple revision rounds, or a rush turnaround — The Books Central notes rush fees commonly add 25-50% on top of the base rate for a 48-hour turnaround versus the standard seven-to-fourteen-day window.
 
 ## Custom and illustrated formatting: $1,500-5,000+
 
-Children's books, cookbooks, heavily designed nonfiction, and anything with fixed-layout image placement is a fundamentally different job from reflowable text formatting, and the price reflects that. The Books Central puts children's and illustrated books at $300-$800 for simpler projects, but that's a floor — full custom illustrated ebooks with original layout design, image licensing coordination, and fixed-layout EPUB work (which behaves more like print design than text formatting) regularly run into the $1,500-$5,000+ range once you account for a designer's time on each spread rather than a template applied to flowing text.
+Children's books, cookbooks, heavily designed nonfiction, and anything with fixed-layout image placement is a fundamentally different job from reflowable text formatting, and the price reflects that.
 
-If your manuscript falls in this category, get a scoped quote against your actual page count and illustration count rather than budgeting from a text-formatting range — the two aren't comparable per-page. A 32-page picture book with full-bleed illustrations on every spread and a 300-page illustrated cookbook with recipe photos every few pages both fall under "custom/illustrated," but the second has roughly ten times the page count doing similar layout work, and a fair quote should reflect that rather than applying one flat "illustrated" rate to both.
+The Books Central puts children's and illustrated books at $300-$800 for simpler projects, but that's a floor — full custom illustrated ebooks with original layout design, image licensing coordination, and fixed-layout EPUB work (which behaves more like print design than text formatting) regularly run into the $1,500-$5,000+ range once you account for a designer's time on each spread rather than a template applied to flowing text.
+
+If your manuscript falls in this category, get a scoped quote against your actual page count and illustration count rather than budgeting from a text-formatting range — the two aren't comparable per-page.
+
+A 32-page picture book with full-bleed illustrations on every spread and a 300-page illustrated cookbook with recipe photos every few pages both fall under "custom/illustrated," but the second has roughly ten times the page count doing similar layout work, and a fair quote should reflect that rather than applying one flat "illustrated" rate to both.
 
 ## The hidden costs nobody quotes upfront
 
@@ -115,8 +125,12 @@ Both are one-time purchases rather than subscriptions, which is the detail that 
 
 ## Print formatting: a related but separate cost
 
-If you also want a print edition, don't assume the ebook formatting price covers it. As ByteAndBook's own [eBook & Digital Publishing service page](/services/ebook-publishing/) notes, print and reflowable ebook layout follow different rules — a print interior needs trim size, margins and running heads set for a physical page, which reflowable ebook text doesn't have. The Books Central's figures reflect this split directly: basic ebook-only formatting runs $50-$150, while print-and-ebook combined climbs to $200-$500 — budget for both if you need both, rather than assuming one quote covers the other.
+If you also want a print edition, don't assume the ebook formatting price covers it. As ByteAndBook's own [eBook & Digital Publishing service page](/services/ebook-publishing/) notes, print and reflowable ebook layout follow different rules — a print interior needs trim size, margins and running heads set for a physical page, which reflowable ebook text doesn't have.
+
+The Books Central's figures reflect this split directly: basic ebook-only formatting runs $50-$150, while print-and-ebook combined climbs to $200-$500 — budget for both if you need both, rather than assuming one quote covers the other.
 
 ## Getting it scoped properly
 
-Pricing depends on manuscript length, illustration needs, and how many platforms you're targeting — which is exactly why a single number for "ebook formatting" is never the whole answer. If you'd rather have your specific manuscript scoped against a real quote than guess from a range, see our [eBook & Digital Publishing service](/services/ebook-publishing/), where editing, layout and distribution prep are handled as one pipeline rather than separate projects that need to be reconciled afterward.
+Pricing depends on manuscript length, illustration needs, and how many platforms you're targeting — which is exactly why a single number for "ebook formatting" is never the whole answer.
+
+If you'd rather have your specific manuscript scoped against a real quote than guess from a range, see our [eBook & Digital Publishing service](/services/ebook-publishing/), where editing, layout and distribution prep are handled as one pipeline rather than separate projects that need to be reconciled afterward.
