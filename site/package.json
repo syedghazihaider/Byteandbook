@@ -13,7 +13,8 @@
     "test": "node scripts/qa-check.mjs",
     "indexnow": "node scripts/indexnow.mjs",
     "package": "node scripts/package-deploy.mjs",
-    "verify-live": "node scripts/verify-live.mjs"
+    "verify-live": "node scripts/verify-live.mjs",
+    "check-links": "node scripts/check-external-links.mjs"
   },
   "keywords": [],
   "author": "",
