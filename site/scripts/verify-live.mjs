@@ -257,7 +257,7 @@ console.log(`verify-live: checking ${SITE} ...`);
     }
   }
   check(`FAQ pages: 14 pages carry FAQs`, FAQ_SLUGS.length === 14);
-  check(`FAQ answers: 52 total across all FAQ pages`, totalAnswers === 52);
+  check(`FAQ answers: 53 total across all FAQ pages`, totalAnswers === 53);
 }
 
 // ---- 8. Deleted-after-deploy files are actually gone -----------------------
