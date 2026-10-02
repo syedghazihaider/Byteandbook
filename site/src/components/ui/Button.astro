@@ -18,10 +18,12 @@ const base =
   'inline-flex min-h-[2.75rem] items-center justify-center gap-2 rounded-bb-md px-6 py-3 text-sm font-semibold ' +
   'transition-[background-color,border-color,color,transform,box-shadow] duration-300 ease-out focus-visible:outline-2';
 
+// Contrast (WCAG 1.4.3, 4.5:1 for normal text): text-ink-50 on signal-500 was
+// 4.49:1; white is 4.85:1, and white on the signal-600 hover fill is 6.83:1.
 const variants = {
   primary:
-    'bg-signal-500 text-ink-50 shadow-[0_0_0_1px_rgba(56,102,240,0.0)] ' +
-    'hover:bg-signal-400 hover:-translate-y-0.5 hover:shadow-[0_12px_32px_-8px_rgba(56,102,240,0.45)] ' +
+    'bg-signal-500 text-white shadow-[0_0_0_1px_rgba(56,102,240,0.0)] ' +
+    'hover:bg-signal-600 hover:-translate-y-0.5 hover:shadow-[0_12px_32px_-8px_rgba(56,102,240,0.45)] ' +
     'active:translate-y-0',
   outline:
     'border border-ink-600 text-ink-50 hover:border-signal-400 hover:text-signal-300 ' +
