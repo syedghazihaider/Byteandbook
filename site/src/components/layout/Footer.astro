@@ -31,7 +31,7 @@ const socialLinks = (
 ).filter((link): link is { label: string; icon: 'instagram' | 'x' | 'facebook' | 'linkedin' | null; url: string } => typeof link.url === 'string' && link.url.length > 0);
 ---
 
-<footer class={`border-t border-ink-800 bg-ink-950 py-12 ${stickyCta ? 'pb-28 md:pb-12' : ''}`}>
+<footer class={`border-t border-ink-800 bg-ink-950 py-12 ${stickyCta ? 'pb-32 md:pb-12' : ''}`}>
   <Container class="flex flex-col gap-8 md:flex-row md:items-start md:justify-between">
     <div class="max-w-xs">
       <a href="/" class="font-display text-lg font-bold text-ink-50">
@@ -113,5 +113,6 @@ const socialLinks = (
         <Icon name="whatsapp" class="h-6 w-6" />
       </a>
     </div>
+    <p class="mt-2 text-center text-xs text-ink-300">We reply within 24 hours.</p>
   </div>
 )}

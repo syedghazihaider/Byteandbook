@@ -80,12 +80,11 @@ const contactOptions = ['Email', 'WhatsApp', 'Phone Call'];
       </div>
 
       <div class="sp-field">
-        <label for="sp-mobile" class="sp-label">Phone Number <span aria-hidden="true">*</span></label>
+        <label for="sp-mobile" class="sp-label">Phone Number <span class="sp-optional">(optional)</span></label>
         <input
           id="sp-mobile"
           name="mobile"
           type="tel"
-          required
           maxlength="24"
           placeholder="(555) 123-4567"
           autocomplete="tel"
@@ -189,7 +188,7 @@ const contactOptions = ['Email', 'WhatsApp', 'Phone Call'];
       </div>
 
       <p class="sp-hint">
-        Submitting this form does not place an order or create a payment obligation. We'll follow up to scope and quote the work first.
+        Submitting this form does not place an order or create a payment obligation. We'll follow up to scope and quote the work first. <strong class="font-semibold">We reply within 24 hours.</strong>
       </p>
 
       <div class="sp-actions">
@@ -202,7 +201,7 @@ const contactOptions = ['Email', 'WhatsApp', 'Phone Call'];
       <h3 class="text-lg font-semibold text-ink-50" tabindex="-1">Your project request has been received.</h3>
       <p class="mt-3 text-sm text-ink-300" data-sp-reference></p>
       <p class="mt-2 text-sm text-ink-300">
-        We'll review your requirements and contact you using the details you provided.
+        We'll review your requirements and contact you using the details you provided. We reply within 24 hours.
       </p>
       <div class="sp-actions">
         <button type="button" class="sp-submit" data-sp-close-success>Close</button>
@@ -361,8 +360,8 @@ const contactOptions = ['Email', 'WhatsApp', 'Phone Call'];
       const mobileDigits = mobileDigitsRaw.length === 11 && mobileDigitsRaw.startsWith('1')
         ? mobileDigitsRaw.slice(1)
         : mobileDigitsRaw;
-      if (!data.mobile.trim()) errors.mobile = 'Please enter your phone number.';
-      else if (mobileDigits.length !== 10) errors.mobile = 'Please enter a valid US phone number, e.g. (555) 123-4567.';
+      // Optional: blank is fine, anything typed must still be valid.
+      if (data.mobile.trim() && mobileDigits.length !== 10) errors.mobile = 'Please enter a valid US phone number, e.g. (555) 123-4567.';
 
       if (data.services.length === 0) errors.services = 'Please select at least one service.';
       if (data.services.includes('other') && !data.otherService.trim()) {

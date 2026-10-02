@@ -281,7 +281,7 @@ check('start-project-modal: email required', emailTag.includes('required'));
 check('start-project-modal: email type=email', emailTag.includes('type="email"'));
 
 const mobileTag = /<input[^>]*name="mobile"[^>]*>/.exec(homeHtml)?.[0] ?? '';
-check('start-project-modal: mobile required', mobileTag.includes('required'));
+check('start-project-modal: mobile optional (owner decision 2026-10-02)', !mobileTag.includes('required'));
 check('start-project-modal: description required', /<textarea[^>]*name="description"[^>]*>/.test(homeHtml) && (/<textarea[^>]*name="description"[^>]*>/.exec(homeHtml)?.[0] ?? '').includes('required'));
 check('start-project-modal: termsAccepted checkbox required', (/<input[^>]*name="termsAccepted"[^>]*>/.exec(homeHtml)?.[0] ?? '').includes('required'));
 check('start-project-modal: privacyAcknowledged checkbox required', (/<input[^>]*name="privacyAcknowledged"[^>]*>/.exec(homeHtml)?.[0] ?? '').includes('required'));
@@ -343,6 +343,7 @@ for (const relPath of allDistHtmlFiles) {
   check(`${relPath}: no tel: link`, !/href="tel:/.test(html));
   // The old number was retired; the only phone-style contact is the
   // WhatsApp click-to-chat line (+1 585 683 4300 -> wa.me/15856834300).
+  if (relPath === 'contact/index.html') check('contact: 24-hour reply commitment visible', html.includes('We reply within 24 hours.'));
   check(`${relPath}: old phone number absent`, !/754[-.\s)]*6847|5167546847/.test(html));
   for (const m of html.matchAll(/href="(https:\/\/wa\.me\/[^"]*)"/g)) {
     check(`${relPath}: wa.me link is exactly the WhatsApp line`, m[1] === 'https://wa.me/15856834300');
