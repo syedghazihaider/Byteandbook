@@ -341,6 +341,12 @@ for (const relPath of allDistHtmlFiles) {
   }
   // No public phone number: no tel: links anywhere on the live site.
   check(`${relPath}: no tel: link`, !/href="tel:/.test(html));
+  // The old number was retired; the only phone-style contact is the
+  // WhatsApp click-to-chat line (+1 585 683 4300 -> wa.me/15856834300).
+  check(`${relPath}: old phone number absent`, !/754[-.\s)]*6847|5167546847/.test(html));
+  for (const m of html.matchAll(/href="(https:\/\/wa\.me\/[^"]*)"/g)) {
+    check(`${relPath}: wa.me link is exactly the WhatsApp line`, m[1] === 'https://wa.me/15856834300');
+  }
 }
 
 // ---- 4b. V2.0.1: every page links the current hashed stylesheet, and

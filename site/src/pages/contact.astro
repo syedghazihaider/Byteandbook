@@ -14,6 +14,8 @@ import Container from '../components/ui/Container.astro';
 import Card from '../components/ui/Card.astro';
 import Button from '../components/ui/Button.astro';
 import AmbientField3D from '../components/three/AmbientField3D.astro';
+import Icon from '../components/ui/Icon.astro';
+import { WHATSAPP } from '../config/site';
 import StartProjectTrigger from '../components/project/StartProjectTrigger.astro';
 
 const EMAIL = 'info@byteandbook.com';
@@ -81,6 +83,26 @@ const briefPoints = [
           </button>
           <span class="sr-only" role="status" aria-live="polite" data-copy-status></span>
         </div>
+      </div>
+
+      <div class="mt-6 flex flex-col items-start gap-4 rounded-bb-lg border border-ink-700 bg-ink-900/60 p-8 sm:flex-row sm:items-center sm:justify-between">
+        <div>
+          <p class="text-xs font-semibold uppercase tracking-[0.14em] text-ink-300">Or chat on WhatsApp</p>
+          <a href={WHATSAPP.url} target="_blank" rel="noopener noreferrer" class="mt-1 flex items-center gap-3 text-2xl font-semibold text-ink-50 hover:text-signal-300">
+            <Icon name="whatsapp" class="h-7 w-7 text-[#25D366]" />
+            {WHATSAPP.display}
+          </a>
+          <p class="mt-1 text-sm text-ink-300">Messages only: opens a WhatsApp chat with us.</p>
+        </div>
+        <a
+          href={WHATSAPP.url}
+          target="_blank"
+          rel="noopener noreferrer"
+          class="inline-flex items-center justify-center gap-2 rounded-bb-md border border-[#25D366]/60 px-6 py-3 text-sm font-semibold text-ink-50 transition-colors hover:bg-[#25D366]/10"
+        >
+          <Icon name="whatsapp" class="h-5 w-5 text-[#25D366]" />
+          Open WhatsApp
+        </a>
       </div>
 
       <div class="mt-12">

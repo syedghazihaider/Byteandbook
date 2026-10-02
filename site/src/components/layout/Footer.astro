@@ -1,7 +1,7 @@
 ---
 import Container from '../ui/Container.astro';
 import Icon from '../ui/Icon.astro';
-import { SITE_SOCIAL } from '../../config/site';
+import { SITE_SOCIAL, WHATSAPP } from '../../config/site';
 
 const year = new Date().getFullYear();
 const EMAIL = 'info@byteandbook.com';
@@ -34,6 +34,16 @@ const socialLinks = (
       </p>
       <a href={`mailto:${EMAIL}`} class="mt-4 inline-block text-sm font-medium text-ink-200 hover:text-signal-300">
         {EMAIL}
+      </a>
+      <a
+        href={WHATSAPP.url}
+        target="_blank"
+        rel="noopener noreferrer"
+        aria-label={`Chat with ByteAndBook on WhatsApp, ${WHATSAPP.display}`}
+        class="mt-2 flex items-center gap-2 py-1 text-sm font-medium text-ink-200 hover:text-signal-300"
+      >
+        <Icon name="whatsapp" class="h-5 w-5 text-[#25D366]" />
+        WhatsApp {WHATSAPP.display}
       </a>
     </div>
 

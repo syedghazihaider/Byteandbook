@@ -30,3 +30,11 @@ export const SITE_SOCIAL: SiteSocial = {
 /** Non-null, verified URLs only — the safe list for sameAs/social UI. */
 export const verifiedSocialUrls = (): string[] =>
   Object.values(SITE_SOCIAL).filter((url): url is string => typeof url === 'string' && url.length > 0);
+
+// WhatsApp business line (click-to-chat). Digits only in the URL, no
+// plus/spaces/dashes, per wa.me format. This is deliberately a WhatsApp
+// link, not a tel: link: the site publishes no voice-call number.
+export const WHATSAPP = {
+  display: '+1 (585) 683-4300',
+  url: 'https://wa.me/15856834300',
+} as const;
