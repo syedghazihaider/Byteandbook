@@ -86,7 +86,8 @@ const caseStudyJsonLd = caseStudies.map((cs) => ({
     <section class="border-t border-ink-800 py-16">
       <Container class="max-w-3xl">
         <div class="space-y-16">
-          {caseStudies.map((cs) => (
+          {caseStudies.map((cs, i) => (
+            <>
             <section id={cs.id} class="scroll-mt-24">
               <div class="flex h-12 w-12 items-center justify-center rounded-bb-sm bg-signal-500/10 text-signal-400">
                 <Icon name={cs.icon} class="h-6 w-6" />
@@ -108,6 +109,15 @@ const caseStudyJsonLd = caseStudies.map((cs) => ({
                 ))}
               </div>
             </section>
+            {i === 1 && (
+              <div class="rounded-bb-lg border border-ink-700 bg-ink-900/60 p-6 text-center">
+                <p class="text-ink-200">Facing a similar problem?</p>
+                <div class="mt-4">
+                  <StartProjectTrigger variant="primary">Start a Project</StartProjectTrigger>
+                </div>
+              </div>
+            )}
+            </>
           ))}
         </div>
       </Container>

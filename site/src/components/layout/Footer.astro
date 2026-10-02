@@ -1,7 +1,16 @@
 ---
 import Container from '../ui/Container.astro';
 import Icon from '../ui/Icon.astro';
+import StartProjectTrigger from '../project/StartProjectTrigger.astro';
 import { SITE_SOCIAL, WHATSAPP } from '../../config/site';
+
+// SXO: phones get a thumb-reach bar with the two ways to start a
+// conversation. Pages that already are the conversation (contact,
+// checkout) pass stickyCta={false}.
+interface Props {
+  stickyCta?: boolean;
+}
+const { stickyCta = true } = Astro.props;
 
 const year = new Date().getFullYear();
 const EMAIL = 'info@byteandbook.com';
@@ -22,7 +31,7 @@ const socialLinks = (
 ).filter((link): link is { label: string; icon: 'instagram' | 'x' | 'facebook' | 'linkedin' | null; url: string } => typeof link.url === 'string' && link.url.length > 0);
 ---
 
-<footer class="border-t border-ink-800 bg-ink-950 py-12">
+<footer class={`border-t border-ink-800 bg-ink-950 py-12 ${stickyCta ? 'pb-28 md:pb-12' : ''}`}>
   <Container class="flex flex-col gap-8 md:flex-row md:items-start md:justify-between">
     <div class="max-w-xs">
       <a href="/" class="font-display text-lg font-bold text-ink-50">
@@ -47,14 +56,14 @@ const socialLinks = (
       </a>
     </div>
 
-    <nav aria-label="Footer" class="flex flex-wrap gap-x-8 gap-y-3 text-sm text-ink-300">
-      <a href="/services/" class="hover:text-ink-50">Services</a>
-      <a href="/process/" class="hover:text-ink-50">Process</a>
-      <a href="/about/" class="hover:text-ink-50">About</a>
-      <a href="/work/" class="hover:text-ink-50">Work</a>
-      <a href="/case-studies/" class="hover:text-ink-50">Case Studies</a>
-      <a href="/insights/" class="hover:text-ink-50">Insights</a>
-      <a href="/contact/" class="hover:text-ink-50">Contact</a>
+    <nav aria-label="Footer" class="flex flex-wrap gap-x-8 gap-y-1 text-sm text-ink-300">
+      <a href="/services/" class="inline-block py-2.5 hover:text-ink-50">Services</a>
+      <a href="/process/" class="inline-block py-2.5 hover:text-ink-50">Process</a>
+      <a href="/about/" class="inline-block py-2.5 hover:text-ink-50">About</a>
+      <a href="/work/" class="inline-block py-2.5 hover:text-ink-50">Work</a>
+      <a href="/case-studies/" class="inline-block py-2.5 hover:text-ink-50">Case Studies</a>
+      <a href="/insights/" class="inline-block py-2.5 hover:text-ink-50">Insights</a>
+      <a href="/contact/" class="inline-block py-2.5 hover:text-ink-50">Contact</a>
     </nav>
 
     {socialLinks.length > 0 && (
@@ -82,10 +91,27 @@ const socialLinks = (
 
   <Container class="mt-10 flex flex-col gap-4 border-t border-ink-800 pt-6 text-xs text-ink-300 sm:flex-row sm:items-center sm:justify-between">
     <span>&copy; {year} ByteAndBook. All rights reserved.</span>
-    <nav aria-label="Legal" class="flex flex-wrap gap-x-6 gap-y-2">
-      <a href="/terms/" class="hover:text-ink-100">Terms of Service</a>
-      <a href="/privacy/" class="hover:text-ink-100">Privacy Policy</a>
-      <a href="/refund-policy/" class="hover:text-ink-100">Refund &amp; Cancellation Policy</a>
+    <nav aria-label="Legal" class="flex flex-wrap gap-x-6 gap-y-0">
+      <a href="/terms/" class="inline-block py-2 hover:text-ink-100">Terms of Service</a>
+      <a href="/privacy/" class="inline-block py-2 hover:text-ink-100">Privacy Policy</a>
+      <a href="/refund-policy/" class="inline-block py-2 hover:text-ink-100">Refund &amp; Cancellation Policy</a>
     </nav>
   </Container>
 </footer>
+
+{stickyCta && (
+  <div class="fixed inset-x-0 bottom-0 z-40 border-t border-ink-700 bg-ink-950/95 px-4 py-3 backdrop-blur-md md:hidden" data-sticky-cta>
+    <div class="mx-auto flex max-w-md items-center gap-3">
+      <StartProjectTrigger variant="primary" class="flex-1 px-4 py-3 text-sm">Start a Project</StartProjectTrigger>
+      <a
+        href={WHATSAPP.url}
+        target="_blank"
+        rel="noopener noreferrer"
+        aria-label="Chat with ByteAndBook on WhatsApp"
+        class="inline-flex h-12 w-12 shrink-0 items-center justify-center rounded-bb-md border border-[#25D366]/60 text-[#25D366]"
+      >
+        <Icon name="whatsapp" class="h-6 w-6" />
+      </a>
+    </div>
+  </div>
+)}

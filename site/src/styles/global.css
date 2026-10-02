@@ -713,6 +713,17 @@
     }
   }
 
+  /* SXO: on phones the sticky Start a Project bar owns the bottom edge,
+     so the assistant launcher and panel sit above it. */
+  @media (max-width: 767px) {
+    body:has([data-sticky-cta]) .chat-launcher {
+      bottom: calc(4.75rem + env(safe-area-inset-bottom));
+    }
+    body:has([data-sticky-cta]) .chat-panel {
+      bottom: calc(8.5rem + env(safe-area-inset-bottom));
+    }
+  }
+
   .chat-panel {
     position: fixed;
     right: max(1rem, env(safe-area-inset-right));

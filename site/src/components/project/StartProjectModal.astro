@@ -229,12 +229,16 @@ const contactOptions = ['Email', 'WhatsApp', 'Phone Call'];
     const openAnimated = () => {
       dialog.showModal();
       document.documentElement.style.overflow = 'hidden';
+      document.body.style.overflow = 'hidden';
+      document.documentElement.style.overscrollBehavior = 'contain';
       requestAnimationFrame(() => panel.classList.add('is-visible'));
     };
 
     const closeAnimated = () => {
       panel.classList.remove('is-visible');
       document.documentElement.style.overflow = '';
+      document.body.style.overflow = '';
+      document.documentElement.style.overscrollBehavior = '';
       // Reset is driven directly from here rather than the dialog's
       // native 'close' event — that event does not fire reliably in
       // every environment (verified against a bare, unstyled <dialog>
