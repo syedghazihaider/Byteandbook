@@ -20,3 +20,7 @@ Beyond formal brand systems, our team has also delivered individual
 creative/design work — channel branding, thumbnails, character art — for
 content creators. See a few [real client shoutouts](/team-track-record/#elizabeth)
 from that work.
+
+For what a brand guidelines document should contain, with measured colour
+contrast and a copyable one-page template, see
+[What to Put in Brand Guidelines](/insights/brand-guidelines-what-to-include/).

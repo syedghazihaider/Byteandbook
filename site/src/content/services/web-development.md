@@ -51,3 +51,6 @@ planned for the hosting environment the site will actually run on,
 whether that's a static host, a managed platform, or infrastructure we
 also set up — see [DevOps](/services/devops/) and [Cloud](/services/cloud/)
 for how that side is handled when it's part of the same project.
+
+For a measured example of the performance side, see
+[how we took our own site's layout shift from 0.100 to 0.000](/insights/how-we-fixed-cls-web-fonts/).

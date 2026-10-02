@@ -65,3 +65,7 @@ different is how the content gets used once it's retrieved — see our
 for how that second layer works, and why it builds on SEO fundamentals
 rather than replacing them. For a direct side-by-side, see
 [GEO vs SEO](/insights/geo-vs-seo/).
+
+Core Web Vitals are part of technical SEO too; our own measured layout-shift
+fix is written up in
+[how we took our own site's layout shift from 0.100 to 0.000](/insights/how-we-fixed-cls-web-fonts/).

@@ -61,3 +61,7 @@ platforms the eBook is being formatted for. See our
 typical ranges across DIY, freelance and professional routes, or
 [start a project](/contact/) and we'll scope it against your specific
 manuscript.
+
+Doing the formatting yourself? Our step-by-step guide to
+[formatting an eBook for Kindle](/insights/how-to-format-an-ebook-for-kindle/)
+covers the Word, Kindle Create and EPUB routes and the pre-upload checks.
